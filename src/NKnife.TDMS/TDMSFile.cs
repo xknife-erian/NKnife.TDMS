@@ -39,7 +39,7 @@ namespace NKnife.TDMS
                 throw new TDMSErrorException("Failed to add group with properties.");
             }
 
-            return new TDMSSChannelGroup(groupPtr);
+            return new TDMSChannelGroup(groupPtr);
         }
 
         public void Save()

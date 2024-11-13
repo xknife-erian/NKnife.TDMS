@@ -5,9 +5,9 @@ using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS
 {
-    public class TDMSSChannelGroup : ITDMSChannelGroup
+    public class TDMSChannelGroup : ITDMSChannelGroup
     {
-        public TDMSSChannelGroup(IntPtr groupPtr)
+        public TDMSChannelGroup(IntPtr groupPtr)
         {
             SelfPtr = groupPtr;
         }
