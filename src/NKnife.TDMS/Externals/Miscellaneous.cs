@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace NKnife.TDMS.Externals
 {
-    class Miscellaneous : DDC
+    internal class Miscellaneous : DDC
     {
         [DllImport(Dll, CallingConvention = CallingConvention.StdCall)]
         public static extern IntPtr DDC_GetLibraryErrorDescription(int errorCode);
@@ -13,7 +13,8 @@ namespace NKnife.TDMS.Externals
 
         public static string GetLibraryErrorDescription(int errorCode)
         {
-            IntPtr ptr = DDC_GetLibraryErrorDescription(errorCode);
+            var ptr = DDC_GetLibraryErrorDescription(errorCode);
+
             return Marshal.PtrToStringAnsi(ptr);
         }
     }
