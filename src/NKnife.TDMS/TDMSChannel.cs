@@ -20,18 +20,18 @@ namespace NKnife.TDMS
             try
             {
                 using var data = new Data<T>(values);
-                var v = data.GetValues();
+                var       v    = data.GetValues();
                 success = DDC.SetDataValues(ChannelPtr, v.Values, v.Length);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 if(success == -1)
                 {
-                    throw new TDMSErrorException("Failed to add data.",ex);
+                    throw new TDMSErrorException("Failed to add data.", e);
                 }
                 else
                 {
-                    throw new TDMSErrorException(success, "Failed to add data.", ex);
+                    throw new TDMSErrorException(success, "Failed to add data.", e);
                 }
             }
 
@@ -40,7 +40,7 @@ namespace NKnife.TDMS
 
         public void Dispose()
         {
-            if (ChannelPtr != IntPtr.Zero)
+            if(ChannelPtr != IntPtr.Zero)
             {
                 DDC.CloseChannel(ChannelPtr);
                 ChannelPtr = IntPtr.Zero;
