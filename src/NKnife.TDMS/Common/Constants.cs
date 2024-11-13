@@ -1,7 +1,7 @@
 ﻿// ReSharper disable InconsistentNaming
 namespace NKnife.TDMS.Common
 {
-    public static class Constants
+    static class Constants
     {
         // File type constants
         public const string DDC_FILE_TYPE_TDM = "TDM";

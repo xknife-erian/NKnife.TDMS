@@ -6,8 +6,6 @@ namespace NKnife.TDMS.Externals
 {
     class PropertiesChannel : DDC
     {
-
-
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int DDC_SetChannelProperty(
             IntPtr channel,

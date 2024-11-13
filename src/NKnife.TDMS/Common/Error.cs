@@ -1,6 +1,6 @@
 ﻿namespace NKnife.TDMS.Common
 {
-    public enum Error : int
+    enum Error : int
     {
         /// <summary>
         /// No error
