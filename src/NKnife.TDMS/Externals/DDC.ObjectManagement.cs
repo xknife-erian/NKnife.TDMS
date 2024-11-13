@@ -4,7 +4,7 @@ using NKnife.TDMS.Common;
 
 namespace NKnife.TDMS.Externals
 {
-    internal partial class DDC : BaseDDC
+    internal partial class DDC : DIAdemConnectivity
     {
         [DllImport(DLL, EntryPoint = "DDC_CreateFile", CallingConvention = CallingConvention.StdCall)]
         public static extern int CreateFile(string filePath,
@@ -23,7 +23,7 @@ namespace NKnife.TDMS.Externals
 
         [DllImport(DLL, EntryPoint = "DDC_AddChannel", CallingConvention = CallingConvention.StdCall)]
         public static extern int AddChannel(IntPtr channelGroup,
-                                            DataType dataType,
+                                            TDMSDataType dataType,
                                             string name,
                                             string description,
                                             string unitString,

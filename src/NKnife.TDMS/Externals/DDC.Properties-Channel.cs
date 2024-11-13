@@ -4,7 +4,7 @@ using NKnife.TDMS.Common;
 
 namespace NKnife.TDMS.Externals
 {
-    internal partial class DDC : BaseDDC
+    internal partial class DDC : DIAdemConnectivity
     {
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "DDC_SetChannelProperty")]
         public static extern int SetChannelProperty(IntPtr channel, string property, __arglist);
@@ -47,7 +47,7 @@ namespace NKnife.TDMS.Externals
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "DDC_CreateChannelProperty")]
         public static extern int CreateChannelProperty(IntPtr channel,
                                                        string property,
-                                                       DataType dataType,
+                                                       TDMSDataType dataType,
                                                        __arglist);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall,
@@ -65,7 +65,7 @@ namespace NKnife.TDMS.Externals
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelPropertyV")]
         public static extern int CreateChannelPropertyV(IntPtr channel,
                                                         string property,
-                                                        DataType dataType,
+                                                        TDMSDataType dataType,
                                                         IntPtr args);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_ChannelPropertyExists")]
@@ -78,6 +78,6 @@ namespace NKnife.TDMS.Externals
         public static extern int GetChannelPropertyNames(IntPtr channel, IntPtr[] propertyNames, UIntPtr numPropertyNames);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelPropertyType")]
-        public static extern int GetChannelPropertyType(IntPtr channel, string property, out DataType dataType);
+        public static extern int GetChannelPropertyType(IntPtr channel, string property, out TDMSDataType dataType);
     }
 }

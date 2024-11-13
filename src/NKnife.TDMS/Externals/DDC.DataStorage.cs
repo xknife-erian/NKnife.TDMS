@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace NKnife.TDMS.Externals
 {
-    internal partial class DDC : BaseDDC
+    internal partial class DDC : DIAdemConnectivity
     {
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "SetDataValues")]
         public static extern int SetDataValues(IntPtr channel, IntPtr values, UIntPtr numValues);

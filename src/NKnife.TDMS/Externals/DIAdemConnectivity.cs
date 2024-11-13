@@ -1,6 +1,6 @@
 ﻿namespace NKnife.TDMS.Externals
 {
-    internal abstract class BaseDDC
+    internal abstract class DIAdemConnectivity
     {
         protected const string DLL = "Libs\\nilibddc.dll";
     }

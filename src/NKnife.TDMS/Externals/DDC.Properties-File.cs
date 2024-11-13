@@ -4,7 +4,7 @@ using NKnife.TDMS.Common;
 
 namespace NKnife.TDMS.Externals
 {
-    internal partial class DDC : BaseDDC
+    internal partial class DDC : DIAdemConnectivity
     {
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "DDC_SetFileProperty")]
         public static extern int SetFileProperty(IntPtr file, string property, __arglist);
@@ -47,7 +47,7 @@ namespace NKnife.TDMS.Externals
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "DDC_CreateFileProperty")]
         public static extern int CreateFileProperty(IntPtr file,
                                                     string property,
-                                                    DataType dataType,
+                                                    TDMSDataType dataType,
                                                     __arglist);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateFilePropertyTimestampComponents")]
@@ -64,7 +64,7 @@ namespace NKnife.TDMS.Externals
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateFilePropertyV")]
         public static extern int CreateFilePropertyV(IntPtr file,
                                                      string property,
-                                                     DataType dataType,
+                                                     TDMSDataType dataType,
                                                      IntPtr args);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_FilePropertyExists")]
@@ -77,6 +77,6 @@ namespace NKnife.TDMS.Externals
         public static extern int GetFilePropertyNames(IntPtr file, IntPtr[] propertyNames, UIntPtr numPropertyNames);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetFilePropertyType")]
-        public static extern int GetFilePropertyType(IntPtr file, string property, out DataType dataType);
+        public static extern int GetFilePropertyType(IntPtr file, string property, out TDMSDataType dataType);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 
@@ -22,7 +23,7 @@ namespace NKnife.TDMS
                 }
                 else
                 {
-                    throw new TDMSFileErrorException("Failed to create TDMS file.");
+                    throw new TDMSErrorException("Failed to create TDMS file.");
                 }
                 DDC.SaveFile(_file);
             }
@@ -30,15 +31,15 @@ namespace NKnife.TDMS
 
         public TDMSFileInfo FileInfo { get; set; }
 
-        public ITDMSGroup AddGroup(string groupName, string description, Dictionary<string, string> properties)
+        public ITDMSChannelGroup AddGroup(string groupName, string description, Dictionary<string, string> properties)
         {
             var result = DDC.AddChannelGroup(_file, groupName, description, out var groupPtr);
             if (result != 0)
             {
-                throw new TDMSFileErrorException("Failed to add group with properties.");
+                throw new TDMSErrorException("Failed to add group with properties.");
             }
 
-            return new TDMSGroup(groupPtr);
+            return new TDMSSChannelGroup(groupPtr);
         }
 
         public void Save()
@@ -46,7 +47,7 @@ namespace NKnife.TDMS
             var result = DDC.SaveFile(_file);
             if (result != 0)
             {
-                throw new TDMSFileErrorException("Failed to save file.");
+                throw new TDMSErrorException("Failed to save file.");
             }
         }
 
@@ -55,7 +56,7 @@ namespace NKnife.TDMS
             var result = DDC.OpenFile(filePath, Constants.DDC_FILE_TYPE_TDM, out var filePtr);
             if (result != 0)
             {
-                throw new TDMSFileErrorException("Failed to load file.");
+                throw new TDMSErrorException("Failed to load file.");
             }
             _file = filePtr;
         }
@@ -65,7 +66,7 @@ namespace NKnife.TDMS
             var result = DDC.CloseFile(_file);
             if (result != 0)
             {
-                throw new TDMSFileErrorException("Failed to close file.");
+                throw new TDMSErrorException("Failed to close file.");
             }
         }
 
@@ -74,26 +75,4 @@ namespace NKnife.TDMS
             Close();
         }
     }
-
-    public class TDMSGroup : ITDMSGroup
-    {
-        public TDMSGroup(IntPtr groupPtr)
-        {
-            GroupPtr = groupPtr;
-        }
-
-        public IntPtr GroupPtr { get; set; }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ITDMSChannel AddChannel(string channelName, string description = "", Dictionary<string, string> properties = null)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
 }

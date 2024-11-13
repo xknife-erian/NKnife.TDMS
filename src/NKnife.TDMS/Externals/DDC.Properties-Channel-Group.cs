@@ -4,7 +4,7 @@ using NKnife.TDMS.Common;
 
 namespace NKnife.TDMS.Externals
 {
-    internal partial class DDC : BaseDDC
+    internal partial class DDC : DIAdemConnectivity
     {
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "DDC_SetChannelGroupProperty")]
         public static extern int SetChannelGroupProperty(IntPtr channelGroup, string property, __arglist);
@@ -49,7 +49,7 @@ namespace NKnife.TDMS.Externals
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "DDC_CreateChannelGroupProperty")]
         public static extern int CreateChannelGroupProperty(IntPtr channelGroup,
                                                             string property,
-                                                            DataType dataType,
+                                                            TDMSDataType dataType,
                                                             __arglist);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall,
@@ -67,7 +67,7 @@ namespace NKnife.TDMS.Externals
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelGroupPropertyV")]
         public static extern int CreateChannelGroupPropertyV(IntPtr channelGroup,
                                                              string property,
-                                                             DataType dataType,
+                                                             TDMSDataType dataType,
                                                              IntPtr args);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_ChannelGroupPropertyExists")]
@@ -82,6 +82,6 @@ namespace NKnife.TDMS.Externals
                                                               UIntPtr numPropertyNames);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroupPropertyType")]
-        public static extern int GetChannelGroupPropertyType(IntPtr channelGroup, string property, out DataType dataType);
+        public static extern int GetChannelGroupPropertyType(IntPtr channelGroup, string property, out TDMSDataType dataType);
     }
 }

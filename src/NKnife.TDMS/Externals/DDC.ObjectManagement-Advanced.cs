@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace NKnife.TDMS.Externals
 {
-    internal partial class DDC : BaseDDC
+    internal partial class DDC : DIAdemConnectivity
     {
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_RemoveChannelGroup")]
         public static extern int RemoveChannelGroup(IntPtr channelGroup);

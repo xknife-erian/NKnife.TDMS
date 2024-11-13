@@ -1,6 +1,6 @@
 ﻿namespace NKnife.TDMS.Common
 {
-    internal enum DataType
+    public enum TDMSDataType
     {
         UInt8 = 5,
         Int16 = 2,

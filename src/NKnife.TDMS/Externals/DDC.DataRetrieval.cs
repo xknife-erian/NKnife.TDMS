@@ -4,7 +4,7 @@ using NKnife.TDMS.Common;
 
 namespace NKnife.TDMS.Externals
 {
-    internal partial class DDC : BaseDDC
+    internal partial class DDC : DIAdemConnectivity
     {
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetNumDataValues")]
         public static extern int GetNumDataValues(IntPtr channel, out ulong numValues);
@@ -29,6 +29,6 @@ namespace NKnife.TDMS.Externals
                                                                   uint[] weekDay);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetDataType")]
-        public static extern int GetDataType(IntPtr channel, out DataType dataType);
+        public static extern int GetDataType(IntPtr channel, out TDMSDataType dataType);
     }
 }
