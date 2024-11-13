@@ -15,23 +15,24 @@ namespace NKnife.TDMS
 
         public TDMSFile(TDMSFileInfo fileInfo)
         {
-            if(!fileInfo.Exists)
+            FileInfo = fileInfo ?? throw new ArgumentNullException(nameof(fileInfo));
+            if (!FileInfo.Exists)
             {
-                var result = DDC.CreateFile(fileInfo.FilePath, fileInfo.FileType, fileInfo.Name, fileInfo.Description,
-                                            fileInfo.Title, fileInfo.Author, out var ptr);
-
+                var result = DDC.CreateFile(FileInfo.FilePath, FileInfo.FileType, FileInfo.Name, FileInfo.Description,
+                                            FileInfo.Title, FileInfo.Author, out var ptr);
                 if(result == 0)
                 {
                     _file = ptr;
                 }
                 else
                 {
-                    throw new Exception("Failed to create TDMS file.");
+                    throw new TDMSFileErrorException("Failed to create TDMS file.");
                 }
-
                 DDC.SaveFile(_file);
             }
         }
+
+        public TDMSFileInfo FileInfo { get; set; }
 
         public void Dispose() { }
     }
