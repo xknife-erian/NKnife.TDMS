@@ -1,17 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS
 {
-    /// <summary>
-    ///     为解决测试和测量中数据读取和分析时的种种问题，如没有描述、格式不一致、存储混乱等，
-    ///     NI定义了一个技术数据管理(Technical Data Management，TDM)解决方案。<br />
-    ///     TDMS文件格式由三个层次组成：文件、组、通道。文件层可包含任意数量的组，而每个组又可包含任意数量的通道。
-    ///     通过通道分组，用户可以选择如何组织数据以便使其更易于理解。
-    /// </summary>
-    public class TDMSFile : IDisposable
+    public class TDMSFile : ITDMSFile
     {
-        private readonly IntPtr _file;
+        private IntPtr _file;
 
         public TDMSFile(TDMSFileInfo fileInfo)
         {
@@ -20,7 +16,7 @@ namespace NKnife.TDMS
             {
                 var result = DDC.CreateFile(FileInfo.FilePath, FileInfo.FileType, FileInfo.Name, FileInfo.Description,
                                             FileInfo.Title, FileInfo.Author, out var ptr);
-                if(result == 0)
+                if (result == 0)
                 {
                     _file = ptr;
                 }
@@ -34,6 +30,70 @@ namespace NKnife.TDMS
 
         public TDMSFileInfo FileInfo { get; set; }
 
-        public void Dispose() { }
+        public ITDMSGroup AddGroup(string groupName, string description, Dictionary<string, string> properties)
+        {
+            var result = DDC.AddChannelGroup(_file, groupName, description, out var groupPtr);
+            if (result != 0)
+            {
+                throw new TDMSFileErrorException("Failed to add group with properties.");
+            }
+
+            return new TDMSGroup(groupPtr);
+        }
+
+        public void Save()
+        {
+            var result = DDC.SaveFile(_file);
+            if (result != 0)
+            {
+                throw new TDMSFileErrorException("Failed to save file.");
+            }
+        }
+
+        public void Load(string filePath)
+        {
+            var result = DDC.OpenFile(filePath, Constants.DDC_FILE_TYPE_TDM, out var filePtr);
+            if (result != 0)
+            {
+                throw new TDMSFileErrorException("Failed to load file.");
+            }
+            _file = filePtr;
+        }
+
+        public void Close()
+        {
+            var result = DDC.CloseFile(_file);
+            if (result != 0)
+            {
+                throw new TDMSFileErrorException("Failed to close file.");
+            }
+        }
+
+        public void Dispose()
+        {
+            Close();
+        }
     }
+
+    public class TDMSGroup : ITDMSGroup
+    {
+        public TDMSGroup(IntPtr groupPtr)
+        {
+            GroupPtr = groupPtr;
+        }
+
+        public IntPtr GroupPtr { get; set; }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITDMSChannel AddChannel(string channelName, string description = "", Dictionary<string, string> properties = null)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
 }
