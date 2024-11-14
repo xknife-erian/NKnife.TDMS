@@ -27,7 +27,7 @@ namespace UnitTests.NKnife.TDMS
             var fileInfo = TestFileContext.CreateTestFile();
             using var file = new TDMSFile(fileInfo);
 
-            using var group = file.AddGroup("Group1", "Group1Description", null);
+            using var group = file.Add("Group1", "Group1Description", null);
             group.Should().NotBeNull();
         }
 
@@ -37,7 +37,7 @@ namespace UnitTests.NKnife.TDMS
             var fileInfo = TestFileContext.CreateTestFile();
             using var file = new TDMSFile(fileInfo);
 
-            using var group   = file.AddGroup("Group1", "Group1Description", null);
+            using var group   = file.Add("Group1", "Group1Description", null);
             using var channel = group.AddChannel(TDMSDataType.Double, "Channel1", "V", "Channel1Description");
             channel.Should().NotBeNull();
         }
@@ -48,9 +48,9 @@ namespace UnitTests.NKnife.TDMS
             var fileInfo = TestFileContext.CreateTestFile();
             using (var file = new TDMSFile(fileInfo))
             {
-                using var group   = file.AddGroup("Group1", "Group1Description", null);
+                using var group   = file.Add("Group1", "Group1Description", null);
                 using var channel = group.AddChannel(TDMSDataType.Double, "Channel1", "V", "Channel1Description");
-                channel.AddData(new double[] { 1.0, 2.0, 3.0 });
+                channel.AddData([1.0, 2.0, 3.0]);
                 file.Save();
                 file.Close();
             }
@@ -60,7 +60,7 @@ namespace UnitTests.NKnife.TDMS
                 var group = file.GetGroup(0);
                 var channel = group.GetChannel(0);
                 var data = channel.GetDataValues<double>(0, 3);
-                data.Should().BeEquivalentTo(new double[] { 1.0, 2.0, 3.0 });
+                data.Should().BeEquivalentTo([1.0, 2.0, 3.0]);
             }
         }
     }

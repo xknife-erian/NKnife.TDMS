@@ -18,13 +18,28 @@ namespace NKnife.TDMS
     /// </summary>
     public interface ITDMSFile : IDisposable
     {
-        public TDMSFileInfo FileInfo { get; set; }
+        TDMSFileInfo FileInfo { get; set; }
+        
+        void Save();
+        
+        void Load(string filePath);
+        
+        void Close();
 
-        public ITDMSChannelGroup AddGroup(string groupName, string description = "", Dictionary<string, string> properties = null);
-        ITDMSChannelGroup GetGroup(int i);
-        public void Save();
-        public void Load(string filePath);
-        public void Close();
+        public int Count { get; set; }
+
+        ITDMSChannelGroup Add(string groupName, string description = "");
+
+        void Clear();
+
+        bool Contains(string groupName);
+
+        bool Remove(string groupName);
+        
+        void RemoveAt(int index);
+
+        ITDMSChannelGroup this[int index] { get; set; }
+        ITDMSChannelGroup this[string groupName] { get; set; }
     }
 
     public interface ITDMSChannelGroup : IDisposable

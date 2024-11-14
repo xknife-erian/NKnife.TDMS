@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using NKnife.TDMS.Common;
@@ -6,7 +7,7 @@ using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS
 {
-    public class TDMSFile : ITDMSFile
+    public class TDMSFile : ITDMSFile, IEnumerable<ITDMSChannelGroup>
     {
         private IntPtr _file;
 
@@ -31,7 +32,7 @@ namespace NKnife.TDMS
 
         public TDMSFileInfo FileInfo { get; set; }
 
-        public ITDMSChannelGroup AddGroup(string groupName, string description, Dictionary<string, string> properties)
+        public ITDMSChannelGroup Add(string groupName, string description, Dictionary<string, string> properties)
         {
             var result = DDC.AddChannelGroup(_file, groupName, description, out var groupPtr);
             if (result != 0)
@@ -63,11 +64,7 @@ namespace NKnife.TDMS
 
         public void Close()
         {
-            var result = DDC.CloseFile(_file);
-            if (result != 0)
-            {
-                throw new TDMSErrorException("Failed to close file.");
-            }
+            DDC.CloseFile(_file);
         }
 
         public void Dispose()
@@ -79,5 +76,20 @@ namespace NKnife.TDMS
         {
             throw new NotImplementedException();
         }
+
+        #region Implementation of IEnumerable
+        /// <inheritdoc />
+        public IEnumerator<ITDMSChannelGroup> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        #endregion
+
     }
 }
