@@ -39,5 +39,10 @@ namespace NKnife.TDMS
                 throw new TDMSErrorException(success, "Failed to add channel.");
             }
         }
+
+        public ITDMSChannel GetChannel(int i)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

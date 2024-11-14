@@ -21,7 +21,7 @@ namespace NKnife.TDMS
         public TDMSFileInfo FileInfo { get; set; }
 
         public ITDMSChannelGroup AddGroup(string groupName, string description = "", Dictionary<string, string> properties = null);
-
+        ITDMSChannelGroup GetGroup(int i);
         public void Save();
         public void Load(string filePath);
         public void Close();
@@ -38,10 +38,20 @@ namespace NKnife.TDMS
         /// <param name="description">通道对象的description属性值。该属性存储在通道中。</param>
         /// <returns>新通道</returns>
         public ITDMSChannel AddChannel(TDMSDataType dataType, string channelName, string unit, string description);
+
+        ITDMSChannel GetChannel(int i);
     }
 
     public interface ITDMSChannel : IDisposable
     {
         bool AddData<T>(T[] values) where T : struct;
+
+        /// <summary>
+        /// 获取指定通道中的数据值
+        /// </summary>
+        /// <typeparam name="T">待获取的数据的数据类型</typeparam>
+        T[] GetDataValues<T>(uint startIndex, uint length);
+
+        ulong Count { get; }
     }
 }

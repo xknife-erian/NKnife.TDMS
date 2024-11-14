@@ -74,5 +74,10 @@ namespace NKnife.TDMS
         {
             Close();
         }
+
+        public ITDMSChannelGroup GetGroup(int i)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
