@@ -78,7 +78,7 @@ namespace NKnife.TDMS.Externals
         public static extern int FilePropertyExists(IntPtr file, string property, out int exists);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetNumFileProperties")]
-        public static extern int GetNumFileProperties(IntPtr file, out uint numProperties);
+        public static extern int CountFileProperties(IntPtr file, out uint numProperties);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetFilePropertyNames")]
         public static extern int GetFilePropertyNames(IntPtr file, IntPtr[] propertyNames, UIntPtr numPropertyNames);

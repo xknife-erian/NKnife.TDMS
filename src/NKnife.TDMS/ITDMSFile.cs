@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using NKnife.TDMS.Common;
 
 namespace NKnife.TDMS
 {
@@ -16,59 +15,39 @@ namespace NKnife.TDMS
     ///     https://www.ni.com/en/support/documentation/supplemental/06/the-ni-tdms-file-format.html <br/>
     ///     https://www.ni.com/docs/en-US/bundle/labwindows-cvi/page/cvi/libref/cvitdmslibrary.htm
     /// </summary>
-    public interface ITDMSFile : IDisposable
+    public interface ITDMSFile : IEnumerable<ITDMSChannelGroup>, IDisposable
     {
-        TDMSFileInfo FileInfo { get; set; }
-        
+        TDMSFileInfo FileInfo { get; }
+
         void Save();
-        
-        void Load(string filePath);
-        
+
+        void Open(string filePath);
+
+        void Create(string filePath, string fileType, string name, string description, string title, string author);
+
         void Close();
 
-        public int Count { get; set; }
+        public int Count { get; }
 
         ITDMSChannelGroup Add(string groupName, string description = "");
 
         void SetFileProperty(string propertyName, string propertyValue);
+
+        /// <summary>
+        ///    属性值是否存在
+        /// </summary>
+        /// <param name="propertyName">属性名</param>
+        bool PropertyExists(string propertyName);
 
         void Clear();
 
         bool Contains(string groupName);
 
         bool Remove(string groupName);
-        
+
         void RemoveAt(int index);
 
         ITDMSChannelGroup this[int index] { get; set; }
         ITDMSChannelGroup this[string groupName] { get; set; }
-    }
-
-    public interface ITDMSChannelGroup : IDisposable
-    {
-        /// <summary>
-        /// 向通道组添加新通道。一个有效的通道组应该包含一个或多个通道。
-        /// </summary>
-        /// <param name="dataType">新建通道的数据类型。此通道的数据必须与指定的数据类型匹配。</param>
-        /// <param name="channelName">通道对象的name属性的值。该属性存储在通道中。</param>
-        /// <param name="unit">通道对象的单位，用字符串表达。该属性存储在通道中</param>
-        /// <param name="description">通道对象的description属性值。该属性存储在通道中。</param>
-        /// <returns>新通道</returns>
-        public ITDMSChannel AddChannel(TDMSDataType dataType, string channelName, string unit, string description);
-
-        ITDMSChannel GetChannel(int i);
-    }
-
-    public interface ITDMSChannel : IDisposable
-    {
-        bool AddData<T>(T[] values) where T : struct;
-
-        /// <summary>
-        /// 获取指定通道中的数据值
-        /// </summary>
-        /// <typeparam name="T">待获取的数据的数据类型</typeparam>
-        T[] GetDataValues<T>(uint startIndex, uint length);
-
-        ulong Count { get; }
     }
 }

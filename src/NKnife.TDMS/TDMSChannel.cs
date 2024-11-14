@@ -63,7 +63,7 @@ namespace NKnife.TDMS
             return values;
         }
 
-        public ulong Count => DDC.GetNumDataValues(ChannelPtr, out var numValues) == 0 ? (ulong)numValues : 0;
+        public ulong Count => DDC.CountDataValues(ChannelPtr, out var numValues) == 0 ? (ulong)numValues : 0;
 
         public void Dispose()
         {

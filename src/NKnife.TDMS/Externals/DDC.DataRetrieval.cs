@@ -7,7 +7,7 @@ namespace NKnife.TDMS.Externals
     internal partial class DDC : DIAdemConnectivity
     {
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetNumDataValues")]
-        public static extern int GetNumDataValues(IntPtr channel, out ulong numValues);
+        public static extern int CountDataValues(IntPtr channel, out ulong numValues);
 
         /// <summary>
         /// 获取指定通道中的数据值

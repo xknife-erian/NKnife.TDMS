@@ -72,7 +72,7 @@ namespace NKnife.TDMS.Externals
         public static extern int ChannelPropertyExists(IntPtr channel, string property, out int exists);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetNumChannelProperties")]
-        public static extern int GetNumChannelProperties(IntPtr channel, out uint numProperties);
+        public static extern int CountChannelProperties(IntPtr channel, out uint numProperties);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelPropertyNames")]
         public static extern int GetChannelPropertyNames(IntPtr channel, IntPtr[] propertyNames, UIntPtr numPropertyNames);

@@ -17,5 +17,11 @@ namespace NKnife.TDMS
         }
 
         public int ErrorCode { get; set; }
+
+        public static void ThrowIfError(int success, string message)
+        {
+            if (success < 0)
+                throw new TDMSErrorException(success, message);
+        }
     }
 }

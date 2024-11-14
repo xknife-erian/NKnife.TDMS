@@ -74,7 +74,7 @@ namespace NKnife.TDMS.Externals
         public static extern int ChannelGroupPropertyExists(IntPtr channelGroup, string property, out int exists);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetNumChannelGroupProperties")]
-        public static extern int GetNumChannelGroupProperties(IntPtr channelGroup, out uint numProperties);
+        public static extern int CountChannelGroupProperties(IntPtr channelGroup, out uint numProperties);
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroupPropertyNames")]
         public static extern int GetChannelGroupPropertyNames(IntPtr channelGroup,

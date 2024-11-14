@@ -29,8 +29,8 @@ namespace NKnife.TDMS
         public static void SetFileDateTime(this ITDMSFile file, DateTime dateTime)
         {
             var tdms = (TDMSFile)file;
-            var ptr    = tdms.GetPtr();
-            var dt     = new TDMSDateTime(dateTime);
+            var ptr  = tdms.GetPtr();
+            var dt   = new TDMSDateTime(dateTime);
             DDC.SetFilePropertyTimestampComponents(ptr, Constants.DDC_FILE_DATETIME, dt.Year, dt.Month, dt.Day, dt.Hour,
                                                    dt.Second, dt.Minute, dt.MilliSecond);
         }
