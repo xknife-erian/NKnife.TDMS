@@ -30,6 +30,8 @@ namespace NKnife.TDMS
 
         ITDMSChannelGroup Add(string groupName, string description = "");
 
+        void SetFileProperty(string propertyName, string propertyValue);
+
         void Clear();
 
         bool Contains(string groupName);

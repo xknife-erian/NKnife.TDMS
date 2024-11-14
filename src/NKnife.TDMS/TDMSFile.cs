@@ -9,7 +9,7 @@ namespace NKnife.TDMS
 {
     public class TDMSFile : ITDMSFile, IEnumerable<ITDMSChannelGroup>
     {
-        private IntPtr _file;
+        private IntPtr _filePtr;
 
         public TDMSFile(TDMSFileInfo fileInfo)
         {
@@ -20,13 +20,13 @@ namespace NKnife.TDMS
                                             FileInfo.Title, FileInfo.Author, out var ptr);
                 if (result == 0)
                 {
-                    _file = ptr;
+                    _filePtr = ptr;
                 }
                 else
                 {
                     throw new TDMSErrorException("Failed to create TDMS file.");
                 }
-                DDC.SaveFile(_file);
+                DDC.SaveFile(_filePtr);
             }
         }
 
@@ -34,7 +34,7 @@ namespace NKnife.TDMS
 
         public ITDMSChannelGroup Add(string groupName, string description, Dictionary<string, string> properties)
         {
-            var result = DDC.AddChannelGroup(_file, groupName, description, out var groupPtr);
+            var result = DDC.AddChannelGroup(_filePtr, groupName, description, out var groupPtr);
             if (result != 0)
             {
                 throw new TDMSErrorException("Failed to add group with properties.");
@@ -45,7 +45,7 @@ namespace NKnife.TDMS
 
         public void Save()
         {
-            var result = DDC.SaveFile(_file);
+            var result = DDC.SaveFile(_filePtr);
             if (result != 0)
             {
                 throw new TDMSErrorException("Failed to save file.");
@@ -59,12 +59,65 @@ namespace NKnife.TDMS
             {
                 throw new TDMSErrorException("Failed to load file.");
             }
-            _file = filePtr;
+            _filePtr = filePtr;
         }
 
         public void Close()
         {
-            DDC.CloseFile(_file);
+            DDC.CloseFile(_filePtr);
+        }
+
+        /// <inheritdoc />
+        public int Count { get; set; }
+
+        /// <inheritdoc />
+        public ITDMSChannelGroup Add(string groupName, string description = "")
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public void SetFileProperty(string propertyName, string propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public bool Contains(string groupName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public bool Remove(string groupName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public void RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public ITDMSChannelGroup this[int index]
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public ITDMSChannelGroup this[string groupName]
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
         public void Dispose()
@@ -91,5 +144,9 @@ namespace NKnife.TDMS
         }
         #endregion
 
+        internal IntPtr GetPtr()
+        {
+            return _filePtr;
+        }
     }
 }

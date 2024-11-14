@@ -6,6 +6,13 @@ namespace NKnife.TDMS.Externals
 {
     internal partial class DDC : DIAdemConnectivity
     {
+        /// <summary>
+        /// 设置文件属性的值
+        /// </summary>
+        /// <param name="file">文件句柄</param>
+        /// <param name="property">文件属性的名称</param>
+        /// <param name="__arglist">可变参数列表，用于传递属性的值</param>
+        /// <returns>执行结果。0 表示成功，负数表示错误代码</returns>
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "DDC_SetFileProperty")]
         public static extern int SetFileProperty(IntPtr file, string property, __arglist);
 
