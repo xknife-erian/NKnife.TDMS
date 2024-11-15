@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 
-namespace NKnife.TDMS
+namespace NKnife.TDMS.Default
 {
-    public class TDMSChannelGroup : ITDMSChannelGroup
+    class TDMSChannelGroup : ITDMSChannelGroup
     {
         public TDMSChannelGroup(IntPtr groupPtr)
         {

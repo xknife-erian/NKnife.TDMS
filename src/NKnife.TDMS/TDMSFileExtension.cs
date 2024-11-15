@@ -1,5 +1,6 @@
 ﻿using System;
 using NKnife.TDMS.Common;
+using NKnife.TDMS.Default;
 using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS

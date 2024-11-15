@@ -1,6 +1,7 @@
 using FluentAssertions;
 using NKnife.TDMS;
 using NKnife.TDMS.Common;
+using NKnife.TDMS.Default;
 using Xunit;
 
 namespace UnitTests.NKnife.TDMS

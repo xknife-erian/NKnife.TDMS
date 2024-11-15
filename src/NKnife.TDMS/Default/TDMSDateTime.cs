@@ -1,17 +1,17 @@
 ﻿using System;
 
-namespace NKnife.TDMS
+namespace NKnife.TDMS.Default
 {
     public record TDMSDateTime
     {
         public TDMSDateTime(DateTime dateTime)
         {
-            Year        = (uint)dateTime.Year;
-            Month       = (uint)dateTime.Month;
-            Day         = (uint)dateTime.Day;
-            Hour        = (uint)dateTime.Hour;
-            Minute      = (uint)dateTime.Minute;
-            Second      = (uint)dateTime.Second;
+            Year = (uint)dateTime.Year;
+            Month = (uint)dateTime.Month;
+            Day = (uint)dateTime.Day;
+            Hour = (uint)dateTime.Hour;
+            Minute = (uint)dateTime.Minute;
+            Second = (uint)dateTime.Second;
             MilliSecond = dateTime.Millisecond;
         }
 
@@ -23,12 +23,12 @@ namespace NKnife.TDMS
                             uint second,
                             double millisecond)
         {
-            Year        = year;
-            Month       = month;
-            Day         = day;
-            Hour        = hour;
-            Minute      = minute;
-            Second      = second;
+            Year = year;
+            Month = month;
+            Day = day;
+            Hour = hour;
+            Minute = minute;
+            Second = second;
             MilliSecond = millisecond;
         }
 

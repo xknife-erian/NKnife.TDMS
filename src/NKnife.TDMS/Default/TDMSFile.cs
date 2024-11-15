@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using NKnife.TDMS;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 
-namespace NKnife.TDMS
+namespace NKnife.TDMS.Default
 {
-    public class TDMSFile : ITDMSFile, IEnumerable<ITDMSChannelGroup>
+    class TDMSFile : ITDMSFile, IEnumerable<ITDMSChannelGroup>
     {
         private IntPtr _filePtr;
         internal IntPtr GetPtr()

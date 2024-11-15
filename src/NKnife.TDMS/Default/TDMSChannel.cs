@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 
-namespace NKnife.TDMS
+namespace NKnife.TDMS.Default
 {
-    public class TDMSChannel : ITDMSChannel
+    class TDMSChannel : ITDMSChannel
     {
         public TDMSChannel(IntPtr channelPtr)
         {
