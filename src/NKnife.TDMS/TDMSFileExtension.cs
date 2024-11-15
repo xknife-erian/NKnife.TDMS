@@ -9,22 +9,22 @@ namespace NKnife.TDMS
     {
         public static void SetFileName(this ITDMSFile file, string name)
         {
-            file.SetFileProperty(Constants.DDC_FILE_NAME, name);
+            file.SetProperty(Constants.DDC_FILE_NAME, name);
         }
 
         public static void SetFileDescription(this ITDMSFile file, string name)
         {
-            file.SetFileProperty(Constants.DDC_FILE_DESCRIPTION, name);
+            file.SetProperty(Constants.DDC_FILE_DESCRIPTION, name);
         }
 
         public static void SetFileTitle(this ITDMSFile file, string name)
         {
-            file.SetFileProperty(Constants.DDC_FILE_TITLE, name);
+            file.SetProperty(Constants.DDC_FILE_TITLE, name);
         }
 
         public static void SetFileAuthor(this ITDMSFile file, string name)
         {
-            file.SetFileProperty(Constants.DDC_FILE_AUTHOR, name);
+            file.SetProperty(Constants.DDC_FILE_AUTHOR, name);
         }
 
         public static void SetFileDateTime(this ITDMSFile file, DateTime dateTime)

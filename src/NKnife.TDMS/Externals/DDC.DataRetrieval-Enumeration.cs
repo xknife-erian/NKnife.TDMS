@@ -17,8 +17,8 @@ namespace NKnife.TDMS.Externals
         /// 获取指定文件中的通道组。
         /// </summary>
         /// <param name="file">文件</param>
-        /// <param name="channelGroupsBuffer">接收指定文件的通道组的数组缓冲区。</param>
-        /// <param name="numberOfChannelGroups">要复制到缓冲区的通道组数量。</param>
+        /// <param name="channelGroupsBuffer">通道组的数组缓冲区</param>
+        /// <param name="numberOfChannelGroups">通道组数量</param>
         /// <returns>是否成功。除非另有说明，否则零表示执行成功，负数表示错误代码。</returns>
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "GetChannelGroups")]
         public static extern int GetChannelGroups(IntPtr file, IntPtr[] channelGroupsBuffer, UIntPtr numberOfChannelGroups);

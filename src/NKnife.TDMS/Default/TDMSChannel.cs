@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
@@ -63,8 +64,6 @@ namespace NKnife.TDMS.Default
             return values;
         }
 
-        public ulong Count => DDC.CountDataValues(ChannelPtr, out var numValues) == 0 ? (ulong)numValues : 0;
-
         public void Dispose()
         {
             if(ChannelPtr != IntPtr.Zero)
@@ -73,5 +72,41 @@ namespace NKnife.TDMS.Default
                 ChannelPtr = IntPtr.Zero;
             }
         }
+
+        #region Implementation of ITDMSNode
+        /// <inheritdoc />
+        public ulong ChildCount => DDC.CountDataValues(ChannelPtr, out var numValues) == 0 ? (ulong)numValues : 0;
+
+        /// <inheritdoc />
+        public void SetProperty(string propertyName, string propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public bool PropertyExists(string propertyName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public string[] GetPropertyNames()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+        #region Implementation of IEnumerable
+        /// <inheritdoc />
+        public IEnumerator GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

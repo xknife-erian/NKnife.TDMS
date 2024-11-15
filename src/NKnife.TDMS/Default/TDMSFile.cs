@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 
@@ -86,14 +87,13 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public int Count
+        public ulong ChildCount
         {
             get
             {
                 var success = DDC.CountChannelGroups(_filePtr, out var count);
                 TDMSErrorException.ThrowIfError(success, "查询通道组数量异常");
-
-                return (int)count;
+                return (ulong)count;
             }
         }
 
@@ -103,13 +103,13 @@ namespace NKnife.TDMS.Default
             var result = DDC.AddChannelGroup(_filePtr, groupName, description, out var groupPtr);
             if (result != 0)
             {
-                throw new TDMSErrorException("Failed to add group with properties.");
+                throw new TDMSErrorException("Failed to add group with properties");
             }
             return new TDMSChannelGroup(groupPtr);
         }
 
         /// <inheritdoc />
-        public void SetFileProperty(string propertyName, string propertyValue)
+        public void SetProperty(string propertyName, string propertyValue)
         {
             int status = DDC.SetFileProperty(_filePtr, propertyName, __arglist(propertyValue));
             if (status != 0)
@@ -119,24 +119,133 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
+        public (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
+        {
+            var success = DDC.GetFilePropertyType(_filePtr, propertyName, out var type);
+            TDMSErrorException.ThrowIfError(success, "Failed to get property type");
+            dataType = type;
+
+            switch (type)
+            {
+                case TDMSDataType.UInt8:
+                {
+                    success = DDC.GetFilePropertyUInt8(_filePtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+
+                    return (true, value);
+                }
+                case TDMSDataType.Int16:
+                {
+                    success = DDC.GetFilePropertyInt16(_filePtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+
+                    return (true, value);
+                }
+                case TDMSDataType.Int32:
+                {
+                    success = DDC.GetFilePropertyInt32(_filePtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+
+                    return (true, value);
+                }
+
+                case TDMSDataType.Float:
+                {
+                    success = DDC.GetFilePropertyFloat(_filePtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+
+                    return (true, value);
+                }
+
+                case TDMSDataType.Double:
+                {
+                    success = DDC.GetFilePropertyDouble(_filePtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+
+                    return (true, value);
+                }
+                case TDMSDataType.String:
+                {
+                    success = DDC.GetFileStringPropertyLength(_filePtr, propertyName, out var length);
+                    TDMSErrorException.ThrowIfError(success, "Failed to get file string property length");
+
+                    var str = new char[length];
+                    success = DDC.GetFilePropertyString(_filePtr, propertyName, str, (UIntPtr)length);
+                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+
+                    return (true, str);
+                }
+                case TDMSDataType.Timestamp:
+                {
+                    success = DDC.GetFilePropertyTimestampComponents(_filePtr,
+                                                                     propertyName,
+                                                                     out var year,
+                                                                     out var month,
+                                                                     out var day,
+                                                                     out var hour,
+                                                                     out var minute,
+                                                                     out var second,
+                                                                     out var milli,
+                                                                     out var weekDay);
+                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+                    var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
+
+                    return (true, dt.ToDateTime());
+                }
+
+                default: throw new ArgumentOutOfRangeException();
+            }
+
+            return (false, null);
+        }
+
+        /// <inheritdoc />
         public bool PropertyExists(string propertyName)
         {
             var success = DDC.FilePropertyExists(_filePtr, propertyName, out var isExists);
-            TDMSErrorException.ThrowIfError(success, "Failed to check property exists.");
+            TDMSErrorException.ThrowIfError(success, "Failed to check property exists");
 
             return isExists == 1;
         }
 
         /// <inheritdoc />
-        public void Clear()
+        public string[] GetPropertyNames()
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
+        public void Clear()
+        {
+            var groupsBuffer = new IntPtr[ChildCount];
+            var success = DDC.GetChannelGroups(_filePtr, groupsBuffer, (UIntPtr)ChildCount);
+            TDMSErrorException.ThrowIfError(success, "Failed to get channel groups");
+
+            foreach (var ptr in groupsBuffer)
+            {
+                success = DDC.RemoveChannelGroup(ptr);
+                TDMSErrorException.ThrowIfError(success, "Failed to remove channel group");
+            }
+        }
+
+        /// <inheritdoc />
         public bool Contains(string groupName)
         {
-            throw new NotImplementedException();
+            var channelGroupsBuffer = new IntPtr[ChildCount];
+            var success = DDC.GetChannelGroups(_filePtr, channelGroupsBuffer, (UIntPtr)ChildCount);
+            TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
+
+            foreach (var intPtr in channelGroupsBuffer)
+            {
+                var group = new TDMSChannelGroup(intPtr);
+                var name = group.GetProperty(Constants.DDC_FILE_NAME);
+                if (name == groupName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <inheritdoc />

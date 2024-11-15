@@ -19,7 +19,7 @@ namespace UnitTests.NKnife.TDMS
         {
             // Act
             Clean();
-            using ITDMSFile result = TDMSWeaver.Weave();
+            using var result = TDMSWeaver.Weave();
 
             // Assert
             result.Should().NotBeNull();
@@ -39,7 +39,7 @@ namespace UnitTests.NKnife.TDMS
             string author = "John Doe";
 
             // Act
-            using ITDMSFile result = TDMSWeaver.CreateNewFile(filePath, fileType, name, description, title, author);
+            using var result = TDMSWeaver.CreateNewFile(filePath, fileType, name, description, title, author);
 
             // Assert
             result.Should().NotBeNull();
@@ -58,7 +58,7 @@ namespace UnitTests.NKnife.TDMS
             }
 
             // Act
-            using ITDMSFile result = TDMSWeaver.OpenExistingFile(filePath);
+            using var result = TDMSWeaver.OpenExistingFile(filePath);
 
             // Assert
             result.Should().NotBeNull();
@@ -82,7 +82,7 @@ namespace UnitTests.NKnife.TDMS
             };
 
             // Act
-            using ITDMSFile result = TDMSWeaver.OpenExistingFile(fileInfo);
+            using var result = TDMSWeaver.OpenExistingFile(fileInfo);
 
             // Assert
             result.Should().NotBeNull();

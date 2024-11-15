@@ -5,7 +5,12 @@ VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NKnife.TDMS", "src\NKnife.TDMS\NKnife.TDMS.csproj", "{DD99E5F1-91E1-4206-8A87-BF9F6DFB411C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.NKnife.TDMS", "test\UnitTests.NKnife.TDMS\UnitTests.NKnife.TDMS.csproj", "{CDAE04EC-B5DB-4D7F-A41A-BC875E8249F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.NKnife.TDMS", "test\UnitTests.NKnife.TDMS\UnitTests.NKnife.TDMS.csproj", "{CDAE04EC-B5DB-4D7F-A41A-BC875E8249F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{9019FFD4-AD81-4BA6-99E5-CBEC6AAEDD0B}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

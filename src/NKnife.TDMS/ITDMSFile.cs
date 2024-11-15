@@ -11,11 +11,12 @@ namespace NKnife.TDMS
     ///     - 在层次结构的每个级别，可以存储无限数量的自定义标量属性。<br/>
     ///     - 每个级别都接受无限数量的自定义属性，以实现文档齐全且可供搜索的数据文件。<br/>
     ///     - 位于文件中的描述性信息是此模型的一个主要优点，它提供了一种简单的方法来记录数据，而无需设计您自己的标头结构。<br/><br/>
-    ///     
+    ///
+    ///     https://knowledge.ni.com/KnowledgeArticleDetails?id=kA03q000000x4PcCAI&l=zh-CN <br/>
     ///     https://www.ni.com/en/support/documentation/supplemental/06/the-ni-tdms-file-format.html <br/>
     ///     https://www.ni.com/docs/en-US/bundle/labwindows-cvi/page/cvi/libref/cvitdmslibrary.htm
     /// </summary>
-    public interface ITDMSFile : IEnumerable<ITDMSChannelGroup>, IDisposable
+    public interface ITDMSFile : ITDMSNode, IEnumerable<ITDMSChannelGroup>, IDisposable
     {
         TDMSFileInfo FileInfo { get; }
 
@@ -27,17 +28,10 @@ namespace NKnife.TDMS
         void Create(TDMSFileInfo fileInfo);
         void Close();
 
-        public int Count { get; }
 
         ITDMSChannelGroup Add(string groupName, string description = "");
 
-        void SetFileProperty(string propertyName, string propertyValue);
 
-        /// <summary>
-        ///    属性值是否存在
-        /// </summary>
-        /// <param name="propertyName">属性名</param>
-        bool PropertyExists(string propertyName);
 
         void Clear();
 

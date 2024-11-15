@@ -43,5 +43,39 @@ namespace NKnife.TDMS.Default
         {
             throw new NotImplementedException();
         }
+
+        public string GetProperty(string propertyName)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region Implementation of ITDMSNode
+        /// <inheritdoc />
+        public ulong ChildCount => DDC.CountChannels(SelfPtr, out var count) == 0 ? (ulong)count : 0;
+
+        /// <inheritdoc />
+        public void SetProperty(string propertyName, string propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public bool PropertyExists(string propertyName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public string[] GetPropertyNames()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

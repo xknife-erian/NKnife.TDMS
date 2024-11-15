@@ -3,7 +3,7 @@ using NKnife.TDMS.Common;
 
 namespace NKnife.TDMS
 {
-    public interface ITDMSChannelGroup : IDisposable
+    public interface ITDMSChannelGroup : ITDMSNode, IDisposable
     {
         /// <summary>
         /// 向通道组添加新通道。一个有效的通道组应该包含一个或多个通道。
