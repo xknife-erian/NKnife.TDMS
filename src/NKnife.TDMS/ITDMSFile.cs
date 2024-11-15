@@ -16,32 +16,97 @@ namespace NKnife.TDMS
     ///     https://www.ni.com/en/support/documentation/supplemental/06/the-ni-tdms-file-format.html <br/>
     ///     https://www.ni.com/docs/en-US/bundle/labwindows-cvi/page/cvi/libref/cvitdmslibrary.htm
     /// </summary>
-    public interface ITDMSFile : ITDMSNode, IEnumerable<ITDMSChannelGroup>, IDisposable
+    public interface ITDMSFile : ITDMSNode, IDisposable
     {
+        /// <summary>
+        /// 获取 TDMS 文件的信息。
+        /// </summary>
         TDMSFileInfo FileInfo { get; }
 
+        /// <summary>
+        /// 保存 TDMS 文件。
+        /// </summary>
         void Save();
 
+        /// <summary>
+        /// 打开指定路径的 TDMS 文件。
+        /// </summary>
+        /// <param name="filePath">文件路径。</param>
         void Open(string filePath);
+
+        /// <summary>
+        /// 通过指定的 TDMS 文件信息打开文件。
+        /// </summary>
+        /// <param name="fileInfo">文件信息。</param>
         void Open(TDMSFileInfo fileInfo);
+
+        /// <summary>
+        /// 创建 TDMS 文件。
+        /// </summary>
+        /// <param name="filePath">文件路径。</param>
+        /// <param name="fileType">文件类型。</param>
+        /// <param name="name">文件名称。</param>
+        /// <param name="description">文件描述。</param>
+        /// <param name="title">文件标题。</param>
+        /// <param name="author">文件作者。</param>
         void Create(string filePath, string fileType, string name, string description, string title, string author);
+
+        /// <summary>
+        /// 创建 TDMS 文件。
+        /// </summary>
+        /// <param name="fileInfo">文件信息。</param>
         void Create(TDMSFileInfo fileInfo);
+
+        /// <summary>
+        /// 关闭 TDMS 文件。
+        /// </summary>
         void Close();
 
-
+        /// <summary>
+        /// 添加指定名称和描述的通道组。
+        /// </summary>
+        /// <param name="groupName">组名称。</param>
+        /// <param name="description">组描述。</param>
+        /// <returns>添加的通道组。</returns>
         ITDMSChannelGroup Add(string groupName, string description = "");
 
+        /// <summary>
+        /// 获取或设置指定索引位置的通道组。
+        /// </summary>
+        /// <param name="index">索引位置。</param>
+        /// <returns>指定索引位置的通道组。</returns>
+        ITDMSChannelGroup this[int index] { get; }
 
+        /// <summary>
+        /// 获取或设置指定名称的通道组。
+        /// </summary>
+        /// <param name="groupName">组名称。</param>
+        /// <returns>指定名称的通道组。</returns>
+        ITDMSChannelGroup this[string groupName] { get; }
 
+        /// <summary>
+        /// 清空 TDMS 文件中的所有数据。
+        /// </summary>
         void Clear();
 
+        /// <summary>
+        /// 判断 TDMS 文件是否包含指定名称的通道组。
+        /// </summary>
+        /// <param name="groupName">组名称。</param>
+        /// <returns>如果包含指定名称的通道组，则为 true；否则为 false。</returns>
         bool Contains(string groupName);
 
+        /// <summary>
+        /// 移除 TDMS 文件中指定名称的通道组。
+        /// </summary>
+        /// <param name="groupName">组名称。</param>
+        /// <returns>如果成功移除通道组，则为 true；否则为 false。</returns>
         bool Remove(string groupName);
 
-        void RemoveAt(int index);
-
-        ITDMSChannelGroup this[int index] { get; set; }
-        ITDMSChannelGroup this[string groupName] { get; set; }
+        /// <summary>
+        /// 移除 TDMS 文件中指定索引位置的通道组。
+        /// </summary>
+        /// <param name="index">索引位置。</param>
+        bool RemoveAt(int index);
     }
 }

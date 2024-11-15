@@ -8,24 +8,29 @@ namespace NKnife.TDMS.Default
     {
         public TDMSChannelGroup(IntPtr groupPtr)
         {
-            SelfPtr = groupPtr;
+            _selfPtr = groupPtr;
         }
 
-        public IntPtr SelfPtr { get; set; }
+        private IntPtr _selfPtr;
+
+        internal IntPtr GetPtr()
+        {
+            return _selfPtr;
+        }
 
         public void Dispose()
         {
-            if (SelfPtr != IntPtr.Zero)
+            if (_selfPtr != IntPtr.Zero)
             {
-                DDC.CloseChannelGroup(SelfPtr);
-                SelfPtr = IntPtr.Zero;
+                DDC.CloseChannelGroup(_selfPtr);
+                _selfPtr = IntPtr.Zero;
             }
             GC.SuppressFinalize(this);
         }
 
         public ITDMSChannel AddChannel(TDMSDataType dataType, string channelName, string unit, string description)
         {
-            var success = DDC.AddChannel(SelfPtr, dataType, channelName, description, unit, out var channelPtr);
+            var success = DDC.AddChannel(_selfPtr, dataType, channelName, description, unit, out var channelPtr);
 
             if(success == (int)Error.NoError)
             {
@@ -51,7 +56,7 @@ namespace NKnife.TDMS.Default
 
         #region Implementation of ITDMSNode
         /// <inheritdoc />
-        public ulong ChildCount => DDC.CountChannels(SelfPtr, out var count) == 0 ? (ulong)count : 0;
+        public ulong ChildCount => DDC.CountChannels(_selfPtr, out var count) == 0 ? (ulong)count : 0;
 
         /// <inheritdoc />
         public void SetProperty(string propertyName, string propertyValue)

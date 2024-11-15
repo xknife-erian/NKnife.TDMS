@@ -1,15 +1,22 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using NKnife.TDMS.Common;
+﻿using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
+using System;
+using System.Runtime.InteropServices;
 
 namespace NKnife.TDMS.Default
 {
-    class TDMSFile : ITDMSFile, IEnumerable<ITDMSChannelGroup>
+    internal class TDMSFile : ITDMSFile
     {
         private IntPtr _filePtr;
+
+        #region Implementation of IDisposable
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Close();
+        }
+        #endregion
+
         internal IntPtr GetPtr()
         {
             return _filePtr;
@@ -59,12 +66,12 @@ namespace NKnife.TDMS.Default
         {
             var tdmsFileInfo = new TDMSFileInfo
             {
-                FilePath = filePath,
-                FileType = fileType,
-                Name = name,
+                FilePath    = filePath,
+                FileType    = fileType,
+                Name        = name,
                 Description = description,
-                Title = title,
-                Author = author
+                Title       = title,
+                Author      = author
             };
             Create(tdmsFileInfo);
         }
@@ -73,8 +80,13 @@ namespace NKnife.TDMS.Default
         public void Create(TDMSFileInfo fileInfo)
         {
             FileInfo = fileInfo;
-            var success = DDC.CreateFile(FileInfo.FilePath, FileInfo.FileType, FileInfo.Name, FileInfo.Description,
-                                         FileInfo.Title, FileInfo.Author, out var filePtr);
+            var success = DDC.CreateFile(FileInfo.FilePath,
+                                         FileInfo.FileType,
+                                         FileInfo.Name,
+                                         FileInfo.Description,
+                                         FileInfo.Title,
+                                         FileInfo.Author,
+                                         out var filePtr);
             TDMSErrorException.ThrowIfError(success, "Failed to create file");
             _filePtr = filePtr;
             Save();
@@ -93,29 +105,76 @@ namespace NKnife.TDMS.Default
             {
                 var success = DDC.CountChannelGroups(_filePtr, out var count);
                 TDMSErrorException.ThrowIfError(success, "查询通道组数量异常");
-                return (ulong)count;
+
+                return count;
+            }
+        }
+
+        /// <inheritdoc />
+        public ITDMSChannelGroup this[int index]
+        {
+            get
+            {
+                if(index < 0)
+                    throw new ArgumentOutOfRangeException(nameof(index), "Index must be greater than or equal to 0");
+                var channelGroupsBuffer = new IntPtr[ChildCount];
+                var success             = DDC.GetChannelGroups(_filePtr, channelGroupsBuffer, (UIntPtr)ChildCount);
+                TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
+
+                if(index >= channelGroupsBuffer.Length)
+                    throw new ArgumentOutOfRangeException(nameof(index), "Index must be less than the number of channel groups");
+                var groupPtr = channelGroupsBuffer[index];
+
+                return new TDMSChannelGroup(groupPtr);
+            }
+        }
+
+        /// <inheritdoc />
+        public ITDMSChannelGroup this[string groupName]
+        {
+            get
+            {
+                if(string.IsNullOrEmpty(groupName))
+                    throw new ArgumentNullException(nameof(groupName), "Group name cannot be null or empty");
+
+                var channelGroupsBuffer = new IntPtr[ChildCount];
+                var success             = DDC.GetChannelGroups(_filePtr, channelGroupsBuffer, (UIntPtr)ChildCount);
+
+                TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
+
+                foreach (var intPtr in channelGroupsBuffer)
+                {
+                    var group = new TDMSChannelGroup(intPtr);
+                    var name  = group.GetProperty(Constants.DDC_FILE_NAME);
+
+                    if(name != groupName)
+                    {
+                        group.Dispose();
+
+                        continue;
+                    }
+
+                    return group;
+                }
+
+                return null;
             }
         }
 
         /// <inheritdoc />
         public ITDMSChannelGroup Add(string groupName, string description = "")
         {
-            var result = DDC.AddChannelGroup(_filePtr, groupName, description, out var groupPtr);
-            if (result != 0)
-            {
-                throw new TDMSErrorException("Failed to add group with properties");
-            }
+            var success = DDC.AddChannelGroup(_filePtr, groupName, description, out var groupPtr);
+            TDMSErrorException.ThrowIfError(success, "Failed to add channel group");
+
             return new TDMSChannelGroup(groupPtr);
         }
 
         /// <inheritdoc />
         public void SetProperty(string propertyName, string propertyValue)
         {
-            int status = DDC.SetFileProperty(_filePtr, propertyName, __arglist(propertyValue));
-            if (status != 0)
-            {
-                Console.WriteLine("设置文件名称属性失败，错误代码: " + status);
-            }
+            var status = DDC.SetFileProperty(_filePtr, propertyName, __arglist(propertyValue));
+            TDMSErrorException.ThrowIfError(status, "Failed to set property");
         }
 
         /// <inheritdoc />
@@ -211,14 +270,28 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public string[] GetPropertyNames()
         {
-            throw new NotImplementedException();
+            var success = DDC.CountFileProperties(_filePtr, out var count);
+            TDMSErrorException.ThrowIfError(success, "Failed to get property count");
+
+            var names = new IntPtr[count];
+            success = DDC.GetFilePropertyNames(_filePtr, names, (UIntPtr)count);
+            TDMSErrorException.ThrowIfError(success, "Failed to get property names");
+
+            var result = new string[count];
+
+            for (var i = 0; i < count; i++)
+            {
+                result[i] = Marshal.PtrToStringAnsi(names[i]);
+            }
+
+            return result;
         }
 
         /// <inheritdoc />
         public void Clear()
         {
             var groupsBuffer = new IntPtr[ChildCount];
-            var success = DDC.GetChannelGroups(_filePtr, groupsBuffer, (UIntPtr)ChildCount);
+            var success      = DDC.GetChannelGroups(_filePtr, groupsBuffer, (UIntPtr)ChildCount);
             TDMSErrorException.ThrowIfError(success, "Failed to get channel groups");
 
             foreach (var ptr in groupsBuffer)
@@ -232,14 +305,15 @@ namespace NKnife.TDMS.Default
         public bool Contains(string groupName)
         {
             var channelGroupsBuffer = new IntPtr[ChildCount];
-            var success = DDC.GetChannelGroups(_filePtr, channelGroupsBuffer, (UIntPtr)ChildCount);
+            var success             = DDC.GetChannelGroups(_filePtr, channelGroupsBuffer, (UIntPtr)ChildCount);
             TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
 
             foreach (var intPtr in channelGroupsBuffer)
             {
-                var group = new TDMSChannelGroup(intPtr);
-                var name = group.GetProperty(Constants.DDC_FILE_NAME);
-                if (name == groupName)
+                using var group = new TDMSChannelGroup(intPtr);
+                var       name  = group.GetProperty(Constants.DDC_FILE_NAME);
+
+                if(name == groupName)
                 {
                     return true;
                 }
@@ -251,90 +325,30 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public bool Remove(string groupName)
         {
-            throw new NotImplementedException();
+            var group = this[groupName];
+
+            if(group is TDMSChannelGroup groupIn)
+            {
+                var success = DDC.RemoveChannelGroup(groupIn.GetPtr());
+                TDMSErrorException.ThrowIfError(success, "Failed to remove channel group");
+            }
+
+            return false;
         }
 
         /// <inheritdoc />
-        public void RemoveAt(int index)
+        public bool RemoveAt(int index)
         {
-            throw new NotImplementedException();
-        }
+            var group = this[index];
 
-        /// <inheritdoc />
-        public ITDMSChannelGroup this[int index]
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
+            if(group is TDMSChannelGroup groupIn)
+            {
+                var success = DDC.RemoveChannelGroup(groupIn.GetPtr());
+                TDMSErrorException.ThrowIfError(success, "Failed to remove channel group");
+            }
 
-        /// <inheritdoc />
-        public ITDMSChannelGroup this[string groupName]
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
-        #endregion
-
-        #region Implementation of IEnumerable
-        /// <inheritdoc />
-        public IEnumerator<ITDMSChannelGroup> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-        #endregion
-
-        #region Implementation of IDisposable
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Close();
+            return false;
         }
         #endregion
     }
 }
-
-
-/*
-public TDMSFileInfo FileInfo { get; set; }
-
-public ITDMSChannelGroup Add(string groupName, string description, Dictionary<string, string> properties)
-{
-    var result = DDC.AddChannelGroup(_filePtr, groupName, description, out var groupPtr);
-    if (result != 0)
-    {
-        throw new TDMSErrorException("Failed to add group with properties.");
-    }
-
-    return new TDMSChannelGroup(groupPtr);
-}
-
-public void Save()
-{
-    var result = DDC.SaveFile(_filePtr);
-    if (result != 0)
-    {
-        throw new TDMSErrorException("Failed to save file.");
-    }
-}
-
-public void Open(string filePath)
-{
-    var result = DDC.OpenFile(filePath, Constants.DDC_FILE_TYPE_TDM, out var filePtr);
-    if (result != 0)
-    {
-        throw new TDMSErrorException("Failed to load file.");
-    }
-    _filePtr = filePtr;
-}
-
-public void Close()
-{
-    DDC.CloseFile(_filePtr);
-}
-*/
