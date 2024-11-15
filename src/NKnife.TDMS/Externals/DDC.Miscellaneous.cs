@@ -14,7 +14,6 @@ namespace NKnife.TDMS.Externals
         public static string GetErrorDescription(int errorCode)
         {
             var ptr = GetLibraryErrorDescription(errorCode);
-
             return Marshal.PtrToStringAnsi(ptr);
         }
     }

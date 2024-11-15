@@ -22,9 +22,9 @@ namespace NKnife.TDMS
         void Save();
 
         void Open(string filePath);
-
+        void Open(TDMSFileInfo fileInfo);
         void Create(string filePath, string fileType, string name, string description, string title, string author);
-
+        void Create(TDMSFileInfo fileInfo);
         void Close();
 
         public int Count { get; }

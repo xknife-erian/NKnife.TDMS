@@ -1,4 +1,5 @@
 ﻿using System;
+using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS
 {
@@ -20,8 +21,11 @@ namespace NKnife.TDMS
 
         public static void ThrowIfError(int success, string message)
         {
-            if (success < 0)
-                throw new TDMSErrorException(success, message);
+            if(success < 0)
+            {
+                var errorDesc = DDC.GetErrorDescription(success);
+                throw new TDMSErrorException(success, $"<{message}> [{success}]:{errorDesc}");
+            }
         }
     }
 }

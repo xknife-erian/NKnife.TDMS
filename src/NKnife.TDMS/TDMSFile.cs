@@ -24,16 +24,30 @@ namespace NKnife.TDMS
         public void Save()
         {
             var success = DDC.SaveFile(_filePtr);
-            TDMSErrorException.ThrowIfError(success, "Failed to save file.");
+            TDMSErrorException.ThrowIfError(success, "Failed to save file");
         }
 
         /// <inheritdoc />
         public void Open(string filePath)
         {
-            FileInfo = new TDMSFileInfo { FilePath = filePath };
-            var success = DDC.OpenFile(filePath, Constants.DDC_FILE_TYPE_TDM, out var filePtr);
-            TDMSErrorException.ThrowIfError(success, "Failed to open file.");
-            _filePtr = filePtr;
+            var tdmsFileInfo = new TDMSFileInfo { FilePath = filePath };
+            Open(tdmsFileInfo);
+        }
+
+        /// <inheritdoc />
+        public void Open(TDMSFileInfo fileInfo)
+        {
+            if(!fileInfo.Exists)
+            {
+                Create(fileInfo);
+            }
+            else
+            {
+                FileInfo = fileInfo;
+                var success = DDC.OpenFile(fileInfo.FilePath, Constants.DDC_FILE_TYPE_TDM, out var filePtr);
+                TDMSErrorException.ThrowIfError(success, "Failed to open file");
+                _filePtr = filePtr;
+            }
         }
 
         /// <inheritdoc />
@@ -44,10 +58,25 @@ namespace NKnife.TDMS
                            string title,
                            string author)
         {
-            FileInfo = new TDMSFileInfo { FilePath = filePath };
+            var tdmsFileInfo = new TDMSFileInfo
+            {
+                FilePath = filePath,
+                FileType = fileType,
+                Name = name,
+                Description = description,
+                Title = title,
+                Author = author
+            };
+            Create(tdmsFileInfo);
+        }
+
+        /// <inheritdoc />
+        public void Create(TDMSFileInfo fileInfo)
+        {
+            FileInfo = fileInfo;
             var success = DDC.CreateFile(FileInfo.FilePath, FileInfo.FileType, FileInfo.Name, FileInfo.Description,
                                          FileInfo.Title, FileInfo.Author, out var filePtr);
-            TDMSErrorException.ThrowIfError(success, "Failed to create file.");
+            TDMSErrorException.ThrowIfError(success, "Failed to create file");
             _filePtr = filePtr;
             Save();
         }
@@ -158,7 +187,6 @@ namespace NKnife.TDMS
         public void Dispose()
         {
             Close();
-            DDC.FreeMemory(_filePtr);
         }
         #endregion
     }
