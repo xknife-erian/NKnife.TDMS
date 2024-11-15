@@ -21,13 +21,13 @@ public class TestFileContext : IDisposable
     public static TDMSFileInfo CreateTestFile()
     {
         var path = Directory.GetCurrentDirectory();
-        var fileInfo = new TDMSFileInfo()
+        var fileInfo = new TDMSFileInfo(Path.Combine(path, $"{TEST_FILE_NAME}.tdms"))
         {
-            FilePath    = Path.Combine(path, $"{TEST_FILE_NAME}.tdms"),
             Name        = "TestName",
             Description = "TestDescription",
             Title       = "TestTitle",
-            Author      = "TestAuthor"
+            Author      = "TestAuthor",
+            DateTime    = new DateTime(2222, 2, 2, 2, 2, 2)
         };
         return fileInfo;
     }

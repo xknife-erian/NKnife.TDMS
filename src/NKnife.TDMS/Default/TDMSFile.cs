@@ -37,7 +37,7 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public void Open(string filePath)
         {
-            var tdmsFileInfo = new TDMSFileInfo { FilePath = filePath };
+            var tdmsFileInfo = new TDMSFileInfo(filePath);
             Open(tdmsFileInfo);
         }
 
@@ -53,6 +53,27 @@ namespace NKnife.TDMS.Default
                 FileInfo = fileInfo;
                 var success = DDC.OpenFile(fileInfo.FilePath, Constants.DDC_FILE_TYPE_TDM, out var filePtr);
                 TDMSErrorException.ThrowIfError(success, "Failed to open file");
+
+                var result = GetProperty(Constants.DDC_FILE_DATETIME, out _);
+                if (result.Success)
+                    fileInfo.DateTime = (DateTime)result.PropertyValue;
+
+                result = GetProperty(Constants.DDC_FILE_NAME, out _);
+                if (result.Success)
+                    fileInfo.Name = (string)result.PropertyValue;
+
+                result = GetProperty(Constants.DDC_FILE_DESCRIPTION, out _);
+                if (result.Success)
+                    fileInfo.Description = (string)result.PropertyValue;
+
+                result = GetProperty(Constants.DDC_FILE_TITLE, out _);
+                if (result.Success)
+                    fileInfo.Title = (string)result.PropertyValue;
+
+                result = GetProperty(Constants.DDC_FILE_AUTHOR, out _);
+                if (result.Success)
+                    fileInfo.Author = (string)result.PropertyValue;
+                
                 _filePtr = filePtr;
             }
         }
@@ -65,9 +86,8 @@ namespace NKnife.TDMS.Default
                            string title,
                            string author)
         {
-            var tdmsFileInfo = new TDMSFileInfo
+            var tdmsFileInfo = new TDMSFileInfo(filePath)
             {
-                FilePath    = filePath,
                 FileType    = fileType,
                 Name        = name,
                 Description = description,
@@ -90,6 +110,12 @@ namespace NKnife.TDMS.Default
                                          out var filePtr);
             TDMSErrorException.ThrowIfError(success, "Failed to create file");
             _filePtr = filePtr;
+            //添加文件创建时间
+            AddOrUpdateProperty(Constants.DDC_FILE_DATETIME, DateTime.Now);
+            //获取文件创建时间，同时也是对读写的校验
+            var result = GetProperty(Constants.DDC_FILE_DATETIME, out _);
+            if(result.Success)
+                fileInfo.DateTime = (DateTime)result.PropertyValue;
             Save();
         }
 
@@ -348,7 +374,7 @@ namespace NKnife.TDMS.Default
 
                     var source = new char[length];
                     success = DDC.GetFilePropertyString(_filePtr, propertyName, source, (UIntPtr)length);
-                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+                    TDMSErrorException.ThrowIfError(success, "Failed to GetFilePropertyString");
 
                     return (true, new string(source).TrimEnd('\0'));
                 }
@@ -364,7 +390,7 @@ namespace NKnife.TDMS.Default
                                                                      out var second,
                                                                      out var milli,
                                                                      out var weekDay);
-                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+                    TDMSErrorException.ThrowIfError(success, "Failed to GetFilePropertyTimestampComponents");
                     var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
 
                     return (true, dt.ToDateTime());

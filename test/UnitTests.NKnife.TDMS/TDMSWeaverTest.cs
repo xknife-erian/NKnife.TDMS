@@ -76,10 +76,7 @@ namespace UnitTests.NKnife.TDMS
                 file.Create(filePath, Constants.DDC_FILE_TYPE_TDM, "Test File", "TestFile", "Test", "Erian");
             }
 
-            TDMSFileInfo fileInfo = new TDMSFileInfo
-            {
-                FilePath = filePath
-            };
+            TDMSFileInfo fileInfo = new TDMSFileInfo(filePath);
 
             // Act
             using var result = TDMSWeaver.OpenExistingFile(fileInfo);

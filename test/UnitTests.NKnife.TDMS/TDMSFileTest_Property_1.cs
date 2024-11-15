@@ -10,9 +10,9 @@ using NKnife.TDMS.Default;
 
 namespace UnitTests.NKnife.TDMS
 {
-    public class TDMSFileTest_Property_01 : IClassFixture<TestFileContext>
+    public class TDMSFileTest_Property_1 : IClassFixture<TestFileContext>
     {
-        public TDMSFileTest_Property_01(TestFileContext context)
+        public TDMSFileTest_Property_1(TestFileContext context)
         {
             context.CleanFiles();
         }
