@@ -84,7 +84,7 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public void SetProperty<T>(string propertyName, T propertyValue)
+        public void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
         {
             throw new NotImplementedException();
         }

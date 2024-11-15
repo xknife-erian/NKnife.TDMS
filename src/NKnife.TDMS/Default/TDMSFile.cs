@@ -10,6 +10,11 @@ namespace NKnife.TDMS.Default
     {
         private IntPtr _filePtr;
 
+        internal IntPtr GetPtr()
+        {
+            return _filePtr;
+        }
+
         #region Implementation of IDisposable
         /// <inheritdoc />
         public void Dispose()
@@ -17,11 +22,6 @@ namespace NKnife.TDMS.Default
             Close();
         }
         #endregion
-
-        internal IntPtr GetPtr()
-        {
-            return _filePtr;
-        }
 
         #region Implementation of ITDMSFile
         /// <inheritdoc />
@@ -171,15 +171,15 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public void SetProperty<T>(string propertyName, T propertyValue)
+        public void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
         {
             if(!PropertyExists(propertyName))
-                CreateProperty(propertyName, propertyValue);
+                AddProperty(propertyName, propertyValue);
             else
-                ReplaceProperty(propertyName, propertyValue);
+                UpdateProperty(propertyName, propertyValue);
         }
 
-        private void CreateProperty<T>(string propertyName, T propertyValue)
+        private void AddProperty<T>(string propertyName, T propertyValue)
         {
             int success;
 
@@ -191,6 +191,11 @@ namespace NKnife.TDMS.Default
                     TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyString");
 
                     break;
+                case byte byteValue:
+                    success = DDC.CreateFilePropertyUInt8(_filePtr, propertyName, byteValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyUInt8");
+
+                    break;      
                 case short shortValue:
                     success = DDC.CreateFilePropertyInt16(_filePtr, propertyName, shortValue);
                     TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyInt16");
@@ -232,15 +237,21 @@ namespace NKnife.TDMS.Default
             }
         }
 
-        private void ReplaceProperty<T>(string propertyName, T propertyValue)
+        private void UpdateProperty<T>(string propertyName, T propertyValue)
         {
             int success;
 
             switch (propertyValue)
             {
                 case string stringValue:
-                    success = DDC.SetFilePropertyString(_filePtr, propertyName, stringValue);
+                    stringValue = $"{stringValue}+";
+                    success     = DDC.SetFilePropertyString(_filePtr, propertyName, stringValue);
                     TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyString");
+
+                    break;
+                case byte byteValue:
+                    success = DDC.SetFilePropertyUInt8(_filePtr, propertyName, byteValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyUInt8");
 
                     break;
                 case short shortValue:
