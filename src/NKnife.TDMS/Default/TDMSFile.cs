@@ -173,8 +173,9 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public void SetProperty(string propertyName, string propertyValue)
         {
-            var status = DDC.SetFileProperty(_filePtr, propertyName, __arglist(propertyValue));
-            TDMSErrorException.ThrowIfError(status, "Failed to set property");
+            var success = DDC.CreateFileProperty(_filePtr, propertyName, TDMSDataType.String, __arglist(propertyValue));
+            // var status = DDC.SetFileProperty(_filePtr, propertyName, __arglist(propertyValue));
+            TDMSErrorException.ThrowIfError(success, "Failed to set property");
         }
 
         /// <inheritdoc />
