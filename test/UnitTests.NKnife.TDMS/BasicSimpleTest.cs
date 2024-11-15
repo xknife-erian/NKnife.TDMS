@@ -6,9 +6,9 @@ using Xunit;
 
 namespace UnitTests.NKnife.TDMS
 {
-    public class BasicTest : IClassFixture<TestFileContext>
+    public class BasicSimpleTest : IClassFixture<TestFileContext>
     {
-        public BasicTest(TestFileContext context)
+        public BasicSimpleTest(TestFileContext context)
         {
             context.CleanFiles();
         }

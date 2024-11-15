@@ -14,7 +14,7 @@ namespace NKnife.TDMS
         /// </summary>
         /// <param name="propertyName">属性名</param>
         /// <param name="propertyValue">属性值</param>
-        void SetProperty(string propertyName, string propertyValue);
+        void SetProperty<T>(string propertyName, T propertyValue);
 
         /// <summary>
         ///     获取属性

@@ -65,6 +65,12 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
+        public void SetProperty<T>(string propertyName, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
         public (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
         {
             throw new NotImplementedException();

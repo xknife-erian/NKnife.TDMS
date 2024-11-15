@@ -1,6 +1,7 @@
 ﻿using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace NKnife.TDMS.Default
@@ -150,7 +151,6 @@ namespace NKnife.TDMS.Default
                     if(name != groupName)
                     {
                         group.Dispose();
-
                         continue;
                     }
 
@@ -171,11 +171,117 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public void SetProperty(string propertyName, string propertyValue)
+        public void SetProperty<T>(string propertyName, T propertyValue)
         {
-            var success = DDC.CreateFileProperty(_filePtr, propertyName, TDMSDataType.String, __arglist(propertyValue));
-            // var status = DDC.SetFileProperty(_filePtr, propertyName, __arglist(propertyValue));
-            TDMSErrorException.ThrowIfError(success, "Failed to set property");
+            if(!PropertyExists(propertyName))
+                CreateProperty(propertyName, propertyValue);
+            else
+                ReplaceProperty(propertyName, propertyValue);
+        }
+
+        private void CreateProperty<T>(string propertyName, T propertyValue)
+        {
+            int success;
+
+            switch (propertyValue)
+            {
+                case string stringValue:
+                    stringValue = $"{stringValue}+";
+                    success     = DDC.CreateFilePropertyString(_filePtr, propertyName, stringValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyString");
+
+                    break;
+                case short shortValue:
+                    success = DDC.CreateFilePropertyInt16(_filePtr, propertyName, shortValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyInt16");
+
+                    break;
+                case int intValue:
+                    success = DDC.CreateFilePropertyInt32(_filePtr, propertyName, intValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyInt32");
+
+                    break;
+                case float floatValue:
+                    success = DDC.CreateFilePropertyFloat(_filePtr, propertyName, floatValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyFloat");
+
+                    break;
+                case double doubleValue:
+                    success = DDC.CreateFilePropertyDouble(_filePtr, propertyName, doubleValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyDouble");
+
+                    break;
+                case DateTime dateTimeValue:
+                {
+                    var dt = new TDMSDateTime(dateTimeValue);
+                    success = DDC.CreateFilePropertyTimestampComponents(_filePtr,
+                                                                        propertyName,
+                                                                        dt.Year,
+                                                                        dt.Month,
+                                                                        dt.Day,
+                                                                        dt.Hour,
+                                                                        dt.Minute,
+                                                                        dt.Second,
+                                                                        dt.MilliSecond);
+                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyTimestampComponents");
+
+                    break;
+                }
+                default:
+                    throw new ArgumentException("Unsupported property value type");
+            }
+        }
+
+        private void ReplaceProperty<T>(string propertyName, T propertyValue)
+        {
+            int success;
+
+            switch (propertyValue)
+            {
+                case string stringValue:
+                    success = DDC.SetFilePropertyString(_filePtr, propertyName, stringValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyString");
+
+                    break;
+                case short shortValue:
+                    success = DDC.SetFilePropertyInt16(_filePtr, propertyName, shortValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyInt16");
+
+                    break;
+                case int intValue:
+                    success = DDC.SetFilePropertyInt32(_filePtr, propertyName, intValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyInt32");
+
+                    break;
+                case float floatValue:
+                    success = DDC.SetFilePropertyFloat(_filePtr, propertyName, floatValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyFloat");
+
+                    break;
+                case double doubleValue:
+                    success = DDC.SetFilePropertyDouble(_filePtr, propertyName, doubleValue);
+                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyDouble");
+
+                    break;
+                case DateTime dateTimeValue:
+                {
+                    var dt = new TDMSDateTime(dateTimeValue);
+                    success = DDC.SetFilePropertyTimestampComponents(_filePtr,
+                                                                     propertyName,
+                                                                     dt.Year,
+                                                                     dt.Month,
+                                                                     dt.Day,
+                                                                     dt.Hour,
+                                                                     dt.Minute,
+                                                                     dt.Second,
+                                                                     dt.MilliSecond);
+                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyTimestampComponents");
+
+                    break;
+                }
+                default:
+                    throw new ArgumentException("Unsupported property value type");
+            }
         }
 
         /// <inheritdoc />
@@ -229,11 +335,11 @@ namespace NKnife.TDMS.Default
                     success = DDC.GetFileStringPropertyLength(_filePtr, propertyName, out var length);
                     TDMSErrorException.ThrowIfError(success, "Failed to get file string property length");
 
-                    var str = new char[length];
-                    success = DDC.GetFilePropertyString(_filePtr, propertyName, str, (UIntPtr)length);
+                    var source = new char[length];
+                    success = DDC.GetFilePropertyString(_filePtr, propertyName, source, (UIntPtr)length);
                     TDMSErrorException.ThrowIfError(success, "Failed to get property value");
 
-                    return (true, str);
+                    return (true, new string(source).TrimEnd('\0'));
                 }
                 case TDMSDataType.Timestamp:
                 {
