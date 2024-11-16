@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using NKnife.TDMS.Common;
 
 namespace NKnife.TDMS
 {
@@ -83,6 +85,17 @@ namespace NKnife.TDMS
         /// <param name="groupName">组名称。</param>
         /// <returns>指定名称的通道组。</returns>
         ITDMSChannelGroup this[string groupName] { get; }
+
+        /// <summary>
+        /// 获取 TDMS 文件中的默认属性值。<br/>
+        /// - name<br/>
+        /// - description<br/>
+        /// - title<br/>
+        /// - author<br/>
+        /// - datetime
+        /// </summary>
+        /// <returns>属性值字典</returns>
+        IDictionary<string, string> GetDefaultProperties();
 
         /// <summary>
         /// 清空 TDMS 文件中的所有数据。

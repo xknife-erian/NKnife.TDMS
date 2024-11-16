@@ -1,6 +1,7 @@
 ﻿using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -272,7 +273,7 @@ namespace NKnife.TDMS.Default
                 case string stringValue:
                     stringValue = $"{stringValue}+";
                     success     = DDC.SetFilePropertyString(_filePtr, propertyName, stringValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyString");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to SetFilePropertyString, KEY:[{propertyName}]; VALUE:[{propertyValue}]");
 
                     break;
                 case byte byteValue:
@@ -429,6 +430,31 @@ namespace NKnife.TDMS.Default
             }
 
             return result;
+        }
+
+        /// <inheritdoc />
+        public IDictionary<string, string> GetDefaultProperties()
+        {
+            var dict = new Dictionary<string, string>(5);
+
+            GetDefaultPropertyToDictionary(Constants.DDC_FILE_NAME, dict);
+            GetDefaultPropertyToDictionary(Constants.DDC_FILE_DESCRIPTION, dict);
+            GetDefaultPropertyToDictionary(Constants.DDC_FILE_TITLE, dict);
+            GetDefaultPropertyToDictionary(Constants.DDC_FILE_AUTHOR, dict);
+            GetDefaultPropertyToDictionary(Constants.DDC_FILE_DATETIME, dict);
+
+            return dict;
+        }
+
+        private void GetDefaultPropertyToDictionary(string key, Dictionary<string, string> dict)
+        {
+            var property = GetProperty(key, out var type);
+
+            if(property.Success)
+                dict.Add(key, property.PropertyValue.ToString());
+            else
+                throw new TDMSErrorException($"Failed to get default property [{key}]",
+                                             new InvalidOperationException("Property not found"));
         }
 
         /// <inheritdoc />

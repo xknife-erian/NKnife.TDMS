@@ -12,8 +12,11 @@ namespace UnitTests.NKnife.TDMS
 {
     public class TDMSFileTest_Property_1 : IClassFixture<TestFileContext>
     {
+        private readonly TestFileContext _context;
+
         public TDMSFileTest_Property_1(TestFileContext context)
         {
+            _context = context;
             context.CleanFiles();
         }
 
@@ -21,8 +24,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_01()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "Property1";
+            var fileInfo      = _context.CreateTestFile();
+            var propertyName  = "Property1";
             var propertyValue = "NI has defined a technical data management (TDM)+";
 
             using var file = new TDMSFile();
@@ -42,8 +45,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_02()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "Property1";
+            var fileInfo       = _context.CreateTestFile();
+            var propertyName   = "Property1";
             var propertyValue1 = "NI has defined a technical data management (TDM)+";
             var propertyValue2 = "TDMS File Structure?";
 
@@ -72,8 +75,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_03()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "Property1";
+            var fileInfo       = _context.CreateTestFile();
+            var propertyName   = "Property1";
             var propertyValue1 = "TDMS是NI定义的一种技术数据管理解决方案";
             var propertyValue2 = "写入可数据管理的TDMS文件?";
 
@@ -102,8 +105,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_UInt8()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyUInt8";
+            var fileInfo      = _context.CreateTestFile();
+            var propertyName  = "PropertyUInt8";
             var propertyValue = (byte)255;
 
             using var file = new TDMSFile();
@@ -123,8 +126,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Int16()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyInt16";
+            var fileInfo      = _context.CreateTestFile();
+            var propertyName  = "PropertyInt16";
             var propertyValue = (short)32767;
 
             using var file = new TDMSFile();
@@ -144,8 +147,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Int32()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyInt32";
+            var fileInfo      = _context.CreateTestFile();
+            var propertyName  = "PropertyInt32";
             var propertyValue = 2147483647;
 
             using var file = new TDMSFile();
@@ -165,8 +168,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Float()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyFloat";
+            var fileInfo      = _context.CreateTestFile();
+            var propertyName  = "PropertyFloat";
             var propertyValue = 3.14f;
 
             using var file = new TDMSFile();
@@ -186,8 +189,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Double()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyDouble";
+            var fileInfo      = _context.CreateTestFile();
+            var propertyName  = "PropertyDouble";
             var propertyValue = 3.14159265359;
 
             using var file = new TDMSFile();
@@ -208,8 +211,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Timestamp()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyTimestamp";
+            var fileInfo      = _context.CreateTestFile();
+            var propertyName  = "PropertyTimestamp";
             var propertyValue = new DateTime(2023, 10, 1, 12, 0, 0, DateTimeKind.Utc);
 
             using var file = new TDMSFile();
@@ -230,14 +233,14 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_04()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName1 = "Property1";
+            var fileInfo       = _context.CreateTestFile();
+            var propertyName1  = "Property1";
             var propertyValue1 = "NI has defined a technical data management (TDM)+";
-            var propertyName2 = "Property2";
+            var propertyName2  = "Property2";
             var propertyValue2 = "TDMS File Structure?";
-            var propertyName3 = "Property3";
+            var propertyName3  = "Property3";
             var propertyValue3 = "TDMS是NI定义的一种技术数据管理解决方案";
-            var propertyName4 = "Property4";
+            var propertyName4  = "Property4";
             var propertyValue4 = "写入可数据管理的TDMS文件?";
 
             using var file = new TDMSFile();
@@ -269,8 +272,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_UInt8_Update()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyUInt8";
+            var fileInfo       = _context.CreateTestFile();
+            var propertyName   = "PropertyUInt8";
             var propertyValue1 = (byte)255;
             var propertyValue2 = (byte)128;
 
@@ -301,8 +304,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Int16_Update()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyInt16";
+            var fileInfo       = _context.CreateTestFile();
+            var propertyName   = "PropertyInt16";
             var propertyValue1 = (short)32767;
             var propertyValue2 = (short)12345;
 
@@ -333,8 +336,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Int32_Update()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyInt32";
+            var fileInfo       = _context.CreateTestFile();
+            var propertyName   = "PropertyInt32";
             var propertyValue1 = 2147483647;
             var propertyValue2 = 1234567890;
 
@@ -365,8 +368,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Float_Update()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyFloat";
+            var fileInfo       = _context.CreateTestFile();
+            var propertyName   = "PropertyFloat";
             var propertyValue1 = 3.14f;
             var propertyValue2 = 1.23f;
 
@@ -397,8 +400,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Double_Update()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyDouble";
+            var fileInfo       = _context.CreateTestFile();
+            var propertyName   = "PropertyDouble";
             var propertyValue1 = 3.14159265359;
             var propertyValue2 = 2.71828182846;
 
@@ -429,8 +432,8 @@ namespace UnitTests.NKnife.TDMS
         public void SetProperty_Test_Timestamp_Update()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
-            var propertyName = "PropertyTimestamp";
+            var fileInfo       = _context.CreateTestFile();
+            var propertyName   = "PropertyTimestamp";
             var propertyValue1 = new DateTime(2023, 10, 1, 12, 0, 0, DateTimeKind.Utc);
             var propertyValue2 = new DateTime(2023, 11, 1, 12, 0, 0, DateTimeKind.Utc);
 

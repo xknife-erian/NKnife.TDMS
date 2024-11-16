@@ -7,13 +7,15 @@ using FluentAssertions;
 using NKnife.TDMS.Default;
 
 // ReSharper disable InconsistentNaming
-
 namespace UnitTests.NKnife.TDMS
 {
     public class TDMSFileTest_Property_2 : IClassFixture<TestFileContext>
     {
+        private readonly TestFileContext _context;
+
         public TDMSFileTest_Property_2(TestFileContext context)
         {
+            _context = context;
             context.CleanFiles();
         }
 
@@ -21,8 +23,8 @@ namespace UnitTests.NKnife.TDMS
         public void PropertyExists_Test()
         {
             // Arrange
-            var    fileInfo     = TestFileContext.CreateTestFile();
-            using var    tdmsFile     = new TDMSFile();
+            var       fileInfo = _context.CreateTestFile();
+            using var tdmsFile = new TDMSFile();
             tdmsFile.Open(fileInfo);
             
             string propertyName = "TestProperty";
@@ -38,7 +40,7 @@ namespace UnitTests.NKnife.TDMS
         public void PropertyExists_AfterAdding_Test()
         {
             // Arrange
-            var       fileInfo = TestFileContext.CreateTestFile();
+            var       fileInfo = _context.CreateTestFile();
             using var tdmsFile = new TDMSFile();
             tdmsFile.Open(fileInfo);
 
@@ -52,11 +54,11 @@ namespace UnitTests.NKnife.TDMS
             exists.Should().BeTrue("因为属性已经被添加");
         }
 
-        [Fact(DisplayName = "获取所有属性名称")]
+        [Fact(DisplayName = "新增2个属性，获取所有属性名称，共7个属性")]
         public void GetPropertyNames_Test()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
+            var       fileInfo = _context.CreateTestFile();
             using var tdmsFile = new TDMSFile();
             tdmsFile.Open(fileInfo);
 
@@ -71,11 +73,11 @@ namespace UnitTests.NKnife.TDMS
             propertyNames.Should().Contain(expectedPropertyNames);
         }
 
-        [Fact(DisplayName = "当没有属性时，获取所有属性")]
+        [Fact(DisplayName = "当没有新增属性时，获取所有属性，仅有5个基础属性")]
         public void GetPropertyNames_WhenNoProperties_Test()
         {
             // Arrange
-            var fileInfo = TestFileContext.CreateTestFile();
+            var       fileInfo = _context.CreateTestFile();
             using var tdmsFile = new TDMSFile();
             tdmsFile.Open(fileInfo);
 
@@ -84,6 +86,27 @@ namespace UnitTests.NKnife.TDMS
 
             // Assert
             propertyNames.Length.Should().Be(5);
+        }
+
+        [Fact(DisplayName = "获取默认属性名称")]
+        public void GetDefaultPropertyNames_Test()
+        {
+            // Arrange
+            var       fileInfo = _context.CreateTestFile();
+            using var tdmsFile = new TDMSFile();
+            tdmsFile.Open(fileInfo);
+
+            // Act
+            var defaultPropertyNames = tdmsFile.GetDefaultProperties();
+
+            // Assert
+            defaultPropertyNames.Count.Should().Be(5);
+            var key = defaultPropertyNames.Keys;
+            key.Should().Contain("name");
+            key.Should().Contain("description");
+            key.Should().Contain("title");
+            key.Should().Contain("author");
+            key.Should().Contain("datetime");
         }
     }
 }

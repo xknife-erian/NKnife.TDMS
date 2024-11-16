@@ -14,11 +14,18 @@ namespace UnitTests.NKnife.TDMS
 {
     public class TDMSWeaverTest
     {
+        private readonly TestFileContext _context;
+
+        public TDMSWeaverTest()
+        {
+            _context = new TestFileContext();
+            _context.CleanFiles();
+        }
+    
         [Fact(DisplayName = "Weave_Test_1: 当调用Weave方法时，应返回一个ITDMSFile实例")]
         public void Weave_Test_1()
         {
             // Act
-            Clean();
             using var result = TDMSWeaver.Weave();
 
             // Assert
@@ -30,13 +37,13 @@ namespace UnitTests.NKnife.TDMS
         public void CreateNewFile_Test_1()
         {
             // Arrange
-            Clean();
-            string filePath = "test.tdm";
-            string fileType = Constants.DDC_FILE_TYPE_TDM;
-            string name = "Test File";
+            var    fileInfo    = _context.CreateTestFile();
+            string  filePath    = fileInfo.FilePath;
+            string fileType    = Constants.DDC_FILE_TYPE_TDM;
+            string name        = "Test File";
             string description = "This is a test file";
-            string title = "Test";
-            string author = "John Doe";
+            string title       = "Test";
+            string author      = "John Doe";
 
             // Act
             using var result = TDMSWeaver.CreateNewFile(filePath, fileType, name, description, title, author);
@@ -50,15 +57,14 @@ namespace UnitTests.NKnife.TDMS
         public void OpenExistingFile_Test_1()
         {
             // Arrange
-            Clean();
-            string filePath = "test.tdm";
+            var fileInfo = _context.CreateTestFile();
             using (var file = new TDMSFile())
             {
-                file.Create(filePath, Constants.DDC_FILE_TYPE_TDM, "Test File", "TestFile", "Test", "Erian");
+                file.Create(fileInfo);
             }
 
             // Act
-            using var result = TDMSWeaver.OpenExistingFile(filePath);
+            using var result = TDMSWeaver.OpenExistingFile(fileInfo.FilePath);
 
             // Assert
             result.Should().NotBeNull();
@@ -69,14 +75,12 @@ namespace UnitTests.NKnife.TDMS
         public void OpenExistingFile_Test_2()
         {
             // Arrange
-            Clean();
-            string filePath = "test.tdm";
+
+            var fileInfo = _context.CreateTestFile();
             using (var file = new TDMSFile())
             {
-                file.Create(filePath, Constants.DDC_FILE_TYPE_TDM, "Test File", "TestFile", "Test", "Erian");
+                file.Create(fileInfo.FilePath, Constants.DDC_FILE_TYPE_TDM, "Test File", "TestFile", "Test", "Erian");
             }
-
-            TDMSFileInfo fileInfo = new TDMSFileInfo(filePath);
 
             // Act
             using var result = TDMSWeaver.OpenExistingFile(fileInfo);
@@ -84,14 +88,6 @@ namespace UnitTests.NKnife.TDMS
             // Assert
             result.Should().NotBeNull();
             result.Should().BeOfType<TDMSFile>();
-        }
-
-        private static void Clean()
-        {
-            var path  = Directory.GetCurrentDirectory();
-            var files = Directory.GetFiles(path, $"*.tdm");
-            foreach (var fileToDelete in files)
-                File.Delete(fileToDelete);
         }
     }
 }
