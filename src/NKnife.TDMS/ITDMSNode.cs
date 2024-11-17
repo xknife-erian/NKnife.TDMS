@@ -17,14 +17,6 @@ namespace NKnife.TDMS
         void AddOrUpdateProperty<T>(string propertyName, T propertyValue);
 
         /// <summary>
-        ///     获取属性
-        /// </summary>
-        /// <param name="propertyName">属性名</param>
-        /// <param name="dataType">属性的类型</param>
-        /// <returns>属性值获取是否成功，如成功，元数据包含属性值</returns>
-        (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType);
-
-        /// <summary>
         ///     属性是否存在
         /// </summary>
         /// <param name="propertyName">属性名</param>
@@ -35,5 +27,13 @@ namespace NKnife.TDMS
         /// </summary>
         /// <returns>当前节点保存的所有属性的名称集合</returns>
         string[] GetPropertyNames();
+
+        /// <summary>
+        ///     获取属性
+        /// </summary>
+        /// <param name="propertyName">属性名</param>
+        /// <param name="dataType">属性的类型</param>
+        /// <returns>属性值获取是否成功，如成功，元数据包含属性值</returns>
+        (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType);
     }
 }

@@ -55,6 +55,8 @@ namespace NKnife.TDMS.Default
                 var success = DDC.OpenFile(fileInfo.FilePath, Constants.DDC_FILE_TYPE_TDM, out var filePtr);
                 TDMSErrorException.ThrowIfError(success, "Failed to open file");
 
+                _filePtr = filePtr;
+
                 var result = GetProperty(Constants.DDC_FILE_DATETIME, out _);
                 if (result.Success)
                     fileInfo.DateTime = (DateTime)result.PropertyValue;
@@ -74,8 +76,6 @@ namespace NKnife.TDMS.Default
                 result = GetProperty(Constants.DDC_FILE_AUTHOR, out _);
                 if (result.Success)
                     fileInfo.Author = (string)result.PropertyValue;
-                
-                _filePtr = filePtr;
             }
         }
 
