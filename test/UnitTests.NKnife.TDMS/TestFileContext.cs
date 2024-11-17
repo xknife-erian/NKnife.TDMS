@@ -3,7 +3,7 @@ using NKnife.TDMS.Common;
 
 public class TestFileContext : IDisposable
 {
-    private readonly string _testFileName = $"~tdms{Guid.NewGuid().ToString("N").Substring(0,8)}";
+    private readonly string _testFileName = $"~tdms{Guid.NewGuid().ToString("N").Substring(0,6)}";
 
     public void Dispose()
     {
@@ -18,7 +18,7 @@ public class TestFileContext : IDisposable
 
     private static string GetTestFileName(string basicName)
     {
-        return $"{basicName}.tmd";
+        return $"{basicName}.tdms";
     }
 
     public TDMSFileInfo CreateTestFile()
@@ -27,7 +27,6 @@ public class TestFileContext : IDisposable
         var fileInfo = new TDMSFileInfo(Path.Combine(path, GetTestFileName(_testFileName)))
         {
             Name        = "+TestName+",
-            FileType    = Constants.DDC_FILE_TYPE_TDM,
             Description = "+TestÖÐÎÄDescription+",
             Title       = "+TestTitle+",
             Author      = "+TestAuthor+",

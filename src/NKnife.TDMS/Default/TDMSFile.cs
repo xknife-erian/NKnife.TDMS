@@ -17,10 +17,29 @@ namespace NKnife.TDMS.Default
         }
 
         #region Implementation of IDisposable
-        /// <inheritdoc />
+        ~TDMSFile()
+        {
+            Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_filePtr != IntPtr.Zero)
+            {
+                DDC.CloseFile(_filePtr);
+                _filePtr = IntPtr.Zero;
+            }
+
+            if (disposing)
+            {
+                // 释放托管资源
+            }
+        }
+
         public void Dispose()
         {
-            Close();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
@@ -29,30 +48,31 @@ namespace NKnife.TDMS.Default
         public TDMSFileInfo FileInfo { get; private set; }
 
         /// <inheritdoc />
-        public void Save()
+        public bool Save()
         {
             var success = DDC.SaveFile(_filePtr);
             TDMSErrorException.ThrowIfError(success, "Failed to save file");
+            return success == 0;
         }
 
         /// <inheritdoc />
-        public void Open(string filePath)
+        public bool Open(string filePath)
         {
             var tdmsFileInfo = new TDMSFileInfo(filePath);
-            Open(tdmsFileInfo);
+            return Open(tdmsFileInfo);
         }
 
         /// <inheritdoc />
-        public void Open(TDMSFileInfo fileInfo)
+        public bool Open(TDMSFileInfo fileInfo)
         {
             if(!fileInfo.Exists)
             {
-                Create(fileInfo);
+                return Create(fileInfo);
             }
             else
             {
                 FileInfo = fileInfo;
-                var success = DDC.OpenFile(fileInfo.FilePath, Constants.DDC_FILE_TYPE_TDM, out var filePtr);
+                var success = DDC.OpenFile(fileInfo.FilePath, fileInfo.FileType, out var filePtr);
                 TDMSErrorException.ThrowIfError(success, "Failed to open file");
 
                 _filePtr = filePtr;
@@ -76,11 +96,13 @@ namespace NKnife.TDMS.Default
                 result = GetProperty(Constants.DDC_FILE_AUTHOR, out _);
                 if (result.Success)
                     fileInfo.Author = (string)result.PropertyValue;
+
+                return success == 0;
             }
         }
 
         /// <inheritdoc />
-        public void Create(string filePath,
+        public bool Create(string filePath,
                            string fileType,
                            string name,
                            string description,
@@ -95,13 +117,16 @@ namespace NKnife.TDMS.Default
                 Title       = title,
                 Author      = author
             };
-            Create(tdmsFileInfo);
+            return Create(tdmsFileInfo);
         }
 
         /// <inheritdoc />
-        public void Create(TDMSFileInfo fileInfo)
+        public bool Create(TDMSFileInfo fileInfo)
         {
             FileInfo = fileInfo;
+
+
+
             var success = DDC.CreateFile(FileInfo.FilePath,
                                          FileInfo.FileType,
                                          FileInfo.Name,
@@ -109,7 +134,7 @@ namespace NKnife.TDMS.Default
                                          FileInfo.Title,
                                          FileInfo.Author,
                                          out var filePtr);
-            TDMSErrorException.ThrowIfError(success, "Failed to create file");
+            TDMSErrorException.ThrowIfError(success, $"Failed to create file:[{FileInfo.FilePath}][{FileInfo.FileType}]");
             _filePtr = filePtr;
             //添加文件创建时间
             AddOrUpdateProperty(Constants.DDC_FILE_DATETIME, DateTime.Now);
@@ -117,13 +142,14 @@ namespace NKnife.TDMS.Default
             var result = GetProperty(Constants.DDC_FILE_DATETIME, out _);
             if(result.Success)
                 fileInfo.DateTime = (DateTime)result.PropertyValue;
-            Save();
+            return Save();
         }
 
         /// <inheritdoc />
-        public void Close()
+        public bool Close()
         {
-            DDC.CloseFile(_filePtr);
+            var success = DDC.CloseFile(_filePtr);
+            return success == 0;
         }
 
         /// <inheritdoc />
@@ -458,7 +484,7 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public void Clear()
+        public bool Clear()
         {
             var groupsBuffer = new IntPtr[ChildCount];
             var success      = DDC.GetChannelGroups(_filePtr, groupsBuffer, (UIntPtr)ChildCount);
@@ -469,6 +495,8 @@ namespace NKnife.TDMS.Default
                 success = DDC.RemoveChannelGroup(ptr);
                 TDMSErrorException.ThrowIfError(success, "Failed to remove channel group");
             }
+
+            return success == 0;
         }
 
         /// <inheritdoc />

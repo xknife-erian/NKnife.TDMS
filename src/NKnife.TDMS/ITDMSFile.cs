@@ -28,19 +28,19 @@ namespace NKnife.TDMS
         /// <summary>
         /// 保存 TDMS 文件。
         /// </summary>
-        void Save();
+        bool Save();
 
         /// <summary>
         /// 打开指定路径的 TDMS 文件。
         /// </summary>
         /// <param name="filePath">文件路径。</param>
-        void Open(string filePath);
+        bool Open(string filePath);
 
         /// <summary>
         /// 通过指定的 TDMS 文件信息打开文件。
         /// </summary>
         /// <param name="fileInfo">文件信息。</param>
-        void Open(TDMSFileInfo fileInfo);
+        bool Open(TDMSFileInfo fileInfo);
 
         /// <summary>
         /// 创建 TDMS 文件。
@@ -51,18 +51,18 @@ namespace NKnife.TDMS
         /// <param name="description">文件描述。</param>
         /// <param name="title">文件标题。</param>
         /// <param name="author">文件作者。</param>
-        void Create(string filePath, string fileType, string name, string description, string title, string author);
+        bool Create(string filePath, string fileType, string name, string description, string title, string author);
 
         /// <summary>
         /// 创建 TDMS 文件。
         /// </summary>
         /// <param name="fileInfo">文件信息。</param>
-        void Create(TDMSFileInfo fileInfo);
+        bool Create(TDMSFileInfo fileInfo);
 
         /// <summary>
         /// 关闭 TDMS 文件。
         /// </summary>
-        void Close();
+        bool Close();
 
         /// <summary>
         /// 添加指定名称和描述的通道组。
@@ -96,11 +96,6 @@ namespace NKnife.TDMS
         /// </summary>
         /// <returns>属性值字典</returns>
         IDictionary<string, string> GetDefaultProperties();
-
-        /// <summary>
-        /// 清空 TDMS 文件中的所有数据。
-        /// </summary>
-        void Clear();
 
         /// <summary>
         /// 判断 TDMS 文件是否包含指定名称的通道组。

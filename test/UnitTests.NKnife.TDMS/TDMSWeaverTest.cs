@@ -79,7 +79,7 @@ namespace UnitTests.NKnife.TDMS
             var fileInfo = _context.CreateTestFile();
             using (var file = new TDMSFile())
             {
-                file.Create(fileInfo.FilePath, Constants.DDC_FILE_TYPE_TDM, "Test File", "TestFile", "Test", "Erian");
+                file.Create(fileInfo.FilePath, fileInfo.FileType, "Test File", "TestFile", "Test", "Erian");
             }
 
             // Act

@@ -10,6 +10,11 @@ namespace NKnife.TDMS
         public ulong ChildCount { get; }
 
         /// <summary>
+        ///     清空当前节点的所有子项目数据。
+        /// </summary>
+        bool Clear();
+
+        /// <summary>
         ///     增加属性（如果属性已经存在，则更新属性值）
         /// </summary>
         /// <param name="propertyName">属性名</param>
