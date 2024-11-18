@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace NKnife.TDMS.Default
 {
@@ -73,7 +74,7 @@ namespace NKnife.TDMS.Default
             {
                 FileInfo = fileInfo;
                 var success = DDC.OpenFile(fileInfo.FilePath, fileInfo.FileType, out var filePtr);
-                TDMSErrorException.ThrowIfError(success, "Failed to open file");
+                TDMSErrorException.ThrowIfError(success, $"Failed to open file:{fileInfo.FilePath},Type:{fileInfo.FileType}");
 
                 _filePtr = filePtr;
 
@@ -142,7 +143,8 @@ namespace NKnife.TDMS.Default
             var result = GetProperty(Constants.DDC_FILE_DATETIME, out _);
             if(result.Success)
                 fileInfo.DateTime = (DateTime)result.PropertyValue;
-            return Save();
+            var isSave = Save();
+            return success == 0 && isSave;
         }
 
         /// <inheritdoc />

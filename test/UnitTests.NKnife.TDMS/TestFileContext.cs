@@ -9,7 +9,6 @@ public class TestFileContext : IDisposable
     public void Dispose()
     {
         CleanFiles();
-
     }
 
     public void CleanFiles()
