@@ -8,7 +8,7 @@ namespace NKnife.TDMS
     /// <summary>
     /// TDMS数据文件的创建类。技术上是工厂模式的创建模式。也是<see cref="NKnife.TDMS"/>的入口类。
     /// </summary>
-    public class TDMSDataBuilder
+    public static class TDMSDataBuilder
     {
         public static ITDMSFile Build()
         {
