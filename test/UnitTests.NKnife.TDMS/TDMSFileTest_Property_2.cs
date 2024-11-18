@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NKnife.TDMS;
 using NKnife.TDMS.Default;
 
 // ReSharper disable InconsistentNaming
@@ -89,7 +90,7 @@ namespace UnitTests.NKnife.TDMS
         }
 
         [Fact(DisplayName = "获取默认属性名称")]
-        public void GetDefaultPropertyNames_Test()
+        public void GetDefaultPropertyNames_Test1()
         {
             // Arrange
             var       fileInfo = _context.CreateTestFile();
@@ -107,6 +108,50 @@ namespace UnitTests.NKnife.TDMS
             key.Should().Contain("title");
             key.Should().Contain("author");
             key.Should().Contain("datetime");
+        }
+
+        [Fact(DisplayName = "获取默认属性名称，创建时未给出实际值，依旧返回基本的5个值（值为空）")]
+        public void GetDefaultPropertyNames_Test2()
+        {
+            // Arrange
+            var fileInfo = new TDMSFileInfo("GetDefaultPropertyNames_Test2");
+
+            using (var tdmsFile = new TDMSFile())
+            {
+                tdmsFile.Open(fileInfo);
+
+                // Act
+                var defaultPropertyNames = tdmsFile.GetDefaultProperties();
+
+                // Assert
+                defaultPropertyNames.Count.Should().Be(5);
+                var key = defaultPropertyNames.Keys;
+                key.Should().Contain("name");
+                key.Should().Contain("description");
+                key.Should().Contain("title");
+                key.Should().Contain("author");
+                key.Should().Contain("datetime");
+
+                defaultPropertyNames["name"].Should().BeEmpty();
+                defaultPropertyNames["description"].Should().BeEmpty();
+                defaultPropertyNames["title"].Should().BeEmpty();
+                defaultPropertyNames["author"].Should().BeEmpty();
+
+                var datetime = defaultPropertyNames["datetime"];
+                datetime.Should().NotBeEmpty();
+                DateTime.TryParse(datetime, out var dt).Should().BeTrue();
+
+                var src = fileInfo.DateTime;
+                dt.Year.Should().Be(src.Year);
+                dt.Month.Should().Be(src.Month);
+                dt.Day.Should().Be(src.Day);
+                dt.Hour.Should().Be(src.Hour);
+                dt.Minute.Should().Be(src.Minute);
+                dt.Second.Should().Be(src.Second);
+                dt.Millisecond.Should().Be(src.Millisecond);
+            }
+
+            File.Delete(fileInfo.FilePath);
         }
     }
 }

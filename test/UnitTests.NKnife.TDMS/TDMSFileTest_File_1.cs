@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using NKnife.TDMS;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Default;
 // ReSharper disable InconsistentNaming
@@ -32,32 +33,97 @@ namespace UnitTests.NKnife.TDMS
             exists.Should().BeFalse("因为属性尚未被添加");
         }
 
-        [Fact(DisplayName = "检查设置不同的FileType时的文件创建、并打开该文件")]
-        public void CreateAndOpenFile_WithDifferentFileTypes_Test()
+        [Fact(DisplayName = "文件名tdm。自动增加tdms后缀名，创建数据文件成功。")]
+        public void CreateAndOpenFile_Test01()
         {
             // Arrange
-            var fileTypes = new[] { Constants.DDC_FILE_TYPE_TDM, Constants.DDC_FILE_TYPE_TDM_STREAMING, "TypeA" };
+            var fileName = "~tdms01.tdm";
+            var fileInfo = new TDMSFileInfo(fileName);
 
-            foreach (var fileType in fileTypes)
+            using (var tdmsFile = new TDMSFile())
             {
-                var fileInfo = _context.CreateTestFile();
-                fileInfo.FileType = fileType;
-
-                using (var tdmsFile = new TDMSFile())
-                {
-                    var success = tdmsFile.Create(fileInfo);
-                    success.Should().BeTrue();
-                }
-
-                using (var tdmsFile = new TDMSFile())
-                {
-                    var success = tdmsFile.Open(fileInfo);
-                    success.Should().BeTrue();
-                    var ps = tdmsFile.GetDefaultProperties();
-                    ps.Count.Should().Be(5);
-                }
-                _context.CleanFiles();
+                var success = tdmsFile.Create(fileInfo);
+                success.Should().BeTrue();
             }
+
+            using (var tdmsFile = TDMSDataBuilder.OpenExistingFile(fileInfo))
+            {
+                tdmsFile.Should().NotBeNull();
+                var ps = tdmsFile.GetDefaultProperties();
+                ps.Count.Should().Be(5);
+            }
+
+            _context.CleanFiles();
         }
+
+        [Fact(DisplayName = "文件名tdms。创建数据文件成功。")]
+        public void CreateAndOpenFile_Test02()
+        {
+            // Arrange
+            var fileName = "~tdms02.tdms";
+            var fileInfo = new TDMSFileInfo(fileName);
+
+            using (var tdmsFile = new TDMSFile())
+            {
+                var success = tdmsFile.Create(fileInfo);
+                success.Should().BeTrue();
+            }
+
+            using (var tdmsFile = TDMSDataBuilder.OpenExistingFile(fileInfo))
+            {
+                tdmsFile.Should().NotBeNull();
+                var ps = tdmsFile.GetDefaultProperties();
+                ps.Count.Should().Be(5);
+            }
+
+            _context.CleanFiles();
+        }
+
+        [Fact(DisplayName = "文件名中后缀名其他。自动增加tdms后缀名，创建数据文件成功。")]
+        public void CreateAndOpenFile_Test03()
+        {
+            // Arrange
+            var fileName = "~tdms03.zip";
+            var fileInfo = new TDMSFileInfo(fileName);
+
+            using (var tdmsFile = new TDMSFile())
+            {
+                var success = tdmsFile.Create(fileInfo);
+                success.Should().BeTrue();
+            }
+
+            using (var tdmsFile = TDMSDataBuilder.OpenExistingFile(fileInfo))
+            {
+                tdmsFile.Should().NotBeNull();
+                var ps = tdmsFile.GetDefaultProperties();
+                ps.Count.Should().Be(5);
+            }
+
+            _context.CleanFiles();
+        }
+
+        [Fact(DisplayName = "文件名中无后缀名。自动增加tdms后缀名，创建数据文件成功。")]
+        public void CreateAndOpenFile_Test04()
+        {
+            // Arrange
+            var fileName = "~tdms04";
+            var fileInfo = new TDMSFileInfo(fileName);
+
+            using (var tdmsFile = new TDMSFile())
+            {
+                var success = tdmsFile.Create(fileInfo);
+                success.Should().BeTrue();
+            }
+
+            using (var tdmsFile = TDMSDataBuilder.OpenExistingFile(fileInfo))
+            {
+                tdmsFile.Should().NotBeNull();
+                var ps = tdmsFile.GetDefaultProperties();
+                ps.Count.Should().Be(5);
+            }
+
+            _context.CleanFiles();
+        }
+
     }
 }

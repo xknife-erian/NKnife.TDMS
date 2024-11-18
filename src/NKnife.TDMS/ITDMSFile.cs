@@ -92,7 +92,8 @@ namespace NKnife.TDMS
         /// - description<br/>
         /// - title<br/>
         /// - author<br/>
-        /// - datetime
+        /// - datetime<br/>
+        /// 其中datetime采用字符串表达，但可以TryParse转换为<see cref="DateTime"/>类型。
         /// </summary>
         /// <returns>属性值字典</returns>
         IDictionary<string, string> GetDefaultProperties();

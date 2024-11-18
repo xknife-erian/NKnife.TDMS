@@ -112,7 +112,6 @@ namespace NKnife.TDMS.Default
         {
             var tdmsFileInfo = new TDMSFileInfo(filePath)
             {
-                FileType    = fileType,
                 Name        = name,
                 Description = description,
                 Title       = title,
@@ -138,11 +137,7 @@ namespace NKnife.TDMS.Default
             TDMSErrorException.ThrowIfError(success, $"Failed to create file:[{FileInfo.FilePath}][{FileInfo.FileType}]");
             _filePtr = filePtr;
             //添加文件创建时间
-            AddOrUpdateProperty(Constants.DDC_FILE_DATETIME, DateTime.Now);
-            //获取文件创建时间，同时也是对读写的校验
-            var result = GetProperty(Constants.DDC_FILE_DATETIME, out _);
-            if(result.Success)
-                fileInfo.DateTime = (DateTime)result.PropertyValue;
+            AddOrUpdateProperty(Constants.DDC_FILE_DATETIME, FileInfo.DateTime);
             var isSave = Save();
             Thread.Sleep(6);//持久化到硬盘需要一些时间，略做等待
             return success == 0 && isSave;
@@ -363,21 +358,21 @@ namespace NKnife.TDMS.Default
                 case TDMSDataType.UInt8:
                 {
                     success = DDC.GetFilePropertyUInt8(_filePtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     return (true, value);
                 }
                 case TDMSDataType.Int16:
                 {
                     success = DDC.GetFilePropertyInt16(_filePtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     return (true, value);
                 }
                 case TDMSDataType.Int32:
                 {
                     success = DDC.GetFilePropertyInt32(_filePtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     return (true, value);
                 }
@@ -385,7 +380,7 @@ namespace NKnife.TDMS.Default
                 case TDMSDataType.Float:
                 {
                     success = DDC.GetFilePropertyFloat(_filePtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     return (true, value);
                 }
@@ -393,18 +388,21 @@ namespace NKnife.TDMS.Default
                 case TDMSDataType.Double:
                 {
                     success = DDC.GetFilePropertyDouble(_filePtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, "Failed to get property value");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     return (true, value);
                 }
                 case TDMSDataType.String:
                 {
                     success = DDC.GetFileStringPropertyLength(_filePtr, propertyName, out var length);
-                    TDMSErrorException.ThrowIfError(success, "Failed to get file string property length");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get file string property length, Key:[{propertyName}]");
+
+                    if(length <= 0) //存在属性，但是值为空
+                        return (true, string.Empty);
 
                     var source = new char[length];
                     success = DDC.GetFilePropertyString(_filePtr, propertyName, source, (UIntPtr)length);
-                    TDMSErrorException.ThrowIfError(success, "Failed to GetFilePropertyString");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
 
                     return (true, new string(source).TrimEnd('\0'));
                 }
@@ -420,7 +418,7 @@ namespace NKnife.TDMS.Default
                                                                      out var second,
                                                                      out var milli,
                                                                      out var weekDay);
-                    TDMSErrorException.ThrowIfError(success, "Failed to GetFilePropertyTimestampComponents");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
                     var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
 
                     return (true, dt.ToDateTime());
@@ -480,10 +478,22 @@ namespace NKnife.TDMS.Default
             var property = GetProperty(key, out var type);
 
             if(property.Success)
-                dict.Add(key, property.PropertyValue.ToString());
+            {
+                if(key != Constants.DDC_FILE_DATETIME)
+                {
+                    dict.Add(key, property.PropertyValue.ToString());
+                }
+                else
+                {
+                    var dt = (DateTime)property.PropertyValue;
+                    dict.Add(key, $"{dt:O}");
+                }
+            }
             else
+            {
                 throw new TDMSErrorException($"Failed to get default property [{key}]",
                                              new InvalidOperationException("Property not found"));
+            }
         }
 
         /// <inheritdoc />
