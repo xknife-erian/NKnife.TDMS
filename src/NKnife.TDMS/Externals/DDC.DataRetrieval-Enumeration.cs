@@ -10,7 +10,7 @@ namespace NKnife.TDMS.Externals
         /// </summary>
         /// <param name="file">文件</param>
         /// <param name="numChannelGroups">指定文件中通道组的数量</param>
-        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "GetNumChannelGroups")]
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetNumChannelGroups")]
         public static extern int CountChannelGroups(IntPtr file, out uint numChannelGroups);
 
         /// <summary>
@@ -20,13 +20,13 @@ namespace NKnife.TDMS.Externals
         /// <param name="channelGroupsBuffer">通道组的数组缓冲区</param>
         /// <param name="numberOfChannelGroups">通道组数量</param>
         /// <returns>是否成功。除非另有说明，否则零表示执行成功，负数表示错误代码。</returns>
-        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "GetChannelGroups")]
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroups")]
         public static extern int GetChannelGroups(IntPtr file, IntPtr[] channelGroupsBuffer, UIntPtr numberOfChannelGroups);
 
-        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "GetNumChannels")]
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetNumChannels")]
         public static extern int CountChannels(IntPtr channelGroup, out uint numChannels);
 
-        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "GetChannels")]
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannels")]
         public static extern int GetChannels(IntPtr channelGroup, IntPtr[] channelsBuf, UIntPtr numChannels);
     }
 }
