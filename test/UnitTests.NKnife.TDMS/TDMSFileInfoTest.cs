@@ -15,7 +15,7 @@ namespace UnitTests.NKnife.TDMS
         public void Exists_Test_1()
         {
             // Act
-            var fi = new TDMSFileInfo("test.tdms");
+            var fi = new TDMSFileInfo("test1.tdms");
 
             // Assert
             fi.Exists.Should().BeFalse();
@@ -25,7 +25,7 @@ namespace UnitTests.NKnife.TDMS
         public void Exists_Test_2()
         {
             // Act
-            var filePath = "test.tdms";
+            var filePath = "test2.tdms";
 
             var stream = File.Open(filePath, FileMode.OpenOrCreate);
             stream.Write(Guid.NewGuid().ToByteArray());

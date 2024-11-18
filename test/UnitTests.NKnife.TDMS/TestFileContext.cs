@@ -1,19 +1,32 @@
 using NKnife.TDMS;
-using NKnife.TDMS.Common;
+
+namespace UnitTests.NKnife.TDMS;
 
 public class TestFileContext : IDisposable
 {
-    private readonly string _testFileName = $"~tdms{Guid.NewGuid().ToString("N").Substring(0,6)}";
+    private readonly string _testFileName = $"~tdms~{Guid.NewGuid().ToString("N").Substring(0,6)}";
 
     public void Dispose()
     {
         CleanFiles();
+
     }
 
     public void CleanFiles()
     {
-        var fileToDelete = GetTestFileName(_testFileName);
-        File.Delete(fileToDelete);
+        var directory     = Directory.GetCurrentDirectory();
+        var filesToDelete = Directory.GetFiles(directory, "~tdms*");
+        foreach (var file in filesToDelete)
+        {
+            try
+            {
+                File.Delete(file);
+            }
+            catch
+            {
+                // ignored
+            }
+        }
     }
 
     private static string GetTestFileName(string basicName)
