@@ -60,7 +60,6 @@ namespace UnitTests.NKnife.TDMS
             {
                 file.Create(fileInfo);
             }
-            Thread.Sleep(15);
 
             // Act
             using var result = TDMSDataBuilder.OpenExisting(fileInfo.FilePath);
@@ -80,7 +79,6 @@ namespace UnitTests.NKnife.TDMS
             {
                 file.Create(fileInfo.FilePath, fileInfo.FileType, "Test File", "TestFile", "Test", "Erian");
             }
-            Thread.Sleep(15);
 
             // Act
             using var result = TDMSDataBuilder.OpenExistingFile(fileInfo);

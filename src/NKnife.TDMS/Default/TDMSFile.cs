@@ -144,6 +144,7 @@ namespace NKnife.TDMS.Default
             if(result.Success)
                 fileInfo.DateTime = (DateTime)result.PropertyValue;
             var isSave = Save();
+            Thread.Sleep(6);//持久化到硬盘需要一些时间，略做等待
             return success == 0 && isSave;
         }
 

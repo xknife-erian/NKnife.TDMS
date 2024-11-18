@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Threading;
 using NKnife.TDMS.Default;
 
 namespace NKnife.TDMS
@@ -10,6 +12,34 @@ namespace NKnife.TDMS
     /// </summary>
     public static class TDMSDataBuilder
     {
+        private static readonly int s_waitTimeBeforeOpeningFile = 20;//防止文件正在被其他进程写入(保存)而导致Open失败
+
+        static TDMSDataBuilder()
+        {
+#if RELEASE
+            s_waitTimeBeforeOpeningFile = 50; //生产环境下，等待时间略长一些，以确保成功率。
+#endif
+            string libsDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Libs");
+            VerifyNiLibFiles(libsDirectory);
+        }
+
+        /// <summary>
+        /// 检查dll库文件是否存在
+        /// </summary>
+        internal static void VerifyNiLibFiles(string libsDirectory)
+        {
+            string[] dllFiles      = ["dacasr.dll", "nilibddc.dll", "tdms_ebd.dll"];
+
+            foreach (string dllFile in dllFiles)
+            {
+                string filePath = Path.Combine(libsDirectory, dllFile);
+                if (!File.Exists(filePath))
+                {
+                    throw new FileNotFoundException($"NI TDMS library file does not exist：{filePath}");
+                }
+            }
+        }
+
         public static ITDMSFile Build()
         {
             return new TDMSFile();
@@ -24,26 +54,26 @@ namespace NKnife.TDMS
 
         /// <summary>
         /// 打开一个已经存在的TDMS文件<br/>
-        /// 注意：如果是刚刚代码创建的TDMS文件，请在打开之前等待约50-100ms，以确保文件已经完全创建。这是NI库的特性。
         /// </summary>
         /// <param name="filePath">文件路径</param>
         /// <returns>返回一个文件的实例</returns>
         public static ITDMSFile OpenExisting(string filePath)
         {
-            ITDMSFile tdmsFile = new TDMSFile(); 
+            ITDMSFile tdmsFile = new TDMSFile();
+            Thread.Sleep(s_waitTimeBeforeOpeningFile);
             tdmsFile.Open(filePath);
             return tdmsFile;
         }
 
         /// <summary>
         /// 打开一个已经存在的TDMS文件<br/>
-        /// 注意：如果是刚刚代码创建的TDMS文件，请在打开之前等待约50-100ms，以确保文件已经完全创建。这是NI库的特性。
         /// </summary>
         /// <param name="fileInfo">文件信息</param>
         /// <returns>返回一个文件的实例</returns>
         public static ITDMSFile OpenExistingFile(TDMSFileInfo fileInfo)
         {
-            ITDMSFile tdmsFile = new TDMSFile(); 
+            ITDMSFile tdmsFile = new TDMSFile();
+            Thread.Sleep(s_waitTimeBeforeOpeningFile);
             tdmsFile.Open(fileInfo);
             return tdmsFile;
         }
