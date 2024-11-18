@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace NKnife.TDMS.Default
+namespace NKnife.TDMS.Common
 {
-    public record TDMSDateTime
+    record TDMSDateTime
     {
         public TDMSDateTime(DateTime dateTime)
         {
