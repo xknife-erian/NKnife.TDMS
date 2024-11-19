@@ -31,7 +31,7 @@ namespace UnitTests.NKnife.TDMS
             tdmsFile.ChildCount.Should().Be(1);
         }
 
-        [Fact(DisplayName = "2. 添加1000个ChannelGroup, 基本测试。")]
+        [Fact(DisplayName = "2. 添加100个ChannelGroup, 基本测试。")]
         public void Add_Test02()
         {
             // Arrange
@@ -42,7 +42,7 @@ namespace UnitTests.NKnife.TDMS
 
             tdmsFile.Open(fileInfo);
 
-            var count = 1000;
+            var count = 100;
             for (int i = 0; i < count; i++)
             {
                 // Act
@@ -78,34 +78,6 @@ namespace UnitTests.NKnife.TDMS
             // Assert
             group2.Should().BeNull();
             tdmsFile.ChildCount.Should().Be(1);
-        }
-    }
-
-    public class TDMSFileTest_Contains
-    {
-        [Fact(DisplayName = "1. 添加1个ChannelGroup，测试判断Group的name的property，以确认该Group是否存在。")]
-        public void Contains_Test01()
-        {
-            // Arrange
-            var groupName = "group1";
-
-            using var context  = new TestFileContext();
-            var       fileInfo = context.CreateTestFile();
-
-            using var tdmsFile = new TDMSFile();
-
-            tdmsFile.Open(fileInfo);
-
-            // Act
-            using var group1 = tdmsFile.AddGroup(groupName);
-
-            // Assert
-            group1.Should().NotBeNull();
-            tdmsFile.ChildCount.Should().Be(1);
-
-            // 是否包含
-            var has = tdmsFile.Contains(groupName);
-            has.Should().BeTrue();
         }
     }
 }

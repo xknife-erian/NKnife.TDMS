@@ -151,6 +151,32 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
+        public string Name
+        {
+            get
+            {
+                var name = GetProperty(Constants.DDC_FILE_NAME, out _);
+                if(!name.Success)
+                    throw new TDMSErrorException("Failed to retrieve the default 'name' property.");
+
+                return name.PropertyValue.ToString();
+            }
+        }
+
+        /// <inheritdoc />
+        public string Description
+        {
+            get
+            {
+                var desc = GetProperty(Constants.DDC_FILE_DESCRIPTION, out _);
+                if (!desc.Success)
+                    throw new TDMSErrorException("Failed to retrieve the default 'description' property.");
+
+                return desc.PropertyValue.ToString();
+            }
+        }
+
+        /// <inheritdoc />
         public ulong ChildCount
         {
             get
@@ -361,6 +387,37 @@ namespace NKnife.TDMS.Default
 
             switch (type)
             {
+                case TDMSDataType.String:
+                {
+                    success = DDC.GetFileStringPropertyLength(_filePtr, propertyName, out var length);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get file string property length, Key:[{propertyName}]");
+
+                    if (length <= 0) //存在属性，但是值为空
+                        return (true, string.Empty);
+
+                    var source = new char[length];
+                    success = DDC.GetFilePropertyString(_filePtr, propertyName, source, (UIntPtr)length);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
+
+                    return (true, new string(source).TrimEnd('\0'));
+                }
+                case TDMSDataType.Timestamp:
+                {
+                    success = DDC.GetFilePropertyTimestampComponents(_filePtr,
+                                                                     propertyName,
+                                                                     out var year,
+                                                                     out var month,
+                                                                     out var day,
+                                                                     out var hour,
+                                                                     out var minute,
+                                                                     out var second,
+                                                                     out var milli,
+                                                                     out var weekDay);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
+                    var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
+
+                    return (true, dt.ToDateTime());
+                }
                 case TDMSDataType.UInt8:
                 {
                     success = DDC.GetFilePropertyUInt8(_filePtr, propertyName, out var value);
@@ -398,38 +455,6 @@ namespace NKnife.TDMS.Default
 
                     return (true, value);
                 }
-                case TDMSDataType.String:
-                {
-                    success = DDC.GetFileStringPropertyLength(_filePtr, propertyName, out var length);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get file string property length, Key:[{propertyName}]");
-
-                    if(length <= 0) //存在属性，但是值为空
-                        return (true, string.Empty);
-
-                    var source = new char[length];
-                    success = DDC.GetFilePropertyString(_filePtr, propertyName, source, (UIntPtr)length);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
-
-                    return (true, new string(source).TrimEnd('\0'));
-                }
-                case TDMSDataType.Timestamp:
-                {
-                    success = DDC.GetFilePropertyTimestampComponents(_filePtr,
-                                                                     propertyName,
-                                                                     out var year,
-                                                                     out var month,
-                                                                     out var day,
-                                                                     out var hour,
-                                                                     out var minute,
-                                                                     out var second,
-                                                                     out var milli,
-                                                                     out var weekDay);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
-                    var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
-
-                    return (true, dt.ToDateTime());
-                }
-
                 default: throw new ArgumentOutOfRangeException();
             }
 
@@ -534,13 +559,11 @@ namespace NKnife.TDMS.Default
                 using var group = new TDMSChannelGroup(intPtr);
                 var       name  = group.GetProperty(Constants.DDC_FILE_NAME, out var dataType);
 
-                if(!name.Success
-                   || (string)name.PropertyValue != childName)
+                if(name.Success
+                   && (string)name.PropertyValue == childName)
                 {
-                    continue;
+                    return true;
                 }
-
-                return true;
             }
 
             return false;
@@ -549,7 +572,14 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public bool TryGetItem(string childName, out ITDMSNode node)
         {
-            throw new NotImplementedException();
+            var has = Contains(childName);
+            if(has)
+            {
+                node = this[childName];
+                return true;
+            }
+            node = null;
+            return false;
         }
 
         /// <inheritdoc />

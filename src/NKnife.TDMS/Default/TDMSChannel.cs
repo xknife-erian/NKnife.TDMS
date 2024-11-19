@@ -75,6 +75,12 @@ namespace NKnife.TDMS.Default
 
         #region Implementation of ITDMSNode
         /// <inheritdoc />
+        public string Name { get; }
+
+        /// <inheritdoc />
+        public string Description { get; }
+
+        /// <inheritdoc />
         public ulong ChildCount => DDC.CountDataValues(ChannelPtr, out var numValues) == 0 ? (ulong)numValues : 0;
 
         /// <inheritdoc />

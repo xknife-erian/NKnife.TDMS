@@ -4,6 +4,9 @@ namespace NKnife.TDMS
 {
     public interface ITDMSNode
     {
+        string Name { get; }
+        string Description { get; }
+
         /// <summary>
         ///     子项目的数量（File->Group->Channel->Data）
         /// </summary>
