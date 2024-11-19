@@ -33,7 +33,7 @@ namespace UnitTests.NKnife.TDMS
             using var file     = new TDMSFile();
             file.Open(fileInfo);
 
-            using var group = file.Add("Group1", "Group1Description");
+            using var group = file.AddGroup("Group1", "Group1Description");
             group.Should().NotBeNull();
         }
 
@@ -44,7 +44,7 @@ namespace UnitTests.NKnife.TDMS
             using var file     = new TDMSFile();
             file.Open(fileInfo);
 
-            using var group   = file.Add("Group1", "Group1Description");
+            using var group   = file.AddGroup("Group1", "Group1Description");
             using var channel = group.AddChannel(TDMSDataType.Double, "Channel1", "V", "Channel1Description");
             channel.Should().NotBeNull();
         }
@@ -57,7 +57,7 @@ namespace UnitTests.NKnife.TDMS
             {
                 file.Open(fileInfo);
 
-                using var group   = file.Add("Group1", "Group1Description");
+                using var group   = file.AddGroup("Group1", "Group1Description");
                 using var channel = group.AddChannel(TDMSDataType.Double, "Channel1", "V", "Channel1Description");
                 channel.AddData([1.0, 2.0, 3.0]);
                 file.Save();

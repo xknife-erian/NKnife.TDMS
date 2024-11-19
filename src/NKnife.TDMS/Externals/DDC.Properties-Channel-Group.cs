@@ -24,9 +24,18 @@ namespace NKnife.TDMS.Externals
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelGroupPropertyV")]
         public static extern int SetChannelGroupPropertyV(IntPtr channelGroup, string property, IntPtr args);
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="channelGroup"></param>
+        /// <param name="propertyName">通道组属性的名称。您可以指定内置属性或由DDC_CreateChannelGroupProperty创建的属性。</param>
+        /// <param name="value"></param>
+        /// <param name="valueSizeInBytes">由value参数指定的内存位置大小，单位为字节。该参数仅在指定的属性为字符串类型时使用。如果指定的属性是另一种类型，则应该为该参数传递0。</param>
+        /// <returns></returns>
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroupProperty")]
         public static extern int GetChannelGroupProperty(IntPtr channelGroup,
-                                                         string property,
+                                                         string propertyName,
                                                          IntPtr value,
                                                          UIntPtr valueSizeInBytes);
 

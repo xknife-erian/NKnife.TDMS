@@ -18,7 +18,7 @@ namespace NKnife.TDMS
     ///     https://www.ni.com/en/support/documentation/supplemental/06/the-ni-tdms-file-format.html <br/>
     ///     https://www.ni.com/docs/en-US/bundle/labwindows-cvi/page/cvi/libref/cvitdmslibrary.htm
     /// </summary>
-    public interface ITDMSFile : ITDMSNode, IDisposable
+    public interface ITDMSFile : ITDMSNode, IAbc, IDisposable
     {
         /// <summary>
         /// 获取 TDMS 文件的信息。
@@ -70,7 +70,7 @@ namespace NKnife.TDMS
         /// <param name="groupName">组名称。</param>
         /// <param name="description">组描述。</param>
         /// <returns>添加的通道组。</returns>
-        ITDMSChannelGroup Add(string groupName, string description = "");
+        ITDMSChannelGroup AddGroup(string groupName, string description = "");
 
         /// <summary>
         /// 获取或设置指定索引位置的通道组。
@@ -98,22 +98,35 @@ namespace NKnife.TDMS
         /// <returns>属性值字典</returns>
         IDictionary<string, string> GetDefaultProperties();
 
+
+    }
+
+    public interface IAbc
+    {
         /// <summary>
-        /// 判断 TDMS 文件是否包含指定名称的通道组。
+        /// 判断是否包含指定名称的子项目。
         /// </summary>
-        /// <param name="groupName">组名称。</param>
-        /// <returns>如果包含指定名称的通道组，则为 true；否则为 false。</returns>
-        bool Contains(string groupName);
+        /// <param name="childName">组名称。</param>
+        /// <returns>如果包含指定名称的子项目，则为 true；否则为 false。</returns>
+        bool Contains(string childName);
 
         /// <summary>
-        /// 移除 TDMS 文件中指定名称的通道组。
+        /// 尝试获取指定名称的子项目。
         /// </summary>
-        /// <param name="groupName">组名称。</param>
-        /// <returns>如果成功移除通道组，则为 true；否则为 false。</returns>
-        bool Remove(string groupName);
+        /// <param name="childName">子项目的名称</param>
+        /// <param name="node">当存在时，out指定名称的子项目</param>
+        /// <returns>是否存在指定名称的子项目</returns>
+        bool TryGetItem(string childName, out ITDMSNode node);
 
         /// <summary>
-        /// 移除 TDMS 文件中指定索引位置的通道组。
+        /// 移除指定名称的子项目。
+        /// </summary>
+        /// <param name="childName">组名称。</param>
+        /// <returns>如果成功移除指定名称的子项目，则为 true；否则为 false。</returns>
+        bool Remove(string childName);
+
+        /// <summary>
+        /// 移除 TDMS 文件中指定索引位置的子项目。
         /// </summary>
         /// <param name="index">索引位置。</param>
         bool RemoveAt(int index);

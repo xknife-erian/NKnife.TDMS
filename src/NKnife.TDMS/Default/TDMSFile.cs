@@ -196,10 +196,10 @@ namespace NKnife.TDMS.Default
 
                 foreach (var intPtr in channelGroupsBuffer)
                 {
-                    var group = new TDMSChannelGroup(intPtr);
-                    var name  = group.GetProperty(Constants.DDC_FILE_NAME);
+                    var group = new TDMSChannelGroup(intPtr); 
+                    var name  = group.GetProperty(Constants.DDC_FILE_NAME, out var dataType);
 
-                    if(name != groupName)
+                    if(name.Success && (string)name.PropertyValue != groupName)
                     {
                         group.Dispose();
                         continue;
@@ -213,8 +213,14 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public ITDMSChannelGroup Add(string groupName, string description = "")
+        public ITDMSChannelGroup AddGroup(string groupName, string description = "")
         {
+            if (string.IsNullOrEmpty(groupName))
+                throw new TDMSErrorException("Channel group name cannot be null or empty", new ArgumentNullException(nameof(groupName)));
+
+            if (Contains(groupName))
+                return null;
+
             var success = DDC.AddChannelGroup(_filePtr, groupName, description, out var groupPtr);
             TDMSErrorException.ThrowIfError(success, "Failed to add channel group");
 
@@ -513,30 +519,43 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public bool Contains(string groupName)
+        public bool Contains(string childName)
         {
-            var channelGroupsBuffer = new IntPtr[ChildCount];
-            var success             = DDC.GetChannelGroups(_filePtr, channelGroupsBuffer, (UIntPtr)ChildCount);
+            var count = ChildCount;
+            if (count == 0)
+                return false;
+
+            var channelGroupsBuffer = new IntPtr[count];
+            var success             = DDC.GetChannelGroups(_filePtr, channelGroupsBuffer, (UIntPtr)count);
             TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
 
             foreach (var intPtr in channelGroupsBuffer)
             {
                 using var group = new TDMSChannelGroup(intPtr);
-                var       name  = group.GetProperty(Constants.DDC_FILE_NAME);
+                var       name  = group.GetProperty(Constants.DDC_FILE_NAME, out var dataType);
 
-                if(name == groupName)
+                if(!name.Success
+                   || (string)name.PropertyValue != childName)
                 {
-                    return true;
+                    continue;
                 }
+
+                return true;
             }
 
             return false;
         }
 
         /// <inheritdoc />
-        public bool Remove(string groupName)
+        public bool TryGetItem(string childName, out ITDMSNode node)
         {
-            var group = this[groupName];
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public bool Remove(string childName)
+        {
+            var group = this[childName];
 
             if(group is TDMSChannelGroup groupIn)
             {
