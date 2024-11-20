@@ -6,7 +6,7 @@ using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS.Default
 {
-    class TDMSChannel : ITDMSChannel
+    class TDMSChannel : BaseTDMSLevel, ITDMSChannel
     {
         public TDMSChannel(IntPtr channelPtr)
         {
@@ -22,7 +22,8 @@ namespace NKnife.TDMS.Default
             try
             {
                 using var data = new Data<T>(values);
-                var       v    = data.GetValues();
+
+                var v = data.GetValues();
                 success = DDC.SetDataValues(ChannelPtr, v.Values, v.Length);
             }
             catch (Exception e)
@@ -64,57 +65,78 @@ namespace NKnife.TDMS.Default
             return values;
         }
 
-        public void Dispose()
-        {
-            if(ChannelPtr != IntPtr.Zero)
-            {
-                DDC.CloseChannel(ChannelPtr);
-                ChannelPtr = IntPtr.Zero;
-            }
-        }
-
-        #region Implementation of ITDMSNode
+        #region Implementation of ITDMSLevel
         /// <inheritdoc />
-        public string Name { get; }
+        public override string Name { get; }
 
         /// <inheritdoc />
-        public string Description { get; }
+        public override string Description { get; }
 
         /// <inheritdoc />
-        public ulong ChildCount => DDC.CountDataValues(ChannelPtr, out var numValues) == 0 ? (ulong)numValues : 0;
-
-        /// <inheritdoc />
-        public void SetProperty(string propertyName, string propertyValue)
+        public override bool Close()
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public bool Clear()
+        public override ulong ChildCount => DDC.CountDataValues(ChannelPtr, out var numValues) == 0 ? (ulong)numValues : 0;
+
+        /// <inheritdoc />
+        public override bool Clear()
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
+        public override bool Contains(string levelName)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
+        public override bool TryGetItem(string levelName, out ITDMSLevel level)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public bool PropertyExists(string propertyName)
+        public override bool Remove(string levelName)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public string[] GetPropertyNames()
+        public override bool RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        protected override void ManualCloseNode()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override bool PropertyExists(string propertyName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override string[] GetPropertyNames()
         {
             throw new NotImplementedException();
         }

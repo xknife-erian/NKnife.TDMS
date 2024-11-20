@@ -18,7 +18,7 @@ namespace NKnife.TDMS
     ///     https://www.ni.com/en/support/documentation/supplemental/06/the-ni-tdms-file-format.html <br/>
     ///     https://www.ni.com/docs/en-US/bundle/labwindows-cvi/page/cvi/libref/cvitdmslibrary.htm
     /// </summary>
-    public interface ITDMSFile : ITDMSNode, IAbc, IDisposable
+    public interface ITDMSFile : ITDMSLevel
     {
         /// <summary>
         /// 获取 TDMS 文件的信息。
@@ -60,11 +60,6 @@ namespace NKnife.TDMS
         bool Create(TDMSFileInfo fileInfo);
 
         /// <summary>
-        /// 关闭 TDMS 文件。
-        /// </summary>
-        bool Close();
-
-        /// <summary>
         /// 添加指定名称和描述的通道组。
         /// </summary>
         /// <param name="groupName">组名称。</param>
@@ -97,38 +92,5 @@ namespace NKnife.TDMS
         /// </summary>
         /// <returns>属性值字典</returns>
         IDictionary<string, string> GetDefaultProperties();
-
-
-    }
-
-    public interface IAbc
-    {
-        /// <summary>
-        /// 判断是否包含指定名称的子项目。
-        /// </summary>
-        /// <param name="childName">组名称。</param>
-        /// <returns>如果包含指定名称的子项目，则为 true；否则为 false。</returns>
-        bool Contains(string childName);
-
-        /// <summary>
-        /// 尝试获取指定名称的子项目。
-        /// </summary>
-        /// <param name="childName">子项目的名称</param>
-        /// <param name="node">当存在时，out指定名称的子项目</param>
-        /// <returns>是否存在指定名称的子项目</returns>
-        bool TryGetItem(string childName, out ITDMSNode node);
-
-        /// <summary>
-        /// 移除指定名称的子项目。
-        /// </summary>
-        /// <param name="childName">组名称。</param>
-        /// <returns>如果成功移除指定名称的子项目，则为 true；否则为 false。</returns>
-        bool Remove(string childName);
-
-        /// <summary>
-        /// 移除 TDMS 文件中指定索引位置的子项目。
-        /// </summary>
-        /// <param name="index">索引位置。</param>
-        bool RemoveAt(int index);
     }
 }

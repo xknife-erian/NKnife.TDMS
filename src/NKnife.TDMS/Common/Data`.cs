@@ -6,6 +6,11 @@ using System.Text;
 
 namespace NKnife.TDMS.Common
 {
+    /// <summary>
+    /// 面向Channel里存储的数据集合的数据结构；用于将数据集合转换为指针和长度，以便传递给C++的DLL。
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="values"></param>
     internal class Data<T>(T[] values) : IDisposable where T : struct
     {
         private readonly T[] _values = values ?? throw new ArgumentNullException(nameof(values));

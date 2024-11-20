@@ -6,33 +6,16 @@ using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS.Default
 {
-    class TDMSChannelGroup : ITDMSChannelGroup
+    class TDMSChannelGroup : BaseTDMSLevel, ITDMSChannelGroup
     {
         public TDMSChannelGroup(IntPtr groupPtr)
         {
-            _selfPtr = groupPtr;
-        }
-
-        private IntPtr _selfPtr;
-
-        internal IntPtr GetPtr()
-        {
-            return _selfPtr;
-        }
-
-        public void Dispose()
-        {
-            if (_selfPtr != IntPtr.Zero)
-            {
-                DDC.CloseChannelGroup(_selfPtr);
-                _selfPtr = IntPtr.Zero;
-            }
-            GC.SuppressFinalize(this);
+            _SelfPtr = groupPtr;
         }
 
         public ITDMSChannel AddChannel(TDMSDataType dataType, string channelName, string unit, string description)
         {
-            var success = DDC.AddChannel(_selfPtr, dataType, channelName, description, unit, out var channelPtr);
+            var success = DDC.AddChannel(_SelfPtr, dataType, channelName, description, unit, out var channelPtr);
 
             if(success == (int)Error.NoError)
             {
@@ -46,14 +29,23 @@ namespace NKnife.TDMS.Default
             }
         }
 
-        public ITDMSChannel GetChannel(int i)
+        /// <inheritdoc />
+        public ITDMSChannel this[int index]
         {
-            throw new NotImplementedException();
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
-        #region Implementation of ITDMSNode
         /// <inheritdoc />
-        public string Name
+        public ITDMSChannel this[string groupName]
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        #region Implementation of ITDMSLevel
+        /// <inheritdoc />
+        public override string Name
         {
             get
             {
@@ -66,7 +58,7 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public string Description
+        public override string Description
         {
             get
             {
@@ -79,24 +71,60 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public ulong ChildCount => DDC.CountChannels(_selfPtr, out var count) == 0 ? (ulong)count : 0;
-
-        /// <inheritdoc />
-        public bool Clear()
+        public override bool Close()
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
+        public override ulong ChildCount => DDC.CountChannels(_SelfPtr, out var count) == 0 ? (ulong)count : 0;
+
+        /// <inheritdoc />
+        public override bool Clear()
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
+        public override bool Contains(string levelName)
         {
-            var success = DDC.GetChannelGroupPropertyType(_selfPtr, propertyName, out var type);
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override bool TryGetItem(string levelName, out ITDMSLevel level)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override bool Remove(string levelName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override bool RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        protected override void ManualCloseNode()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
+        {
+            var success = DDC.GetChannelGroupPropertyType(_SelfPtr, propertyName, out var type);
             TDMSErrorException.ThrowIfError(success, "Failed to get property type");
             dataType = type;
 
@@ -104,7 +132,7 @@ namespace NKnife.TDMS.Default
             {
                 case TDMSDataType.String:
                 {
-                    success = DDC.GetChannelGroupStringPropertyLength(_selfPtr, propertyName, out var length);
+                    success = DDC.GetChannelGroupStringPropertyLength(_SelfPtr, propertyName, out var length);
                     TDMSErrorException.ThrowIfError(success,
                                                     $"Failed to get ChannelGroup string property length, Key:[{propertyName}]");
 
@@ -113,7 +141,7 @@ namespace NKnife.TDMS.Default
 
                     var ptr = Marshal.StringToHGlobalAnsi(new string(new char[length + 1]));
 
-                    success = DDC.GetChannelGroupProperty(_selfPtr, propertyName, ptr, (UIntPtr)(length + 1));
+                    success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, ptr, (UIntPtr)(length + 1));
                     TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
 
                     var result = Marshal.PtrToStringAnsi(ptr);
@@ -127,7 +155,7 @@ namespace NKnife.TDMS.Default
                 }
                 case TDMSDataType.Timestamp:
                 {
-                    success = DDC.GetChannelGroupPropertyTimestampComponents(_selfPtr,
+                    success = DDC.GetChannelGroupPropertyTimestampComponents(_SelfPtr,
                                                                              propertyName,
                                                                              out var year,
                                                                              out var month,
@@ -146,7 +174,7 @@ namespace NKnife.TDMS.Default
                 case TDMSDataType.UInt8:
                 {
                     var result = Marshal.AllocHGlobal(sizeof(byte));
-                    success = DDC.GetChannelGroupProperty(_selfPtr, propertyName, result, (UIntPtr)0);
+                    success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
                     TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     byte value = Marshal.ReadByte(result);
@@ -157,7 +185,7 @@ namespace NKnife.TDMS.Default
                 case TDMSDataType.Int16:
                 {
                     var result = Marshal.AllocHGlobal(sizeof(short));
-                    success = DDC.GetChannelGroupProperty(_selfPtr, propertyName, result, (UIntPtr)0);
+                    success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
                     TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     short value = Marshal.ReadInt16(result);
@@ -168,7 +196,7 @@ namespace NKnife.TDMS.Default
                 case TDMSDataType.Int32:
                 {
                     var result = Marshal.AllocHGlobal(sizeof(int));
-                    success = DDC.GetChannelGroupProperty(_selfPtr, propertyName, result, (UIntPtr)0);
+                    success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
                     TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     int value = Marshal.ReadInt32(result);
@@ -180,7 +208,7 @@ namespace NKnife.TDMS.Default
                 case TDMSDataType.Float:
                 {
                     var result = Marshal.AllocHGlobal(sizeof(float));
-                    success = DDC.GetChannelGroupProperty(_selfPtr, propertyName, result, (UIntPtr)0);
+                    success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
                     TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     float value = Marshal.PtrToStructure<float>(result);
@@ -192,7 +220,7 @@ namespace NKnife.TDMS.Default
                 case TDMSDataType.Double:
                 {
                     var result = Marshal.AllocHGlobal(sizeof(double));
-                    success = DDC.GetChannelGroupProperty(_selfPtr, propertyName, result, (UIntPtr)0);
+                    success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
                     TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
 
                     double value = Marshal.PtrToStructure<double>(result);
@@ -207,13 +235,13 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public bool PropertyExists(string propertyName)
+        public override bool PropertyExists(string propertyName)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public string[] GetPropertyNames()
+        public override string[] GetPropertyNames()
         {
             throw new NotImplementedException();
         }

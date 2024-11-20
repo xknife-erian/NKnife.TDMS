@@ -4,7 +4,7 @@ using NKnife.TDMS.Common;
 
 namespace NKnife.TDMS
 {
-    public interface ITDMSChannelGroup : ITDMSNode, IDisposable
+    public interface ITDMSChannelGroup : ITDMSLevel, IDisposable
     {
         /// <summary>
         /// 向通道组添加新通道。一个有效的通道组应该包含一个或多个通道。
@@ -16,10 +16,22 @@ namespace NKnife.TDMS
         /// <returns>新通道</returns>
         public ITDMSChannel AddChannel(TDMSDataType dataType, string channelName, string unit, string description);
 
-        ITDMSChannel GetChannel(int i);
+        /// <summary>
+        /// 获取或设置指定索引位置的通道。
+        /// </summary>
+        /// <param name="index">索引位置。</param>
+        /// <returns>指定索引位置的通道。</returns>
+        ITDMSChannel this[int index] { get; }
+
+        /// <summary>
+        /// 获取或设置指定名称的通道。
+        /// </summary>
+        /// <param name="groupName">通道名称。</param>
+        /// <returns>指定名称的通道。</returns>
+        ITDMSChannel this[string groupName] { get; }
     }
 
-    public interface ITDMSChannel : ITDMSNode, IEnumerable, IDisposable
+    public interface ITDMSChannel : ITDMSLevel, IEnumerable, IDisposable
     {
         bool AddData<T>(T[] values) where T : struct;
 
