@@ -1,85 +1,86 @@
 ﻿using System;
-using System.Collections;
 using System.Runtime.InteropServices;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS.Default
 {
-    class TDMSChannel : BaseTDMSLevel, ITDMSChannel
+    internal class TDMSChannel : BaseTDMSLevel, ITDMSChannel
     {
         public TDMSChannel(IntPtr channelPtr)
         {
-            ChannelPtr = channelPtr;
+            _SelfPtr = channelPtr;
+            SetNameAndDescription();
         }
 
-        public IntPtr ChannelPtr { get; set; }
-
-        public bool AddData<T>(T[] values) where T : struct
+        #region Implementation of ITDMSChannel
+        public bool SetData<T>(T[] values) where T : struct
         {
-            int success = -1;
+            var success = -1;
 
             try
             {
                 using var data = new Data<T>(values);
 
                 var v = data.GetValues();
-                success = DDC.SetDataValues(ChannelPtr, v.Values, v.Length);
+                success = DDC.SetDataValues(_SelfPtr, v.Values, v.Length);
+
+                throw new TDMSErrorException(success, "Failed to add data.");
             }
             catch (Exception e)
             {
                 if(success == -1)
-                {
                     throw new TDMSErrorException("Failed to add data.", e);
-                }
-                else
-                {
-                    throw new TDMSErrorException(success, "Failed to add data.", e);
-                }
             }
 
             return success == 0;
         }
 
+        /// <inheritdoc />
+        public bool AppendData<T>(T[] values) where T : struct
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public bool UpdateData<T>(int index, T[] values) where T : struct
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
         public T[] GetDataValues<T>(uint startIndex, uint length)
         {
-            T[] values         = new T[length];
+            var values = new T[length];
 
             // 获取数组的指针
-            IntPtr valuesPtr = Marshal.UnsafeAddrOfPinnedArrayElement(values, 0);
+            var valuesPtr = Marshal.UnsafeAddrOfPinnedArrayElement(values, 0);
 
-            int result = DDC.GetDataValues(ChannelPtr, (UIntPtr)startIndex, (UIntPtr)length, valuesPtr);
-
-            // 检查返回值并进行相应的处理
-            if(result == 0)
-            {
-                // 执行成功
-                // 在values数组中获取到了指定通道中的数据值
-            }
-            else
-            {
-                // 发生了错误
-                // 根据返回值进行相应的错误处理
-            }
+            var success = DDC.GetDataValues(_SelfPtr, (UIntPtr)startIndex, (UIntPtr)length, valuesPtr);
+            TDMSErrorException.ThrowIfError(success, "Failed to GetDataValues.");
 
             return values;
         }
 
-        #region Implementation of ITDMSLevel
+        /// <inheritdoc />
+        public string Unit { get; set; }
+        #endregion
 
+        #region Implementation of ITDMSLevel
         /// <inheritdoc />
         public override bool Close()
         {
-            if (!_IsClosed)
+            if(!_IsClosed)
             {
                 var success = DDC.CloseChannel(_SelfPtr);
-                TDMSErrorException.ThrowIfError(success, $"Failed to CloseChannel.");
+                TDMSErrorException.ThrowIfError(success, "Failed to CloseChannel.");
             }
+
             return _IsClosed = true;
         }
 
         /// <inheritdoc />
-        public override ulong ChildCount => DDC.CountDataValues(ChannelPtr, out var numValues) == 0 ? (ulong)numValues : 0;
+        public override ulong ChildCount => DDC.CountDataValues(_SelfPtr, out var numValues) == 0 ? numValues : 0;
 
         /// <inheritdoc />
         public override bool Clear()
@@ -137,13 +138,6 @@ namespace NKnife.TDMS.Default
 
         /// <inheritdoc />
         public override string[] GetPropertyNames()
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
-        #region Implementation of IEnumerable
-        /// <inheritdoc />
-        public IEnumerator GetEnumerator()
         {
             throw new NotImplementedException();
         }
