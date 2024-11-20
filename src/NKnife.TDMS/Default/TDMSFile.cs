@@ -398,6 +398,50 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
+        protected override TDMSDataType GetPropertyType(string propertyName)
+        {
+            var success = DDC.GetFilePropertyType(_SelfPtr, propertyName, out var type);
+            TDMSErrorException.ThrowIfError(success, "Failed to get property type");
+
+            return type;
+        }
+
+        /// <inheritdoc />
+        protected override uint GetStringPropertyLength(string propertyName)
+        {
+            var success = DDC.GetFileStringPropertyLength(_SelfPtr, propertyName, out var length);
+            TDMSErrorException.ThrowIfError(success, $"Failed to get file string property length, Key:[{propertyName}]");
+            return length;
+        }
+
+        /// <inheritdoc />
+        protected override void GetPropertyInternal(string propertyName, IntPtr result, uint length)
+        {
+            var success = DDC.GetFileProperty(_SelfPtr, propertyName, result, (UIntPtr)length);
+            TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
+        }
+
+        /// <inheritdoc />
+        protected override DateTime GetPropertyTimestampComponents(string propertyName)
+        {
+            var success = DDC.GetFilePropertyTimestampComponents(_SelfPtr,
+                                                             propertyName,
+                                                             out var year,
+                                                             out var month,
+                                                             out var day,
+                                                             out var hour,
+                                                             out var minute,
+                                                             out var second,
+                                                             out var milli,
+                                                             out var weekDay);
+            TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
+            var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
+
+            return dt.ToDateTime();
+        }
+
+        /*
+        /// <inheritdoc />
         public override (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
         {
             var success = DDC.GetFilePropertyType(_SelfPtr, propertyName, out var type);
@@ -478,7 +522,7 @@ namespace NKnife.TDMS.Default
             }
 
             return (false, null);
-        }
+        }*/
 
         #endregion
 
@@ -579,6 +623,7 @@ namespace NKnife.TDMS.Default
 
             return _IsClosed = true;
         }
+
         #endregion
     }
 }

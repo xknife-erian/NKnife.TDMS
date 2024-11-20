@@ -119,16 +119,171 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
+        protected override TDMSDataType GetPropertyType(string propertyName)
+        {
+            var success = DDC.GetChannelPropertyType(_SelfPtr, propertyName, out var type);
+            TDMSErrorException.ThrowIfError(success, "Failed to get property type");
+
+            return type;
+        }
+
+        /// <inheritdoc />
+        protected override uint GetStringPropertyLength(string propertyName)
+        {
+            var success = DDC.GetChannelStringPropertyLength(_SelfPtr, propertyName, out var length);
+            TDMSErrorException.ThrowIfError(success,
+                                            $"Failed to get Channel string property length, Key:[{propertyName}]");
+
+            return length;
+        }
+
+        /// <inheritdoc />
+        protected override void GetPropertyInternal(string propertyName, IntPtr result, uint length)
+        {
+            if(length > 0)//如果长度为0，说明不是字符串类型
+                length++; //HACK: 为了兼容字符串类型，长度+1
+            var success = DDC.GetChannelProperty(_SelfPtr, propertyName, result, (UIntPtr)length);
+            TDMSErrorException.ThrowIfError(success, $"Failed to GetChannelProperty, Key:[{propertyName}]");
+        }
+
+        /// <inheritdoc />
+        protected override DateTime GetPropertyTimestampComponents(string propertyName)
+        {
+            var success = DDC.GetChannelPropertyTimestampComponents(_SelfPtr,
+                                                                propertyName,
+                                                                out var year,
+                                                                out var month,
+                                                                out var day,
+                                                                out var hour,
+                                                                out var minute,
+                                                                out var second,
+                                                                out var milli,
+                                                                out var weekDay);
+            TDMSErrorException.ThrowIfError(success,
+                                            $"Failed to GetChannelPropertyTimestampComponents, Key:[{propertyName}]");
+            var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
+
+            return dt.ToDateTime();
+        }
+
+        /// <inheritdoc />
         public override void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
+        /*
         /// <inheritdoc />
         public override (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
         {
-            throw new NotImplementedException();
+            var success = DDC.GetChannelPropertyType(_SelfPtr, propertyName, out var type);
+            TDMSErrorException.ThrowIfError(success, "Failed to get property type");
+            dataType = type;
+
+            switch (type)
+            {
+                case TDMSDataType.String:
+                    {
+                        success = DDC.GetChannelStringPropertyLength(_SelfPtr, propertyName, out var length);
+                        TDMSErrorException.ThrowIfError(success,
+                                                        $"Failed to get Channel string property length, Key:[{propertyName}]");
+
+                        if (length <= 0) //存在属性，但是值为空
+                            return (true, string.Empty);
+
+                        var ptr = Marshal.StringToHGlobalAnsi(new string(new char[length + 1]));
+
+                        success = DDC.GetChannelProperty(_SelfPtr, propertyName, ptr, (UIntPtr)(length + 1));
+                        TDMSErrorException.ThrowIfError(success, $"Failed to GetChannelProperty, Key:[{propertyName}]");
+
+                        var result = Marshal.PtrToStringAnsi(ptr);
+
+                        if (result == null)
+                            return (false, null);
+
+                        return (true, result.TrimEnd('\0'));
+                    }
+                case TDMSDataType.Timestamp:
+                {
+                    success = DDC.GetChannelPropertyTimestampComponents(_SelfPtr,
+                                                                        propertyName,
+                                                                        out var year,
+                                                                        out var month,
+                                                                        out var day,
+                                                                        out var hour,
+                                                                        out var minute,
+                                                                        out var second,
+                                                                        out var milli,
+                                                                        out var weekDay);
+                    TDMSErrorException.ThrowIfError(success,
+                                                    $"Failed to GetChannelPropertyTimestampComponents, Key:[{propertyName}]");
+                    var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
+
+                    return (true, dt.ToDateTime());
+                }
+                case TDMSDataType.UInt8:
+                    {
+                        var result = Marshal.AllocHGlobal(sizeof(byte));
+                        success = DDC.GetChannelProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
+                        TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                        byte value = Marshal.ReadByte(result);
+                        Marshal.FreeHGlobal(result);
+
+                        return (true, value);
+                    }
+                case TDMSDataType.Int16:
+                    {
+                        var result = Marshal.AllocHGlobal(sizeof(short));
+                        success = DDC.GetChannelProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
+                        TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                        short value = Marshal.ReadInt16(result);
+                        Marshal.FreeHGlobal(result);
+
+                        return (true, value);
+                    }
+                case TDMSDataType.Int32:
+                    {
+                        var result = Marshal.AllocHGlobal(sizeof(int));
+                        success = DDC.GetChannelProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
+                        TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                        int value = Marshal.ReadInt32(result);
+                        Marshal.FreeHGlobal(result);
+
+                        return (true, value);
+                    }
+
+                case TDMSDataType.Float:
+                    {
+                        var result = Marshal.AllocHGlobal(sizeof(float));
+                        success = DDC.GetChannelProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
+                        TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                        float value = Marshal.PtrToStructure<float>(result);
+                        Marshal.FreeHGlobal(result);
+
+                        return (true, value);
+                    }
+
+                case TDMSDataType.Double:
+                    {
+                        var result = Marshal.AllocHGlobal(sizeof(double));
+                        success = DDC.GetChannelProperty(_SelfPtr, propertyName, result, (UIntPtr)0);
+                        TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                        double value = Marshal.PtrToStructure<double>(result);
+                        Marshal.FreeHGlobal(result);
+
+                        return (true, value);
+                    }
+                default: throw new ArgumentOutOfRangeException();
+            }
+
+            return (false, null);
         }
+        */
 
         /// <inheritdoc />
         public override bool PropertyExists(string propertyName)

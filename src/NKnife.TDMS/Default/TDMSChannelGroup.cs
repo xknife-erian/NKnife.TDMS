@@ -98,11 +98,57 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
+        protected override TDMSDataType GetPropertyType(string propertyName)
+        {
+            var success = DDC.GetChannelGroupPropertyType(_SelfPtr, propertyName, out var type);
+            TDMSErrorException.ThrowIfError(success, "Failed to get property type");
+
+            return type;
+        }
+
+        /// <inheritdoc />
+        protected override uint GetStringPropertyLength(string propertyName)
+        {
+            var success = DDC.GetChannelGroupStringPropertyLength(_SelfPtr, propertyName, out var length);
+            TDMSErrorException.ThrowIfError(success,
+                                            $"Failed to get ChannelGroup string property length, Key:[{propertyName}]");
+
+            return length;
+        }
+
+        /// <inheritdoc />
+        protected override void GetPropertyInternal(string propertyName, IntPtr result, uint length)
+        {
+            var success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, result, (UIntPtr)length);
+            TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+        }
+
+        /// <inheritdoc />
+        protected override DateTime GetPropertyTimestampComponents(string propertyName)
+        {
+            var success = DDC.GetChannelGroupPropertyTimestampComponents(_SelfPtr,
+                                                                     propertyName,
+                                                                     out var year,
+                                                                     out var month,
+                                                                     out var day,
+                                                                     out var hour,
+                                                                     out var minute,
+                                                                     out var second,
+                                                                     out var milli,
+                                                                     out var weekDay);
+            TDMSErrorException.ThrowIfError(success,
+                                            $"Failed to GetChannelGroupPropertyTimestampComponents, Key:[{propertyName}]");
+            var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
+            return dt.ToDateTime();
+        }
+
+        /// <inheritdoc />
         public override void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
         {
             throw new NotImplementedException();
         }
 
+        /*
         /// <inheritdoc />
         public override (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
         {
@@ -124,14 +170,12 @@ namespace NKnife.TDMS.Default
                     var ptr = Marshal.StringToHGlobalAnsi(new string(new char[length + 1]));
 
                     success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, ptr, (UIntPtr)(length + 1));
-                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
+                    TDMSErrorException.ThrowIfError(success, $"Failed to GetChannelGroupProperty, Key:[{propertyName}]");
 
                     var result = Marshal.PtrToStringAnsi(ptr);
 
                     if(result == null)
                         return (false, null);
-
-                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
 
                     return (true, result.TrimEnd('\0'));
                 }
@@ -148,7 +192,7 @@ namespace NKnife.TDMS.Default
                                                                              out var milli,
                                                                              out var weekDay);
                     TDMSErrorException.ThrowIfError(success,
-                                                    $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
+                                                    $"Failed to GetChannelGroupPropertyTimestampComponents, Key:[{propertyName}]");
                     var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
 
                     return (true, dt.ToDateTime());
@@ -215,6 +259,7 @@ namespace NKnife.TDMS.Default
 
             return (false, null);
         }
+        */
 
         /// <inheritdoc />
         public override bool PropertyExists(string propertyName)
