@@ -13,7 +13,7 @@ namespace NKnife.TDMS.Default
             return _SelfPtr;
         }
 
-        #region Implementation of ITDMSNodePropertyOperation
+        #region Implementation of ITDMSLevelPropertyOperation
         /// <inheritdoc />
         public abstract void AddOrUpdateProperty<T>(string propertyName, T propertyValue);
 
@@ -28,11 +28,31 @@ namespace NKnife.TDMS.Default
         #endregion
 
         #region Implementation of ITDMSLevel
-        /// <inheritdoc />
-        public abstract string Name { get; }
+
+        private string _name;
+        private string _description;
+
+        protected void SetNameAndDescription()
+        {
+            var result = GetProperty(Constants.DDC_LEVEL_NAME, out _);
+
+            if(!result.Success)
+                throw new TDMSErrorException("Failed to retrieve the default 'name' property.");
+
+            _name = result.PropertyValue.ToString();
+
+            result = GetProperty(Constants.DDC_LEVEL_DESCRIPTION, out _);
+
+            if(!result.Success)
+                throw new TDMSErrorException("Failed to retrieve the default 'description' property.");
+            _description = result.PropertyValue.ToString();
+        }
 
         /// <inheritdoc />
-        public abstract string Description { get; }
+        public string Name => _name;
+
+        /// <inheritdoc />
+        public string Description => _description;
 
         /// <inheritdoc />
         public abstract bool Close();
@@ -57,6 +77,8 @@ namespace NKnife.TDMS.Default
         #endregion
 
         #region Implementation of IDisposable
+        protected bool _IsClosed = false;
+
         ~BaseTDMSLevel()
         {
             Dispose(false);
@@ -64,22 +86,22 @@ namespace NKnife.TDMS.Default
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_SelfPtr != IntPtr.Zero)
+            if(_SelfPtr != IntPtr.Zero)
             {
-                ManualCloseNode();
-                _SelfPtr = IntPtr.Zero;
+                _IsClosed = ManualCloseNode();
+                _SelfPtr  = IntPtr.Zero;
             }
 
-            if (disposing)
+            if(disposing)
             {
                 // 释放托管资源
             }
         }
 
         /// <summary>
-        ///    手动关闭节点相关的资源。
+        ///    手动关闭节点相关的资源。本方法会被<see cref="Dispose"/>方法调用。
         /// </summary>
-        protected abstract void ManualCloseNode();
+        protected abstract bool ManualCloseNode();
 
         public void Dispose()
         {

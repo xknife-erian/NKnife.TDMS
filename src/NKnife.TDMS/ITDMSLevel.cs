@@ -2,7 +2,7 @@
 
 namespace NKnife.TDMS
 {
-    public interface ITDMSLevel : ITDMSNodePropertyOperation, IDisposable
+    public interface ITDMSLevel : ITDMSLevelPropertyOperation, IDisposable
     {
         string Name { get; }
         string Description { get; }

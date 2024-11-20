@@ -150,7 +150,6 @@ namespace UnitTests.NKnife.TDMS
                 dt.Second.Should().Be(src.Second);
                 dt.Millisecond.Should().Be(src.Millisecond);
             }
-
             File.Delete(fileInfo.FilePath);
         }
     }

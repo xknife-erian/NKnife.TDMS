@@ -66,16 +66,16 @@ namespace NKnife.TDMS.Default
         }
 
         #region Implementation of ITDMSLevel
-        /// <inheritdoc />
-        public override string Name { get; }
-
-        /// <inheritdoc />
-        public override string Description { get; }
 
         /// <inheritdoc />
         public override bool Close()
         {
-            throw new NotImplementedException();
+            if (!_IsClosed)
+            {
+                var success = DDC.CloseChannel(_SelfPtr);
+                TDMSErrorException.ThrowIfError(success, $"Failed to CloseChannel.");
+            }
+            return _IsClosed = true;
         }
 
         /// <inheritdoc />
@@ -112,9 +112,9 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        protected override void ManualCloseNode()
+        protected override bool ManualCloseNode()
         {
-            throw new NotImplementedException();
+            return Close();
         }
 
         /// <inheritdoc />

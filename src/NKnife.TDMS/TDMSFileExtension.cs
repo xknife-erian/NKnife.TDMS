@@ -7,14 +7,14 @@ namespace NKnife.TDMS
 {
     public static class TDMSFileExtension
     {
-        public static void SetFileName(this ITDMSFile file, string name)
+        public static void SetLevelName(this ITDMSLevel level, string name)
         {
-            file.AddOrUpdateProperty(Constants.DDC_FILE_NAME, name);
+            level.AddOrUpdateProperty(Constants.DDC_FILE_NAME, name);
         }
 
-        public static void SetFileDescription(this ITDMSFile file, string name)
+        public static void SetLevelDescription(this ITDMSLevel level, string name)
         {
-            file.AddOrUpdateProperty(Constants.DDC_FILE_DESCRIPTION, name);
+            level.AddOrUpdateProperty(Constants.DDC_FILE_DESCRIPTION, name);
         }
 
         public static void SetFileTitle(this ITDMSFile file, string name)

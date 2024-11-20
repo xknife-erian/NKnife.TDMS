@@ -5,7 +5,7 @@ namespace NKnife.TDMS
     /// <summary>
     /// 自定义标量属性的操作接口
     /// </summary>
-    public interface ITDMSNodePropertyOperation
+    public interface ITDMSLevelPropertyOperation
     {
         /// <summary>
         ///     增加属性（如果属性已经存在，则更新属性值）

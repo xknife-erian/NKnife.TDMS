@@ -11,6 +11,7 @@ namespace NKnife.TDMS.Default
         public TDMSChannelGroup(IntPtr groupPtr)
         {
             _SelfPtr = groupPtr;
+            SetNameAndDescription();
         }
 
         public ITDMSChannel AddChannel(TDMSDataType dataType, string channelName, string unit, string description)
@@ -44,36 +45,17 @@ namespace NKnife.TDMS.Default
         }
 
         #region Implementation of ITDMSLevel
-        /// <inheritdoc />
-        public override string Name
-        {
-            get
-            {
-                var name = GetProperty(Constants.DDC_CHANNEL_GROUP_NAME, out _);
-                if (!name.Success)
-                    throw new TDMSErrorException("Failed to retrieve the default 'name' property.");
-
-                return name.PropertyValue.ToString();
-            }
-        }
-
-        /// <inheritdoc />
-        public override string Description
-        {
-            get
-            {
-                var desc = GetProperty(Constants.DDC_CHANNEL_GROUP_DESCRIPTION, out _);
-                if (!desc.Success)
-                    throw new TDMSErrorException("Failed to retrieve the default 'description' property.");
-
-                return desc.PropertyValue.ToString();
-            }
-        }
 
         /// <inheritdoc />
         public override bool Close()
         {
-            throw new NotImplementedException();
+            if (!_IsClosed)
+            {
+                var success = DDC.CloseChannelGroup(_SelfPtr);
+                TDMSErrorException.ThrowIfError(success, $"Failed to CloseChannelGroup");
+            }
+
+            return _IsClosed = true;
         }
 
         /// <inheritdoc />
@@ -110,9 +92,9 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        protected override void ManualCloseNode()
+        protected override bool ManualCloseNode()
         {
-            throw new NotImplementedException();
+            return Close();
         }
 
         /// <inheritdoc />

@@ -49,11 +49,13 @@ namespace NKnife.TDMS.Default
                     fileInfo.DateTime = (DateTime)result.PropertyValue;
 
                 result = GetProperty(Constants.DDC_FILE_NAME, out _);
-                if (result.Success)
+
+                if(result.Success)
                     fileInfo.Name = (string)result.PropertyValue;
 
                 result = GetProperty(Constants.DDC_FILE_DESCRIPTION, out _);
-                if (result.Success)
+
+                if(result.Success)
                     fileInfo.Description = (string)result.PropertyValue;
 
                 result = GetProperty(Constants.DDC_FILE_TITLE, out _);
@@ -64,6 +66,7 @@ namespace NKnife.TDMS.Default
                 if (result.Success)
                     fileInfo.Author = (string)result.PropertyValue;
 
+                SetNameAndDescription();
                 return success == 0;
             }
         }
@@ -90,9 +93,6 @@ namespace NKnife.TDMS.Default
         public bool Create(TDMSFileInfo fileInfo)
         {
             FileInfo = fileInfo;
-
-
-
             var success = DDC.CreateFile(FileInfo.FilePath,
                                          FileInfo.FileType,
                                          FileInfo.Name,
@@ -101,11 +101,15 @@ namespace NKnife.TDMS.Default
                                          FileInfo.Author,
                                          out var filePtr);
             TDMSErrorException.ThrowIfError(success, $"Failed to create file:[{FileInfo.FilePath}][{FileInfo.FileType}]");
+            
             _SelfPtr = filePtr;
-            //添加文件创建时间
-            AddOrUpdateProperty(Constants.DDC_FILE_DATETIME, FileInfo.DateTime);
+            
+            SetNameAndDescription();
+            AddOrUpdateProperty(Constants.DDC_FILE_DATETIME, FileInfo.DateTime);//即将存储，添加文件创建时间
+
             var isSave = Save();
-            Thread.Sleep(6);//持久化到硬盘需要一些时间，略做等待
+            Thread.Sleep(6); //持久化到硬盘需要一些时间，略做等待
+
             return success == 0 && isSave;
         }
 
@@ -201,34 +205,13 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public override bool Close()
         {
-            var success = DDC.CloseFile(_SelfPtr);
-            return success == 0;
-        }
-
-        /// <inheritdoc />
-        public override string Name
-        {
-            get
+            if(!_IsClosed)
             {
-                var name = GetProperty(Constants.DDC_FILE_NAME, out _);
-                if(!name.Success)
-                    throw new TDMSErrorException("Failed to retrieve the default 'name' property.");
-
-                return name.PropertyValue.ToString();
+                var success = DDC.CloseFile(_SelfPtr);
+                TDMSErrorException.ThrowIfError(success, "Failed to CloseFile");
             }
-        }
 
-        /// <inheritdoc />
-        public override string Description
-        {
-            get
-            {
-                var desc = GetProperty(Constants.DDC_FILE_DESCRIPTION, out _);
-                if (!desc.Success)
-                    throw new TDMSErrorException("Failed to retrieve the default 'description' property.");
-
-                return desc.PropertyValue.ToString();
-            }
+            return _IsClosed = true;
         }
 
         /// <inheritdoc />
@@ -258,7 +241,7 @@ namespace NKnife.TDMS.Default
             return new TDMSChannelGroup(groupPtr);
         }
 
-        #region Implementation of ITDMSNodePropertyOperation
+        #region Implementation of ITDMSLevelPropertyOperation
 
         /// <inheritdoc />
         public override void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
@@ -516,23 +499,26 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public override bool Contains(string levelName)
+        public override bool Contains(string groupName)
         {
             var count = ChildCount;
-            if (count == 0)
+
+            if(count == 0)
                 return false;
 
             var channelGroupsBuffer = new IntPtr[count];
-            var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)count);
+
+            var success = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)count);
             TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
 
             foreach (var intPtr in channelGroupsBuffer)
             {
                 using var group = new TDMSChannelGroup(intPtr);
-                var       name  = group.GetProperty(Constants.DDC_FILE_NAME, out var dataType);
 
-                if(name.Success
-                   && (string)name.PropertyValue == levelName)
+                var propertyGetter = group.GetProperty(Constants.DDC_FILE_NAME, out var dataType);
+
+                if(propertyGetter.Success
+                   && (string)propertyGetter.PropertyValue == groupName)
                 {
                     return true;
                 }
@@ -542,12 +528,12 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public override bool TryGetItem(string levelName, out ITDMSLevel level)
+        public override bool TryGetItem(string groupName, out ITDMSLevel level)
         {
-            var has = Contains(levelName);
+            var has = Contains(groupName);
             if(has)
             {
-                level = this[levelName];
+                level = this[groupName];
                 return true;
             }
             level = null;
@@ -555,9 +541,9 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public override bool Remove(string levelName)
+        public override bool Remove(string groupName)
         {
-            var group = this[levelName];
+            var group = this[groupName];
 
             if(group is TDMSChannelGroup groupIn)
             {
@@ -583,10 +569,15 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        protected override void ManualCloseNode()
+        protected override bool ManualCloseNode()
         {
-            var success = DDC.CloseFile(_SelfPtr);
-            TDMSErrorException.ThrowIfError(success, "Failed to close file");
+            if(!_IsClosed)
+            {
+                var success = DDC.CloseFile(_SelfPtr);
+                TDMSErrorException.ThrowIfError(success, "Failed to close file");
+            }
+
+            return _IsClosed = true;
         }
         #endregion
     }
