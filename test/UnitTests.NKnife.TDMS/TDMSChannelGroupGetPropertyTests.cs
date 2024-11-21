@@ -20,7 +20,7 @@ namespace UnitTests.NKnife.TDMS
             var group = file.AddGroup("Group1");
 
             // Act
-            group.AddOrUpdateProperty(propertyName, propertyValue);
+            group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
@@ -44,7 +44,7 @@ namespace UnitTests.NKnife.TDMS
             var group = file.AddGroup("Group1");
 
             // Act
-            group.AddOrUpdateProperty(propertyName, propertyValue);
+            group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
@@ -68,7 +68,7 @@ namespace UnitTests.NKnife.TDMS
             var group = file.AddGroup("Group1");
 
             // Act
-            group.AddOrUpdateProperty(propertyName, propertyValue);
+            group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
@@ -92,7 +92,7 @@ namespace UnitTests.NKnife.TDMS
             var group = file.AddGroup("Group1");
 
             // Act
-            group.AddOrUpdateProperty(propertyName, propertyValue);
+            group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
@@ -116,7 +116,7 @@ namespace UnitTests.NKnife.TDMS
             var group = file.AddGroup("Group1");
 
             // Act
-            group.AddOrUpdateProperty(propertyName, propertyValue);
+            group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
@@ -140,7 +140,7 @@ namespace UnitTests.NKnife.TDMS
             var group = file.AddGroup("Group1");
 
             // Act
-            group.AddOrUpdateProperty(propertyName, propertyValue);
+            group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
@@ -164,7 +164,7 @@ namespace UnitTests.NKnife.TDMS
             var group = file.AddGroup("Group1");
 
             // Act
-            group.AddOrUpdateProperty(propertyName, propertyValue);
+            group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);

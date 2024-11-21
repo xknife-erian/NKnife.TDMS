@@ -19,7 +19,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue);
+            file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
@@ -42,7 +42,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue1);
+            file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
@@ -51,7 +51,7 @@ namespace UnitTests.NKnife.TDMS
             value.Should().Be(propertyValue1);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue2);
+            file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
             (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
@@ -73,7 +73,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue1);
+            file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
@@ -82,7 +82,7 @@ namespace UnitTests.NKnife.TDMS
             value.Should().Be(propertyValue1);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue2);
+            file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
             (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
@@ -103,7 +103,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue);
+            file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
@@ -125,7 +125,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue);
+            file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
@@ -147,7 +147,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue);
+            file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
@@ -169,7 +169,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue);
+            file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
@@ -191,7 +191,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue);
+            file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
@@ -214,7 +214,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue);
+            file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
@@ -243,10 +243,10 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName1, propertyValue1);
-            file.AddOrUpdateProperty(propertyName2, propertyValue2);
-            file.AddOrUpdateProperty(propertyName3, propertyValue3);
-            file.AddOrUpdateProperty(propertyName4, propertyValue4);
+            file.CreateOrUpdateProperty(propertyName1, propertyValue1);
+            file.CreateOrUpdateProperty(propertyName2, propertyValue2);
+            file.CreateOrUpdateProperty(propertyName3, propertyValue3);
+            file.CreateOrUpdateProperty(propertyName4, propertyValue4);
 
             // Assert
             var (success1, value1) = file.TryGetProperty(propertyName1, out TODO, out var type1);
@@ -279,7 +279,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue1);
+            file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
@@ -289,7 +289,7 @@ namespace UnitTests.NKnife.TDMS
             type1.Should().Be(TDMSDataType.UInt8);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue2);
+            file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
             (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
@@ -312,7 +312,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue1);
+            file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
@@ -322,7 +322,7 @@ namespace UnitTests.NKnife.TDMS
             type1.Should().Be(TDMSDataType.Int16);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue2);
+            file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
             (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
@@ -345,7 +345,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue1);
+            file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
@@ -355,7 +355,7 @@ namespace UnitTests.NKnife.TDMS
             type1.Should().Be(TDMSDataType.Int32);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue2);
+            file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
             (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
@@ -378,7 +378,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue1);
+            file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
@@ -388,7 +388,7 @@ namespace UnitTests.NKnife.TDMS
             type1.Should().Be(TDMSDataType.Float);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue2);
+            file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
             (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
@@ -411,7 +411,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue1);
+            file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
@@ -421,7 +421,7 @@ namespace UnitTests.NKnife.TDMS
             type1.Should().Be(TDMSDataType.Double);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue2);
+            file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
             (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
@@ -444,7 +444,7 @@ namespace UnitTests.NKnife.TDMS
             file.Open(fileInfo);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue1);
+            file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
             var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
@@ -454,7 +454,7 @@ namespace UnitTests.NKnife.TDMS
             type1.Should().Be(TDMSDataType.Timestamp);
 
             // Act
-            file.AddOrUpdateProperty(propertyName, propertyValue2);
+            file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
             (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);

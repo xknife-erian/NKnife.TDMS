@@ -102,53 +102,16 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        protected override uint GetStringPropertyLength(string propertyName)
-        {
-            var success = DDC.GetChannelGroupStringPropertyLength(_SelfPtr, propertyName, out var length);
-            TDMSErrorException.ThrowIfError(success,
-                                            $"Failed to get ChannelGroup string property length, Key:[{propertyName}]");
-
-            return length;
-        }
-
-        /// <inheritdoc />
-        protected override void GetPropertyInternal(string propertyName, IntPtr result, uint length)
-        {
-            if (length > 0) //如果长度为0，说明不是字符串类型
-                length++;   //HACK: 为了兼容字符串类型，长度+1
-            var success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, result, (UIntPtr)length);
-            TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-        }
-
-        /// <inheritdoc />
-        protected override DateTime GetPropertyTimestampComponents(string propertyName)
-        {
-            var success = DDC.GetChannelGroupPropertyTimestampComponents(_SelfPtr,
-                                                                     propertyName,
-                                                                     out var year,
-                                                                     out var month,
-                                                                     out var day,
-                                                                     out var hour,
-                                                                     out var minute,
-                                                                     out var second,
-                                                                     out var milli,
-                                                                     out var weekDay);
-            TDMSErrorException.ThrowIfError(success,
-                                            $"Failed to GetChannelGroupPropertyTimestampComponents, Key:[{propertyName}]");
-            var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
-            return dt.ToDateTime();
-        }
-
-        /// <inheritdoc />
-        public override void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
+        public override void CreateOrUpdateProperty<T>(string propertyName, T propertyValue)
         {
             if(!PropertyExists(propertyName))
-                AddProperty(propertyName, propertyValue);
+                CreateProperty(propertyName, propertyValue);
             else
                 UpdateProperty(propertyName, propertyValue);
         }
-
-        private void AddProperty<T>(string propertyName, T propertyValue)
+        
+        /// <inheritdoc />
+        protected override void CreateProperty<T>(string propertyName, T propertyValue)
         {
             int success;
 
@@ -206,7 +169,8 @@ namespace NKnife.TDMS.Default
             }
         }
 
-        private void UpdateProperty<T>(string propertyName, T propertyValue)
+        /// <inheritdoc />
+        protected override void UpdateProperty<T>(string propertyName, T propertyValue)
         {
             int success;
 
@@ -262,6 +226,71 @@ namespace NKnife.TDMS.Default
                 default:
                     throw new ArgumentException("Unsupported property value type");
             }
+        }
+
+        /// <inheritdoc />
+        protected override T GetProperty<T>(string propertyName)
+        {
+            var dataType = typeof(T).ToDataType();
+
+            switch (dataType)
+            {
+                case TDMSDataType.String:
+                    var length    = GetStringPropertyLength(propertyName);
+                    var charArray = new char[length];
+                    var success = DDC.GetChannelGroupPropertyString(_SelfPtr, propertyName, charArray, (UIntPtr)length);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                    return new string(charArray);
+            }
+        }
+        
+        protected void GetPropertyInternal(string propertyName, IntPtr result, uint length)
+        {
+            if (length > 0) //如果长度为0，说明不是字符串类型
+                length++;   //HACK: 为了兼容字符串类型，长度+1
+            var success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, result, (UIntPtr)length);
+            TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+        }
+
+        protected uint GetStringPropertyLength(string propertyName)
+        {
+            var success = DDC.GetChannelGroupStringPropertyLength(_SelfPtr, propertyName, out var length);
+            TDMSErrorException.ThrowIfError(success,
+                                            $"Failed to get ChannelGroup string property length, Key:[{propertyName}]");
+
+            return length;
+        }
+        
+        /// <inheritdoc />
+        protected override DateTime GetPropertyTimestampComponents(string propertyName)
+        {
+            var success = DDC.GetChannelGroupPropertyTimestampComponents(_SelfPtr,
+                                                                         propertyName,
+                                                                         out var year,
+                                                                         out var month,
+                                                                         out var day,
+                                                                         out var hour,
+                                                                         out var minute,
+                                                                         out var second,
+                                                                         out var milli,
+                                                                         out var weekDay);
+            TDMSErrorException.ThrowIfError(success,
+                                            $"Failed to GetChannelGroupPropertyTimestampComponents, Key:[{propertyName}]");
+            var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
+            return dt.ToDateTime();
+        }
+
+        /// <inheritdoc />
+        protected override void UpdatePropertyTimestampComponents(string propertyName, DateTime dateTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        protected override void CreatePropertyTimestampComponents(string propertyName, DateTime dateTime)
+        {
+            throw new NotImplementedException();
         }
 
         /*

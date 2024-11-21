@@ -45,7 +45,7 @@ namespace UnitTests.NKnife.TDMS
             tdmsFile.Open(fileInfo);
 
             string propertyName = "TestProperty";
-            tdmsFile.AddOrUpdateProperty(propertyName, "SomeValue");
+            tdmsFile.CreateOrUpdateProperty(propertyName, "SomeValue");
 
             // Act
             bool exists = tdmsFile.PropertyExists(propertyName);
@@ -63,8 +63,8 @@ namespace UnitTests.NKnife.TDMS
             tdmsFile.Open(fileInfo);
 
             var expectedPropertyNames = new List<string> { "Property1", "Property2" };
-            tdmsFile.AddOrUpdateProperty("Property1", "Value1");
-            tdmsFile.AddOrUpdateProperty("Property2", "Value2");
+            tdmsFile.CreateOrUpdateProperty("Property1", "Value1");
+            tdmsFile.CreateOrUpdateProperty("Property2", "Value2");
 
             // Act
             var propertyNames = tdmsFile.GetPropertyNames();

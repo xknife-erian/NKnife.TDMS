@@ -148,7 +148,7 @@ namespace UnitTests.NKnife.TDMS
             // Act
             DDC.CreateChannelGroupProperty(group.GetPtr(), "test", TDMSDataType.String, new RuntimeArgumentHandle());
 
-            group.AddOrUpdateProperty(propertyName, propertyValue);
+            group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
             var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);

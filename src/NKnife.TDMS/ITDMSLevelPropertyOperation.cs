@@ -12,7 +12,7 @@ namespace NKnife.TDMS
         /// </summary>
         /// <param name="propertyName">属性名</param>
         /// <param name="propertyValue">属性值</param>
-        void AddOrUpdateProperty<T>(string propertyName, T propertyValue);
+        void CreateOrUpdateProperty<T>(string propertyName, T propertyValue);
 
         /// <summary>
         ///     属性是否存在
@@ -30,9 +30,8 @@ namespace NKnife.TDMS
         ///     获取属性
         /// </summary>
         /// <param name="propertyName">属性名</param>
-        /// <param name="propertyValue"></param>
-        /// <param name="dataType">属性的类型</param>
+        /// <param name="propertyValue">输出：属性值</param>
         /// <returns>属性值获取是否成功，如成功，元数据包含属性值</returns>
-        bool TryGetProperty<T>(string propertyName, out T propertyValue, out TDMSDataType dataType);
+        bool TryGetProperty<T>(string propertyName, out T propertyValue);
     }
 }

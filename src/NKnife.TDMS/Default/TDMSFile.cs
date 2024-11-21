@@ -1,10 +1,9 @@
-﻿using NKnife.TDMS.Common;
-using NKnife.TDMS.Externals;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using NKnife.TDMS.Common;
+using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS.Default
 {
@@ -19,6 +18,7 @@ namespace NKnife.TDMS.Default
         {
             var success = DDC.SaveFile(_SelfPtr);
             TDMSErrorException.ThrowIfError(success, "Failed to save file");
+
             return success == 0;
         }
 
@@ -26,6 +26,7 @@ namespace NKnife.TDMS.Default
         public bool Open(string filePath)
         {
             var tdmsFileInfo = new TDMSFileInfo(filePath);
+
             return Open(tdmsFileInfo);
         }
 
@@ -36,39 +37,31 @@ namespace NKnife.TDMS.Default
             {
                 return Create(fileInfo);
             }
-            else
-            {
-                FileInfo = fileInfo;
-                var success = DDC.OpenFile(fileInfo.FilePath, fileInfo.FileType, out var filePtr);
-                TDMSErrorException.ThrowIfError(success, $"Failed to open file:{fileInfo.FilePath},Type:{fileInfo.FileType}");
 
-                _SelfPtr = filePtr;
+            FileInfo = fileInfo;
+            var success = DDC.OpenFile(fileInfo.FilePath, fileInfo.FileType, out var filePtr);
+            TDMSErrorException.ThrowIfError(success, $"Failed to open file:{fileInfo.FilePath},Type:{fileInfo.FileType}");
 
-                var result = TryGetProperty(Constants.DDC_FILE_DATETIME, out TODO, out _);
-                if (result.Success)
-                    fileInfo.DateTime = (DateTime)result.PropertyValue;
+            _SelfPtr = filePtr;
 
-                result = TryGetProperty(Constants.DDC_FILE_NAME, out TODO, out _);
+            if(TryGetProperty<DateTime>(Constants.DDC_FILE_DATETIME, out var dateTime))
+                fileInfo.DateTime = dateTime;
 
-                if(result.Success)
-                    fileInfo.Name = (string)result.PropertyValue;
+            if(TryGetProperty(Constants.DDC_FILE_NAME, out string name))
+                fileInfo.Name = name;
 
-                result = TryGetProperty(Constants.DDC_FILE_DESCRIPTION, out TODO, out _);
+            if(TryGetProperty(Constants.DDC_FILE_DESCRIPTION, out string desc))
+                fileInfo.Description = desc;
 
-                if(result.Success)
-                    fileInfo.Description = (string)result.PropertyValue;
+            if(TryGetProperty(Constants.DDC_FILE_TITLE, out string title))
+                fileInfo.Title = title;
 
-                result = TryGetProperty(Constants.DDC_FILE_TITLE, out TODO, out _);
-                if (result.Success)
-                    fileInfo.Title = (string)result.PropertyValue;
+            if(TryGetProperty(Constants.DDC_FILE_AUTHOR, out string author))
+                fileInfo.Author = author;
 
-                result = TryGetProperty(Constants.DDC_FILE_AUTHOR, out TODO, out _);
-                if (result.Success)
-                    fileInfo.Author = (string)result.PropertyValue;
+            SetNameAndDescription();
 
-                SetNameAndDescription();
-                return success == 0;
-            }
+            return success == 0;
         }
 
         /// <inheritdoc />
@@ -86,6 +79,7 @@ namespace NKnife.TDMS.Default
                 Title       = title,
                 Author      = author
             };
+
             return Create(tdmsFileInfo);
         }
 
@@ -101,11 +95,11 @@ namespace NKnife.TDMS.Default
                                          FileInfo.Author,
                                          out var filePtr);
             TDMSErrorException.ThrowIfError(success, $"Failed to create file:[{FileInfo.FilePath}][{FileInfo.FileType}]");
-            
+
             _SelfPtr = filePtr;
-            
+
             SetNameAndDescription();
-            AddOrUpdateProperty(Constants.DDC_FILE_DATETIME, FileInfo.DateTime);//即将存储，添加文件创建时间
+            CreateOrUpdateProperty(Constants.DDC_FILE_DATETIME, FileInfo.DateTime); //即将存储，添加文件创建时间
 
             var isSave = Save();
             Thread.Sleep(6); //持久化到硬盘需要一些时间，略做等待
@@ -118,13 +112,13 @@ namespace NKnife.TDMS.Default
         {
             get
             {
-                if (index < 0)
+                if(index < 0)
                     throw new ArgumentOutOfRangeException(nameof(index), "Index must be greater than or equal to 0");
                 var channelGroupsBuffer = new IntPtr[ChildCount];
-                var success = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)ChildCount);
+                var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)ChildCount);
                 TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
 
-                if (index >= channelGroupsBuffer.Length)
+                if(index >= channelGroupsBuffer.Length)
                     throw new ArgumentOutOfRangeException(nameof(index), "Index must be less than the number of channel groups");
                 var groupPtr = channelGroupsBuffer[index];
 
@@ -137,22 +131,23 @@ namespace NKnife.TDMS.Default
         {
             get
             {
-                if (string.IsNullOrEmpty(groupName))
+                if(string.IsNullOrEmpty(groupName))
                     throw new ArgumentNullException(nameof(groupName), "Group name cannot be null or empty");
 
                 var channelGroupsBuffer = new IntPtr[ChildCount];
-                var success = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)ChildCount);
+                var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)ChildCount);
 
                 TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
 
                 foreach (var intPtr in channelGroupsBuffer)
                 {
                     var group = new TDMSChannelGroup(intPtr);
-                    var name = group.TryGetProperty(Constants.DDC_FILE_NAME, out TODO, out var dataType);
 
-                    if (name.Success && (string)name.PropertyValue != groupName)
+                    if(group.TryGetProperty(Constants.DDC_FILE_NAME, out string name)
+                       && name != groupName)
                     {
                         group.Dispose();
+
                         continue;
                     }
 
@@ -179,24 +174,19 @@ namespace NKnife.TDMS.Default
 
         private void GetDefaultPropertyToDictionary(string key, Dictionary<string, string> dict)
         {
-            var property = TryGetProperty(key, out TODO, out var type);
-
-            if (property.Success)
+            if(key == Constants.DDC_FILE_DATETIME)
             {
-                if (key != Constants.DDC_FILE_DATETIME)
+                if(TryGetProperty(key, out DateTime dateTime))
                 {
-                    dict.Add(key, property.PropertyValue.ToString());
-                }
-                else
-                {
-                    var dt = (DateTime)property.PropertyValue;
-                    dict.Add(key, $"{dt:O}");
+                    dict.Add(key, dateTime.ToString("O"));
                 }
             }
             else
             {
-                throw new TDMSErrorException($"Failed to get default property [{key}]",
-                                             new InvalidOperationException("Property not found"));
+                if(TryGetProperty(key, out string propertyValue))
+                {
+                    dict.Add(key, propertyValue);
+                }
             }
         }
         #endregion
@@ -220,7 +210,7 @@ namespace NKnife.TDMS.Default
             get
             {
                 var success = DDC.CountChannelGroups(_SelfPtr, out var count);
-                TDMSErrorException.ThrowIfError(success, "查询通道组数量异常");
+                TDMSErrorException.ThrowIfError(success, "Failed to query the number of channel groups");
 
                 return count;
             }
@@ -229,10 +219,11 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public ITDMSChannelGroup AddGroup(string groupName, string description = "")
         {
-            if (string.IsNullOrEmpty(groupName))
-                throw new TDMSErrorException("Channel group name cannot be null or empty", new ArgumentNullException(nameof(groupName)));
+            if(string.IsNullOrEmpty(groupName))
+                throw new TDMSErrorException("Channel group name cannot be null or empty",
+                                             new ArgumentNullException(nameof(groupName)));
 
-            if (Contains(groupName))
+            if(Contains(groupName))
                 return null;
 
             var success = DDC.AddChannelGroup(_SelfPtr, groupName, description, out var groupPtr);
@@ -242,17 +233,22 @@ namespace NKnife.TDMS.Default
         }
 
         #region Implementation of ITDMSLevelPropertyOperation
+        /// <inheritdoc />
+        protected override void CreatePropertyTimestampComponents(string propertyName, DateTime dateTime)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <inheritdoc />
-        public override void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
+        public override void CreateOrUpdateProperty<T>(string propertyName, T propertyValue)
         {
             if(!PropertyExists(propertyName))
-                AddProperty(propertyName, propertyValue);
+                CreateProperty(propertyName, propertyValue);
             else
                 UpdateProperty(propertyName, propertyValue);
         }
 
-        private void AddProperty<T>(string propertyName, T propertyValue)
+        protected override void CreateProperty<T>(string propertyName, T propertyValue)
         {
             int success;
 
@@ -268,7 +264,7 @@ namespace NKnife.TDMS.Default
                     success = DDC.CreateFilePropertyUInt8(_SelfPtr, propertyName, byteValue);
                     TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyUInt8");
 
-                    break;      
+                    break;
                 case short shortValue:
                     success = DDC.CreateFilePropertyInt16(_SelfPtr, propertyName, shortValue);
                     TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyInt16");
@@ -310,7 +306,7 @@ namespace NKnife.TDMS.Default
             }
         }
 
-        private void UpdateProperty<T>(string propertyName, T propertyValue)
+        protected override void UpdateProperty<T>(string propertyName, T propertyValue)
         {
             int success;
 
@@ -319,7 +315,8 @@ namespace NKnife.TDMS.Default
                 case string stringValue:
                     stringValue = $"{stringValue}+";
                     success     = DDC.SetFilePropertyString(_SelfPtr, propertyName, stringValue);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to SetFilePropertyString, KEY:[{propertyName}]; VALUE:[{propertyValue}]");
+                    TDMSErrorException.ThrowIfError(success,
+                                                    $"Failed to SetFilePropertyString, KEY:[{propertyName}]; VALUE:[{propertyValue}]");
 
                     break;
                 case byte byteValue:
@@ -369,6 +366,13 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
+        protected override T GetProperty<T>(string propertyName)
+        {
+            var success = DDC.GetFileProperty(_SelfPtr, propertyName, result, (UIntPtr)length);
+            TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
+        }
+
+        /// <inheritdoc />
         public override string[] GetPropertyNames()
         {
             var success = DDC.CountFileProperties(_SelfPtr, out var count);
@@ -406,38 +410,37 @@ namespace NKnife.TDMS.Default
             return type;
         }
 
-        /// <inheritdoc />
-        protected override uint GetStringPropertyLength(string propertyName)
+        protected uint GetStringPropertyLength(string propertyName)
         {
             var success = DDC.GetFileStringPropertyLength(_SelfPtr, propertyName, out var length);
             TDMSErrorException.ThrowIfError(success, $"Failed to get file string property length, Key:[{propertyName}]");
-            return length;
-        }
 
-        /// <inheritdoc />
-        protected override void GetPropertyInternal(string propertyName, IntPtr result, uint length)
-        {
-            var success = DDC.GetFileProperty(_SelfPtr, propertyName, result, (UIntPtr)length);
-            TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
+            return length;
         }
 
         /// <inheritdoc />
         protected override DateTime GetPropertyTimestampComponents(string propertyName)
         {
             var success = DDC.GetFilePropertyTimestampComponents(_SelfPtr,
-                                                             propertyName,
-                                                             out var year,
-                                                             out var month,
-                                                             out var day,
-                                                             out var hour,
-                                                             out var minute,
-                                                             out var second,
-                                                             out var milli,
-                                                             out var weekDay);
+                                                                 propertyName,
+                                                                 out var year,
+                                                                 out var month,
+                                                                 out var day,
+                                                                 out var hour,
+                                                                 out var minute,
+                                                                 out var second,
+                                                                 out var milli,
+                                                                 out var weekDay);
             TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
             var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
 
             return dt.ToDateTime();
+        }
+
+        /// <inheritdoc />
+        protected override void UpdatePropertyTimestampComponents(string propertyName, DateTime dateTime)
+        {
+            throw new NotImplementedException();
         }
 
         /*
@@ -523,7 +526,6 @@ namespace NKnife.TDMS.Default
 
             return (false, null);
         }*/
-
         #endregion
 
         /// <inheritdoc />
@@ -559,13 +561,9 @@ namespace NKnife.TDMS.Default
             {
                 using var group = new TDMSChannelGroup(intPtr);
 
-                var propertyGetter = group.TryGetProperty(Constants.DDC_FILE_NAME, out TODO, out var dataType);
-
-                if(propertyGetter.Success
-                   && (string)propertyGetter.PropertyValue == groupName)
-                {
+                if(group.TryGetProperty(Constants.DDC_FILE_NAME, out string name)
+                   && name == groupName)
                     return true;
-                }
             }
 
             return false;
@@ -575,12 +573,16 @@ namespace NKnife.TDMS.Default
         public override bool TryGetItem(string groupName, out ITDMSLevel level)
         {
             var has = Contains(groupName);
+
             if(has)
             {
                 level = this[groupName];
+
                 return true;
             }
+
             level = null;
+
             return false;
         }
 
@@ -623,7 +625,6 @@ namespace NKnife.TDMS.Default
 
             return _IsClosed = true;
         }
-
         #endregion
     }
 }

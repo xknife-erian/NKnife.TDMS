@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.ComponentModel;
 using NKnife.TDMS.Common;
-using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS.Default
 {
-    abstract class BaseTDMSLevel : ITDMSLevel
+    internal abstract class BaseTDMSLevel : ITDMSLevel
     {
         protected IntPtr _SelfPtr;
 
@@ -14,9 +13,21 @@ namespace NKnife.TDMS.Default
             return _SelfPtr;
         }
 
+        #region protected abstract
+        protected abstract TDMSDataType GetPropertyType(string propertyName);
+
+        protected abstract void UpdateProperty<T>(string propertyName, T value);
+        protected abstract void CreateProperty<T>(string propertyName, T value);
+        protected abstract T GetProperty<T>(string propertyName);
+
+        protected abstract DateTime GetPropertyTimestampComponents(string propertyName);
+        protected abstract void UpdatePropertyTimestampComponents(string propertyName, DateTime dateTime);
+        protected abstract void CreatePropertyTimestampComponents(string propertyName, DateTime dateTime);
+        #endregion
+
         #region Implementation of ITDMSLevelPropertyOperation
         /// <inheritdoc />
-        public abstract void AddOrUpdateProperty<T>(string propertyName, T propertyValue);
+        public abstract void CreateOrUpdateProperty<T>(string propertyName, T propertyValue);
 
         /// <inheritdoc />
         public abstract bool PropertyExists(string propertyName);
@@ -25,123 +36,66 @@ namespace NKnife.TDMS.Default
         public abstract string[] GetPropertyNames();
 
         /// <inheritdoc />
-        public virtual bool TryGetProperty<T>(string propertyName, out T propertyValue, out TDMSDataType dataType)
+        public virtual bool TryGetProperty<T>(string propertyName, out T propertyValue)
         {
-            var has = PropertyExists(propertyName);
-
-            if(has)
+            if(!PropertyExists(propertyName))
             {
-                propertyValue = default(T);
-                dataType      = TDMSDataType.UnDefine;
-
+                propertyValue = default;
                 return false;
             }
 
-            dataType = GetPropertyType(propertyName);
+            var dataType = typeof(T).ToDataType();
 
             switch (dataType)
             {
-                case TDMSDataType.String:
-                {
-                    var result = GetPropertyInternal<T>(propertyName);
-                    propertyValue = result;
-
-                    return true;
-
-                }
                 case TDMSDataType.Timestamp:
                 {
                     var dateTime = GetPropertyTimestampComponents(propertyName);
+                    propertyValue = (T)Convert.ChangeType(dateTime, typeof(T));
 
-                    return (true, dateTime);
+                    return true;
                 }
+                case TDMSDataType.String:
                 case TDMSDataType.UInt8:
-                {
-                    var result = Marshal.AllocHGlobal(sizeof(byte));
-                    GetPropertyInternal(propertyName, result, 0);
-
-                    byte value = Marshal.ReadByte(result);
-                    Marshal.FreeHGlobal(result);
-
-                    return (true, value);
-                }
                 case TDMSDataType.Int16:
-                {
-                    var result = Marshal.AllocHGlobal(sizeof(short));
-                    GetPropertyInternal(propertyName, result, 0);
-
-                    short value = Marshal.ReadInt16(result);
-                    Marshal.FreeHGlobal(result);
-
-                    return (true, value);
-                }
                 case TDMSDataType.Int32:
-                {
-                    var result = Marshal.AllocHGlobal(sizeof(int));
-                    GetPropertyInternal(propertyName, result, 0);
-
-                    int value = Marshal.ReadInt32(result);
-                    Marshal.FreeHGlobal(result);
-
-                    return (true, value);
-                }
-
+                case TDMSDataType.Double:
                 case TDMSDataType.Float:
                 {
-                    var result = Marshal.AllocHGlobal(sizeof(float));
-                    GetPropertyInternal(propertyName, result, 0);
-
-                    float value = Marshal.PtrToStructure<float>(result);
-                    Marshal.FreeHGlobal(result);
-
-                    return (true, value);
+                    propertyValue = GetProperty<T>(propertyName);
+                    return true;
                 }
-
-                case TDMSDataType.Double:
-                {
-                    var result = Marshal.AllocHGlobal(sizeof(double));
-                    GetPropertyInternal(propertyName, result, 0);
-
-                    double value = Marshal.PtrToStructure<double>(result);
-                    Marshal.FreeHGlobal(result);
-
-                    return (true, value);
-                }
-                default: throw new ArgumentOutOfRangeException();
+                case TDMSDataType.UnDefine:
+                default:
+                    throw new InvalidEnumArgumentException();
             }
 
-            return (false, null);
+            return false;
         }
         #endregion
 
         #region Implementation of ITDMSLevel
-
-        private string _name;
-        private string _description;
-
         protected void SetNameAndDescription()
         {
-            _name = GetDefaultProperty(Constants.DDC_LEVEL_NAME);
-            _description = GetDefaultProperty(Constants.DDC_LEVEL_DESCRIPTION);
+            Name        = GetDefaultProperty(Constants.DDC_LEVEL_NAME);
+            Description = GetDefaultProperty(Constants.DDC_LEVEL_DESCRIPTION);
         }
 
-        /// <summary>
-        ///    快速获取层级的默认属性值
-        /// </summary>
+        /// <summary> 快速获取层级的默认属性值 </summary>
         protected string GetDefaultProperty(string propertyName)
         {
-            var propertyResult = TryGetProperty(propertyName, out TODO, out _);
+            var has = TryGetProperty<string>(propertyName, out var propertyValue);
 
-            if(!propertyResult.Success)
-                throw new TDMSErrorException($"Failed to retrieve the default '{propertyName}' property.");
-            return propertyResult.PropertyValue.ToString();
+            if(!has) throw new TDMSErrorException($"Failed to retrieve the default '{propertyName}' property.");
+
+            return propertyValue;
         }
 
         /// <inheritdoc />
-        public string Name => _name;
+        public string Name { get; private set; }
 
         /// <inheritdoc />
-        public string Description => _description;
+        public string Description { get; private set; }
 
         /// <inheritdoc />
         public abstract bool Close();
@@ -166,7 +120,7 @@ namespace NKnife.TDMS.Default
         #endregion
 
         #region Implementation of IDisposable
-        protected bool _IsClosed = false;
+        protected bool _IsClosed;
 
         ~BaseTDMSLevel()
         {
@@ -188,7 +142,7 @@ namespace NKnife.TDMS.Default
         }
 
         /// <summary>
-        ///    手动关闭节点相关的资源。本方法会被<see cref="Dispose"/>方法调用。
+        ///     手动关闭节点相关的资源。本方法会被<see cref="Dispose" />方法调用。
         /// </summary>
         protected abstract bool ManualCloseNode();
 
@@ -198,15 +152,5 @@ namespace NKnife.TDMS.Default
             GC.SuppressFinalize(this);
         }
         #endregion
-
-        protected abstract TDMSDataType GetPropertyType(string propertyName);
-
-        protected abstract T GetPropertyInternal<T>(string propertyName);
-        protected abstract void UpdatePropertyInternal<T>(string propertyName, T value);
-        protected abstract void CreatePropertyInternal<T>(string propertyName, T value);
-
-        protected abstract DateTime GetPropertyTimestampComponents(string propertyName);
-        protected abstract void UpdatePropertyTimestampComponents(string propertyName, DateTime dateTime);
-        protected abstract void CreatePropertyTimestampComponents(string propertyName, DateTime dateTime);
     }
 }

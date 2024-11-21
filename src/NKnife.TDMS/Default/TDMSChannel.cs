@@ -137,19 +137,19 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        protected override T GetPropertyInternal<T>(string propertyName)
+        protected override T GetProperty<T>(string propertyName)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        protected override void UpdatePropertyInternal<T>(string propertyName, T value)
+        protected override void UpdateProperty<T>(string propertyName, T value)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        protected override void CreatePropertyInternal<T>(string propertyName, T value)
+        protected override void CreateProperty<T>(string propertyName, T value)
         {
             throw new NotImplementedException();
         }
@@ -204,7 +204,7 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public override void AddOrUpdateProperty<T>(string propertyName, T propertyValue)
+        public override void CreateOrUpdateProperty<T>(string propertyName, T propertyValue)
         {
             throw new NotImplementedException();
         }

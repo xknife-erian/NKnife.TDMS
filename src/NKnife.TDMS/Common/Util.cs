@@ -5,11 +5,11 @@ using System.Text;
 
 namespace NKnife.TDMS.Common
 {
-    internal class Util
+    internal static class Util
     {
         public static TDMSDataType GetTDMSDataType<T>()
         {
-            var dataType  = Common.TDMSDataType.String;
+            var dataType = Common.TDMSDataType.String;
             var inputType = typeof(T);
             if (inputType == typeof(byte))
             {
@@ -74,6 +74,42 @@ namespace NKnife.TDMS.Common
             {
                 // 如果在处理过程中抛出异常，如路径太长等，也视为无效路径
                 return false;
+            }
+        }
+
+        public static TDMSDataType ToDataType(this Type type)
+        {
+            if(type == typeof(string))
+            {
+                return Common.TDMSDataType.String;
+            }
+            else if(type == typeof(byte))
+            {
+                return Common.TDMSDataType.UInt8;
+            }
+            else if(type == typeof(short))
+            {
+                return Common.TDMSDataType.Int16;
+            }
+            else if(type == typeof(int))
+            {
+                return Common.TDMSDataType.Int32;
+            }
+            else if(type == typeof(float))
+            {
+                return Common.TDMSDataType.Float;
+            }
+            else if(type == typeof(double))
+            {
+                return Common.TDMSDataType.Double;
+            }
+            else if(type == typeof(DateTime))
+            {
+                return Common.TDMSDataType.Timestamp;
+            }
+            else
+            {
+                throw new TDMSErrorException("Unsupported data type.");
             }
         }
     }
