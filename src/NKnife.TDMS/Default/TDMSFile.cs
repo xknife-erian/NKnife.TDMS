@@ -44,25 +44,25 @@ namespace NKnife.TDMS.Default
 
                 _SelfPtr = filePtr;
 
-                var result = GetProperty(Constants.DDC_FILE_DATETIME, out _);
+                var result = TryGetProperty(Constants.DDC_FILE_DATETIME, out TODO, out _);
                 if (result.Success)
                     fileInfo.DateTime = (DateTime)result.PropertyValue;
 
-                result = GetProperty(Constants.DDC_FILE_NAME, out _);
+                result = TryGetProperty(Constants.DDC_FILE_NAME, out TODO, out _);
 
                 if(result.Success)
                     fileInfo.Name = (string)result.PropertyValue;
 
-                result = GetProperty(Constants.DDC_FILE_DESCRIPTION, out _);
+                result = TryGetProperty(Constants.DDC_FILE_DESCRIPTION, out TODO, out _);
 
                 if(result.Success)
                     fileInfo.Description = (string)result.PropertyValue;
 
-                result = GetProperty(Constants.DDC_FILE_TITLE, out _);
+                result = TryGetProperty(Constants.DDC_FILE_TITLE, out TODO, out _);
                 if (result.Success)
                     fileInfo.Title = (string)result.PropertyValue;
 
-                result = GetProperty(Constants.DDC_FILE_AUTHOR, out _);
+                result = TryGetProperty(Constants.DDC_FILE_AUTHOR, out TODO, out _);
                 if (result.Success)
                     fileInfo.Author = (string)result.PropertyValue;
 
@@ -148,7 +148,7 @@ namespace NKnife.TDMS.Default
                 foreach (var intPtr in channelGroupsBuffer)
                 {
                     var group = new TDMSChannelGroup(intPtr);
-                    var name = group.GetProperty(Constants.DDC_FILE_NAME, out var dataType);
+                    var name = group.TryGetProperty(Constants.DDC_FILE_NAME, out TODO, out var dataType);
 
                     if (name.Success && (string)name.PropertyValue != groupName)
                     {
@@ -179,7 +179,7 @@ namespace NKnife.TDMS.Default
 
         private void GetDefaultPropertyToDictionary(string key, Dictionary<string, string> dict)
         {
-            var property = GetProperty(key, out var type);
+            var property = TryGetProperty(key, out TODO, out var type);
 
             if (property.Success)
             {
@@ -559,7 +559,7 @@ namespace NKnife.TDMS.Default
             {
                 using var group = new TDMSChannelGroup(intPtr);
 
-                var propertyGetter = group.GetProperty(Constants.DDC_FILE_NAME, out var dataType);
+                var propertyGetter = group.TryGetProperty(Constants.DDC_FILE_NAME, out TODO, out var dataType);
 
                 if(propertyGetter.Success
                    && (string)propertyGetter.PropertyValue == groupName)

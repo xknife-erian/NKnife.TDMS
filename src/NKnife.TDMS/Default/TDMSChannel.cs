@@ -19,12 +19,7 @@ namespace NKnife.TDMS.Default
 
         private void SetUnit()
         {
-            var result = GetProperty(Constants.DDC_CHANNEL_UNIT_STRING, out _);
-
-            if (!result.Success)
-                throw new TDMSErrorException("Failed to retrieve the default 'unit' property.");
-
-            _unit = result.PropertyValue.ToString();
+            _unit = GetDefaultProperty(Constants.DDC_CHANNEL_UNIT_STRING);
         }
 
         #region Implementation of ITDMSChannel
@@ -142,7 +137,24 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        protected override uint GetStringPropertyLength(string propertyName)
+        protected override T GetPropertyInternal<T>(string propertyName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        protected override void UpdatePropertyInternal<T>(string propertyName, T value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        protected override void CreatePropertyInternal<T>(string propertyName, T value)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected uint GetStringPropertyLength(string propertyName)
         {
             var success = DDC.GetChannelStringPropertyLength(_SelfPtr, propertyName, out var length);
             TDMSErrorException.ThrowIfError(success,
@@ -151,8 +163,7 @@ namespace NKnife.TDMS.Default
             return length;
         }
 
-        /// <inheritdoc />
-        protected override void GetPropertyInternal(string propertyName, IntPtr result, uint length)
+        protected void GetPropertyInternal(string propertyName, IntPtr result, uint length)
         {
             if(length > 0)//如果长度为0，说明不是字符串类型
                 length++; //HACK: 为了兼容字符串类型，长度+1
@@ -178,6 +189,18 @@ namespace NKnife.TDMS.Default
             var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
 
             return dt.ToDateTime();
+        }
+
+        /// <inheritdoc />
+        protected override void UpdatePropertyTimestampComponents(string propertyName, DateTime dateTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        protected override void CreatePropertyTimestampComponents(string propertyName, DateTime dateTime)
+        {
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />

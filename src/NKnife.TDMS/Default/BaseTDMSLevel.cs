@@ -25,87 +25,88 @@ namespace NKnife.TDMS.Default
         public abstract string[] GetPropertyNames();
 
         /// <inheritdoc />
-        public virtual (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType)
+        public virtual bool TryGetProperty<T>(string propertyName, out T propertyValue, out TDMSDataType dataType)
         {
+            var has = PropertyExists(propertyName);
+
+            if(has)
+            {
+                propertyValue = default(T);
+                dataType      = TDMSDataType.UnDefine;
+
+                return false;
+            }
+
             dataType = GetPropertyType(propertyName);
 
             switch (dataType)
             {
                 case TDMSDataType.String:
-                    {
-                        var length = GetStringPropertyLength(propertyName);
+                {
+                    var result = GetPropertyInternal<T>(propertyName);
+                    propertyValue = result;
 
-                        if (length <= 0) //存在属性，但是值为空
-                            return (true, string.Empty);
+                    return true;
 
-                        var ptr = Marshal.StringToHGlobalAnsi(new string(new char[length + 1]));
-
-                        GetPropertyInternal(propertyName, ptr, length);
-
-                        var result = Marshal.PtrToStringAnsi(ptr);
-
-                        if (result == null)
-                            return (false, null);
-
-                        return (true, result.TrimEnd('\0'));
-                    }
+                }
                 case TDMSDataType.Timestamp:
-                    {
-                        var dateTime = GetPropertyTimestampComponents(propertyName);
-                        return (true, dateTime);
-                    }
+                {
+                    var dateTime = GetPropertyTimestampComponents(propertyName);
+
+                    return (true, dateTime);
+                }
                 case TDMSDataType.UInt8:
-                    {
-                        var result = Marshal.AllocHGlobal(sizeof(byte));
-                        GetPropertyInternal(propertyName, result, 0);
+                {
+                    var result = Marshal.AllocHGlobal(sizeof(byte));
+                    GetPropertyInternal(propertyName, result, 0);
 
-                        byte value = Marshal.ReadByte(result);
-                        Marshal.FreeHGlobal(result);
+                    byte value = Marshal.ReadByte(result);
+                    Marshal.FreeHGlobal(result);
 
-                        return (true, value);
-                    }
+                    return (true, value);
+                }
                 case TDMSDataType.Int16:
-                    {
-                        var result = Marshal.AllocHGlobal(sizeof(short));
-                        GetPropertyInternal(propertyName, result, 0);
+                {
+                    var result = Marshal.AllocHGlobal(sizeof(short));
+                    GetPropertyInternal(propertyName, result, 0);
 
-                        short value = Marshal.ReadInt16(result);
-                        Marshal.FreeHGlobal(result);
+                    short value = Marshal.ReadInt16(result);
+                    Marshal.FreeHGlobal(result);
 
-                        return (true, value);
-                    }
+                    return (true, value);
+                }
                 case TDMSDataType.Int32:
-                    {
-                        var result = Marshal.AllocHGlobal(sizeof(int));
-                        GetPropertyInternal(propertyName, result, 0);
+                {
+                    var result = Marshal.AllocHGlobal(sizeof(int));
+                    GetPropertyInternal(propertyName, result, 0);
 
-                        int value = Marshal.ReadInt32(result);
-                        Marshal.FreeHGlobal(result);
+                    int value = Marshal.ReadInt32(result);
+                    Marshal.FreeHGlobal(result);
 
-                        return (true, value);
-                    }
+                    return (true, value);
+                }
 
                 case TDMSDataType.Float:
-                    {
-                        var result = Marshal.AllocHGlobal(sizeof(float));
-                        GetPropertyInternal(propertyName, result, 0);
+                {
+                    var result = Marshal.AllocHGlobal(sizeof(float));
+                    GetPropertyInternal(propertyName, result, 0);
 
-                        float value = Marshal.PtrToStructure<float>(result);
-                        Marshal.FreeHGlobal(result);
+                    float value = Marshal.PtrToStructure<float>(result);
+                    Marshal.FreeHGlobal(result);
 
-                        return (true, value);
-                    }
+                    return (true, value);
+                }
 
                 case TDMSDataType.Double:
-                    {
-                        var result = Marshal.AllocHGlobal(sizeof(double));
-                        GetPropertyInternal(propertyName, result, 0);
+                {
+                    var result = Marshal.AllocHGlobal(sizeof(double));
+                    GetPropertyInternal(propertyName, result, 0);
 
-                        double value = Marshal.PtrToStructure<double>(result);
-                        Marshal.FreeHGlobal(result);
+                    double value = Marshal.PtrToStructure<double>(result);
+                    Marshal.FreeHGlobal(result);
 
-                        return (true, value);
-                    }
+                    return (true, value);
+                }
                 default: throw new ArgumentOutOfRangeException();
             }
 
@@ -120,18 +121,20 @@ namespace NKnife.TDMS.Default
 
         protected void SetNameAndDescription()
         {
-            var result = GetProperty(Constants.DDC_LEVEL_NAME, out _);
+            _name = GetDefaultProperty(Constants.DDC_LEVEL_NAME);
+            _description = GetDefaultProperty(Constants.DDC_LEVEL_DESCRIPTION);
+        }
 
-            if(!result.Success)
-                throw new TDMSErrorException("Failed to retrieve the default 'name' property.");
+        /// <summary>
+        ///    快速获取层级的默认属性值
+        /// </summary>
+        protected string GetDefaultProperty(string propertyName)
+        {
+            var propertyResult = TryGetProperty(propertyName, out TODO, out _);
 
-            _name = result.PropertyValue.ToString();
-
-            result = GetProperty(Constants.DDC_LEVEL_DESCRIPTION, out _);
-
-            if(!result.Success)
-                throw new TDMSErrorException("Failed to retrieve the default 'description' property.");
-            _description = result.PropertyValue.ToString();
+            if(!propertyResult.Success)
+                throw new TDMSErrorException($"Failed to retrieve the default '{propertyName}' property.");
+            return propertyResult.PropertyValue.ToString();
         }
 
         /// <inheritdoc />
@@ -197,8 +200,13 @@ namespace NKnife.TDMS.Default
         #endregion
 
         protected abstract TDMSDataType GetPropertyType(string propertyName);
-        protected abstract uint GetStringPropertyLength(string propertyName);
-        protected abstract void GetPropertyInternal(string propertyName, IntPtr result, uint length);
+
+        protected abstract T GetPropertyInternal<T>(string propertyName);
+        protected abstract void UpdatePropertyInternal<T>(string propertyName, T value);
+        protected abstract void CreatePropertyInternal<T>(string propertyName, T value);
+
         protected abstract DateTime GetPropertyTimestampComponents(string propertyName);
+        protected abstract void UpdatePropertyTimestampComponents(string propertyName, DateTime dateTime);
+        protected abstract void CreatePropertyTimestampComponents(string propertyName, DateTime dateTime);
     }
 }

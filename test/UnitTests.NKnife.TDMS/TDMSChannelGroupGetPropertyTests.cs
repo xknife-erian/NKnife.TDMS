@@ -23,7 +23,7 @@ namespace UnitTests.NKnife.TDMS
             group.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.GetProperty(propertyName, out var type);
+            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -47,7 +47,7 @@ namespace UnitTests.NKnife.TDMS
             group.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.GetProperty(propertyName, out var type);
+            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -71,7 +71,7 @@ namespace UnitTests.NKnife.TDMS
             group.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.GetProperty(propertyName, out var type);
+            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -95,7 +95,7 @@ namespace UnitTests.NKnife.TDMS
             group.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.GetProperty(propertyName, out var type);
+            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -119,7 +119,7 @@ namespace UnitTests.NKnife.TDMS
             group.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.GetProperty(propertyName, out var type);
+            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -143,7 +143,7 @@ namespace UnitTests.NKnife.TDMS
             group.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.GetProperty(propertyName, out var type);
+            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -167,7 +167,7 @@ namespace UnitTests.NKnife.TDMS
             group.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.GetProperty(propertyName, out var type);
+            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);

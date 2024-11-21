@@ -22,7 +22,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -45,7 +45,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type1);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -54,7 +54,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.GetProperty(propertyName, out var type2);
+            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
         }
@@ -76,7 +76,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type1);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -85,7 +85,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.GetProperty(propertyName, out var type2);
+            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
         }
@@ -106,7 +106,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -128,7 +128,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -150,7 +150,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -172,7 +172,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -194,7 +194,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -217,7 +217,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -249,10 +249,10 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName4, propertyValue4);
 
             // Assert
-            var (success1, value1) = file.GetProperty(propertyName1, out var type1);
-            var (success2, value2) = file.GetProperty(propertyName2, out var type2);
-            var (success3, value3) = file.GetProperty(propertyName3, out var type3);
-            var (success4, value4) = file.GetProperty(propertyName4, out var type4);
+            var (success1, value1) = file.TryGetProperty(propertyName1, out TODO, out var type1);
+            var (success2, value2) = file.TryGetProperty(propertyName2, out TODO, out var type2);
+            var (success3, value3) = file.TryGetProperty(propertyName3, out TODO, out var type3);
+            var (success4, value4) = file.TryGetProperty(propertyName4, out TODO, out var type4);
 
             success1.Should().BeTrue();
             value1.Should().Be(propertyValue1);
@@ -282,7 +282,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type1);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -292,7 +292,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.GetProperty(propertyName, out var type2);
+            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
             type2.Should().Be(TDMSDataType.UInt8);
@@ -315,7 +315,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type1);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -325,7 +325,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.GetProperty(propertyName, out var type2);
+            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
             type2.Should().Be(TDMSDataType.Int16);
@@ -348,7 +348,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type1);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -358,7 +358,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.GetProperty(propertyName, out var type2);
+            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
             type2.Should().Be(TDMSDataType.Int32);
@@ -381,7 +381,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type1);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -391,7 +391,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.GetProperty(propertyName, out var type2);
+            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
             type2.Should().Be(TDMSDataType.Float);
@@ -414,7 +414,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type1);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -424,7 +424,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.GetProperty(propertyName, out var type2);
+            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
             type2.Should().Be(TDMSDataType.Double);
@@ -447,7 +447,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.GetProperty(propertyName, out var type1);
+            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -457,7 +457,7 @@ namespace UnitTests.NKnife.TDMS
             file.AddOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.GetProperty(propertyName, out var type2);
+            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
             type2.Should().Be(TDMSDataType.Timestamp);

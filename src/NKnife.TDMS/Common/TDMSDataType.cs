@@ -12,6 +12,8 @@
         /// <summary>
         ///     timestamp (Year/Month/Day/Hour/Minute/Second/Millisecond components)
         /// </summary>
-        Timestamp = 30
+        Timestamp = 30,
+
+        UnDefine = 255,
     }
 }

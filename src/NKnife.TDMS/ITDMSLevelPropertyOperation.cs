@@ -30,8 +30,9 @@ namespace NKnife.TDMS
         ///     获取属性
         /// </summary>
         /// <param name="propertyName">属性名</param>
+        /// <param name="propertyValue"></param>
         /// <param name="dataType">属性的类型</param>
         /// <returns>属性值获取是否成功，如成功，元数据包含属性值</returns>
-        (bool Success, object PropertyValue) GetProperty(string propertyName, out TDMSDataType dataType);
+        bool TryGetProperty<T>(string propertyName, out T propertyValue, out TDMSDataType dataType);
     }
 }
