@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NKnife.TDMS.Default;
 
-// ReSharper disable InconsistentNaming
-
 namespace UnitTests.NKnife.TDMS
 {
-    public class TDMSFileTest_AddGroup_1
+    public class TDMSFileAddGroupTest
     {
         [Fact(DisplayName = "1. 添加1个ChannelGroup, 基本测试。")]
         public void Add_Test01()

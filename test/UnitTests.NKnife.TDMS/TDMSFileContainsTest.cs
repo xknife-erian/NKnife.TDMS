@@ -1,10 +1,9 @@
 ﻿using FluentAssertions;
 using NKnife.TDMS.Default;
-// ReSharper disable InconsistentNaming
 
 namespace UnitTests.NKnife.TDMS
 {
-    public class TDMSFileTest_Contains
+    public class TDMSFileContainsTest
     {
         [Fact(DisplayName = "1. 添加1个ChannelGroup，测试判断Group的name的property，以确认该Group是否存在。")]
         public void Contains_Test01()

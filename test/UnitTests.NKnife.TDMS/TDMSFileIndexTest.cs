@@ -1,10 +1,9 @@
 ﻿using FluentAssertions;
 using NKnife.TDMS.Default;
-// ReSharper disable InconsistentNaming
 
 namespace UnitTests.NKnife.TDMS
 {
-    public class TDMSFileTest_Index
+    public class TDMSFileIndexTest
     {
         [Fact(DisplayName = "1. 添加1个ChannelGroup，测试通过序号索引器方式获取Group。")]
         public void Indexer_Test01()

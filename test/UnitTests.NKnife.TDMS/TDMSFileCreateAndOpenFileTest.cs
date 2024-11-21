@@ -2,15 +2,14 @@
 using NKnife.TDMS;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Default;
-// ReSharper disable InconsistentNaming
 
 namespace UnitTests.NKnife.TDMS
 {
-    public class TDMSFileTest_File_1 : IClassFixture<TestFileContext>
+    public class TDMSFileCreateAndOpenFileTest : IClassFixture<TestFileContext>
     {
         private readonly TestFileContext _context;
 
-        public TDMSFileTest_File_1(TestFileContext context)
+        public TDMSFileCreateAndOpenFileTest(TestFileContext context)
         {
             _context = context;
             context.CleanFiles();

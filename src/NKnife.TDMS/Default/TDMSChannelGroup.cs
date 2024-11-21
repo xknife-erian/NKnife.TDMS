@@ -31,14 +31,12 @@ namespace NKnife.TDMS.Default
         public ITDMSChannel this[int index]
         {
             get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public ITDMSChannel this[string groupName]
         {
             get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
         }
 
         #region Implementation of ITDMSLevel

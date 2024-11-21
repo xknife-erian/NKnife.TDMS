@@ -7,14 +7,13 @@ using FluentAssertions;
 using NKnife.TDMS;
 using NKnife.TDMS.Default;
 
-// ReSharper disable InconsistentNaming
 namespace UnitTests.NKnife.TDMS
 {
-    public class TDMSFileTest_Property_2 : IClassFixture<TestFileContext>
+    public class TDMSFilePropertyTest : IClassFixture<TestFileContext>
     {
         private readonly TestFileContext _context;
 
-        public TDMSFileTest_Property_2(TestFileContext context)
+        public TDMSFilePropertyTest(TestFileContext context)
         {
             _context = context;
             context.CleanFiles();
