@@ -14,20 +14,17 @@ namespace NKnife.TDMS.Default
             SetNameAndDescription();
         }
 
-        public ITDMSChannel AddChannel(TDMSDataType dataType, string channelName, string unit, string description)
+        public ITDMSChannel AddChannel(TDMSDataType dataType,
+                                       string channelName,
+                                       string unit,
+                                       string description = "")
         {
             var success = DDC.AddChannel(_SelfPtr, dataType, channelName, description, unit, out var channelPtr);
 
             if(success == (int)Error.NoError)
-            {
-                var channel = new TDMSChannel(channelPtr);
-
-                return channel;
-            }
+                return new TDMSChannel(channelPtr);
             else
-            {
                 throw new TDMSErrorException(success, "Failed to add channel.");
-            }
         }
 
         /// <inheritdoc />
@@ -119,6 +116,8 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         protected override void GetPropertyInternal(string propertyName, IntPtr result, uint length)
         {
+            if (length > 0) //如果长度为0，说明不是字符串类型
+                length++;   //HACK: 为了兼容字符串类型，长度+1
             var success = DDC.GetChannelGroupProperty(_SelfPtr, propertyName, result, (UIntPtr)length);
             TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
         }

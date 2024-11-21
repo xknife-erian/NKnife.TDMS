@@ -14,7 +14,7 @@ namespace NKnife.TDMS
         /// <param name="unit">通道对象的单位，用字符串表达。该属性存储在通道中</param>
         /// <param name="description">通道对象的description属性值。该属性存储在通道中。</param>
         /// <returns>新通道</returns>
-        public ITDMSChannel AddChannel(TDMSDataType dataType, string channelName, string unit, string description);
+        public ITDMSChannel AddChannel(TDMSDataType dataType, string channelName, string unit, string description = "");
 
         /// <summary>
         /// 获取或设置指定索引位置的通道。

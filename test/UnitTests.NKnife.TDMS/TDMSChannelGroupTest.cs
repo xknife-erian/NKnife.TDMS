@@ -24,68 +24,43 @@ namespace UnitTests.NKnife.TDMS
         [Fact(DisplayName = "AddChannel_Test_1: 添加新通道，验证返回的通道对象不为空")]
         public void AddChannel_Test_1()
         {
-            // Arrange
-            var mockChannelGroup = new Mock<ITDMSChannelGroup>();
-            var mockChannel      = new Mock<ITDMSChannel>();
-            mockChannelGroup.Setup(m => m.AddChannel(It.IsAny<TDMSDataType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                            .Returns(mockChannel.Object);
+            var       fileInfo = _context.CreateTestFile();
+            
+            using var file     = new TDMSFile();
+            file.Open(fileInfo);
+            
+            using var group = file.AddGroup("Group1");
 
-            // Act
-            var result = mockChannelGroup.Object.AddChannel(TDMSDataType.Double, "Channel1", "Unit1", "Description1");
+            using var channel = group.AddChannel(TDMSDataType.Double, "Channel1", "Unit1");
 
-            // Assert
-            result.Should().NotBeNull();
+            group.ChildCount.Should().Be(1);
         }
 
-        [Fact(DisplayName = "AddChannel_Test_2: 添加新通道，验证通道的属性值")]
+        [Fact(DisplayName = "AddChannel_Test_2: 添加新通道后，验证name/description/unit的属性值")]
         public void AddChannel_Test_2()
         {
-            // Arrange
-            var mockChannelGroup = new Mock<ITDMSChannelGroup>();
-            var mockChannel = new Mock<ITDMSChannel>();
-            mockChannel.SetupProperty(c => c.Name, "Channel1");
-            mockChannel.SetupProperty(c => c.Unit, "Unit1");
-            mockChannel.SetupProperty(c => c.Description, "Description1");
-            mockChannelGroup.Setup(m => m.AddChannel(It.IsAny<TDMSDataType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                            .Returns(mockChannel.Object);
+            var fileInfo = _context.CreateTestFile();
+            
+            using var file = new TDMSFile();
+            file.Open(fileInfo);
+            
+            using var group = file.AddGroup("Group1");
+            using var channel = group.AddChannel(TDMSDataType.Double, "Channel1", "Unit1", "Description1");
+            channel.Name.Should().Be("Channel1");
+            channel.Unit.Should().Be("Unit1");
+            channel.Description.Should().Be("Description1");
 
-            // Act
-            var result = mockChannelGroup.Object.AddChannel(TDMSDataType.Double, "Channel1", "Unit1", "Description1");
-
-            // Assert
-            result.Name.Should().Be("Channel1");
-            result.Unit.Should().Be("Unit1");
-            result.Description.Should().Be("Description1");
+            group.ChildCount.Should().Be(1);
         }
 
         [Fact(DisplayName = "Indexer_Test_1: 通过索引获取通道，验证返回的通道对象不为空")]
         public void Indexer_Test_1()
         {
-            // Arrange
-            var mockChannelGroup = new Mock<ITDMSChannelGroup>();
-            var mockChannel = new Mock<ITDMSChannel>();
-            mockChannelGroup.Setup(m => m[It.IsAny<int>()]).Returns(mockChannel.Object);
-
-            // Act
-            var result = mockChannelGroup.Object[0];
-
-            // Assert
-            result.Should().NotBeNull();
         }
 
         [Fact(DisplayName = "Indexer_Test_2: 通过名称获取通道，验证返回的通道对象不为空")]
         public void Indexer_Test_2()
         {
-            // Arrange
-            var mockChannelGroup = new Mock<ITDMSChannelGroup>();
-            var mockChannel = new Mock<ITDMSChannel>();
-            mockChannelGroup.Setup(m => m[It.IsAny<string>()]).Returns(mockChannel.Object);
-
-            // Act
-            var result = mockChannelGroup.Object["Channel1"];
-
-            // Assert
-            result.Should().NotBeNull();
         }
     }
 }

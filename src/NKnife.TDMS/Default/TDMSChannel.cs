@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 using NKnife.TDMS.Common;
 using NKnife.TDMS.Externals;
 
@@ -7,10 +8,23 @@ namespace NKnife.TDMS.Default
 {
     internal class TDMSChannel : BaseTDMSLevel, ITDMSChannel
     {
+        private string _unit;
+
         public TDMSChannel(IntPtr channelPtr)
         {
             _SelfPtr = channelPtr;
             SetNameAndDescription();
+            SetUnit();
+        }
+
+        private void SetUnit()
+        {
+            var result = GetProperty(Constants.DDC_CHANNEL_UNIT_STRING, out _);
+
+            if (!result.Success)
+                throw new TDMSErrorException("Failed to retrieve the default 'unit' property.");
+
+            _unit = result.PropertyValue.ToString();
         }
 
         #region Implementation of ITDMSChannel
@@ -63,7 +77,7 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public string Unit { get; set; }
+        public string Unit => _unit;
         #endregion
 
         #region Implementation of ITDMSLevel

@@ -78,7 +78,7 @@ namespace UnitTests.NKnife.TDMS
             var fileInfo       = _context.CreateTestFile();
             var propertyName   = "Property1";
             var propertyValue1 = "TDMS是NI定义的一种技术数据管理解决方案";
-            var propertyValue2 = "写入可数据管理的TDMS文件?";
+            var propertyValue2 = "写\t入\r可\n数据管理的TDMS文件?\n";
 
             using var file = new TDMSFile();
             file.Open(fileInfo);
