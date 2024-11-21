@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NKnife.TDMS.Common;
+using NKnife.TDMS.Default;
 using NKnife.TDMS.Externals;
 
 namespace UnitTests.NKnife.TDMS
@@ -129,6 +130,32 @@ namespace UnitTests.NKnife.TDMS
 
             DDC.CloseFile(file);
             File.Delete(filePath);
+        }
+
+        [Fact]
+        public void CreateChannelGroupProperty_Test1()
+        {
+            // Arrange
+            using var context       = new TestFileContext();
+            var       fileInfo      = context.CreateTestFile();
+            var       propertyName  = "PropertyDouble";
+            var       propertyValue = 3.14159265359;
+
+            using var file = new TDMSFile();
+            file.Open(fileInfo);
+            var group = (TDMSChannelGroup)file.AddGroup("Group1");
+
+            // Act
+            DDC.CreateChannelGroupProperty(group.GetPtr(), "test", TDMSDataType.String, new RuntimeArgumentHandle());
+
+            group.AddOrUpdateProperty(propertyName, propertyValue);
+
+            // Assert
+            var (success, value) = group.GetProperty(propertyName, out var type);
+
+            success.Should().BeTrue();
+            value.Should().Be(propertyValue);
+            type.Should().Be(TDMSDataType.Double);
         }
     }
 }

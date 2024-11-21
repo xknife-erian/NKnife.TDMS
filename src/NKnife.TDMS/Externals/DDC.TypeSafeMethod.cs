@@ -5,7 +5,9 @@ namespace NKnife.TDMS.Externals
 {
     internal partial class DDC : DIAdemConnectivity
     {
-        #region SetData
+        #region Channel-Data
+
+        #region Set Data
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetDataValuesUInt8")]
         public static extern int SetDataValuesUInt8(IntPtr channel, byte[] values, UIntPtr numValues);
@@ -27,7 +29,7 @@ namespace NKnife.TDMS.Externals
 
         #endregion
 
-        #region Append
+        #region Append Data
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_AppendDataValuesUInt8")]
         public static extern int AppendDataValuesUInt8(IntPtr channel, byte[] values, UIntPtr numValues);
@@ -49,7 +51,7 @@ namespace NKnife.TDMS.Externals
 
         #endregion
 
-        #region Replace
+        #region Replace Data
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_ReplaceDataValuesUInt8")]
         public static extern int ReplaceDataValuesUInt8(IntPtr channel,
@@ -129,6 +131,10 @@ namespace NKnife.TDMS.Externals
 
         #endregion
 
+        #endregion
+
+        #region FileProperty
+
         #region CreateFileProperty
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateFilePropertyUInt8")]
@@ -188,6 +194,140 @@ namespace NKnife.TDMS.Externals
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetFilePropertyString")]
         public static extern int GetFilePropertyString(IntPtr file, string property, [Out] char[] value, UIntPtr valueSize);
+
+        #endregion
+
+        #endregion
+
+        #region ChannelGroupProperty
+
+        #region CreateChannelGroupProperty
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelGroupPropertyUInt8")]
+        public static extern int CreateChannelGroupPropertyUInt8(IntPtr file, string property, byte value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelGroupPropertyInt16")]
+        public static extern int CreateChannelGroupPropertyInt16(IntPtr file, string property, short value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelGroupPropertyInt32")]
+        public static extern int CreateChannelGroupPropertyInt32(IntPtr file, string property, int value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelGroupPropertyFloat")]
+        public static extern int CreateChannelGroupPropertyFloat(IntPtr file, string property, float value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelGroupPropertyDouble")]
+        public static extern int CreateChannelGroupPropertyDouble(IntPtr file, string property, double value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelGroupPropertyString")]
+        public static extern int CreateChannelGroupPropertyString(IntPtr file, string property, string value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelGroupPropertyUInt8")]
+        public static extern int SetChannelGroupPropertyUInt8(IntPtr file, string property, byte value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelGroupPropertyInt16")]
+        public static extern int SetChannelGroupPropertyInt16(IntPtr file, string property, short value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelGroupPropertyInt32")]
+        public static extern int SetChannelGroupPropertyInt32(IntPtr file, string property, int value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelGroupPropertyFloat")]
+        public static extern int SetChannelGroupPropertyFloat(IntPtr file, string property, float value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelGroupPropertyDouble")]
+        public static extern int SetChannelGroupPropertyDouble(IntPtr file, string property, double value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelGroupPropertyString")]
+        public static extern int SetChannelGroupPropertyString(IntPtr file, string property, string value);
+
+        #endregion
+
+        #region GetChannelGroupProperty
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroupPropertyUInt8")]
+        public static extern int GetChannelGroupPropertyUInt8(IntPtr file, string property, out byte value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroupPropertyInt16")]
+        public static extern int GetChannelGroupPropertyInt16(IntPtr file, string property, out short value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroupPropertyInt32")]
+        public static extern int GetChannelGroupPropertyInt32(IntPtr file, string property, out int value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroupPropertyFloat")]
+        public static extern int GetChannelGroupPropertyFloat(IntPtr file, string property, out float value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroupPropertyDouble")]
+        public static extern int GetChannelGroupPropertyDouble(IntPtr file, string property, out double value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelGroupPropertyString")]
+        public static extern int GetChannelGroupPropertyString(IntPtr file, string property, [Out] char[] value, UIntPtr valueSize);
+
+        #endregion
+
+        #endregion
+
+        #region ChannelProperty
+
+        #region CreateChannelProperty
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelPropertyUInt8")]
+        public static extern int CreateChannelPropertyUInt8(IntPtr file, string property, byte value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelPropertyInt16")]
+        public static extern int CreateChannelPropertyInt16(IntPtr file, string property, short value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelPropertyInt32")]
+        public static extern int CreateChannelPropertyInt32(IntPtr file, string property, int value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelPropertyFloat")]
+        public static extern int CreateChannelPropertyFloat(IntPtr file, string property, float value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelPropertyDouble")]
+        public static extern int CreateChannelPropertyDouble(IntPtr file, string property, double value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelPropertyString")]
+        public static extern int CreateChannelPropertyString(IntPtr file, string property, string value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelPropertyUInt8")]
+        public static extern int SetChannelPropertyUInt8(IntPtr file, string property, byte value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelPropertyInt16")]
+        public static extern int SetChannelPropertyInt16(IntPtr file, string property, short value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelPropertyInt32")]
+        public static extern int SetChannelPropertyInt32(IntPtr file, string property, int value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelPropertyFloat")]
+        public static extern int SetChannelPropertyFloat(IntPtr file, string property, float value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelPropertyDouble")]
+        public static extern int SetChannelPropertyDouble(IntPtr file, string property, double value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelPropertyString")]
+        public static extern int SetChannelPropertyString(IntPtr file, string property, string value);
+
+        #endregion
+
+        #region GetChannelProperty
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelPropertyUInt8")]
+        public static extern int GetChannelPropertyUInt8(IntPtr file, string property, out byte value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelPropertyInt16")]
+        public static extern int GetChannelPropertyInt16(IntPtr file, string property, out short value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelPropertyInt32")]
+        public static extern int GetChannelPropertyInt32(IntPtr file, string property, out int value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelPropertyFloat")]
+        public static extern int GetChannelPropertyFloat(IntPtr file, string property, out float value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelPropertyDouble")]
+        public static extern int GetChannelPropertyDouble(IntPtr file, string property, out double value);
+
+        [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_GetChannelPropertyString")]
+        public static extern int GetChannelPropertyString(IntPtr file, string property, [Out] char[] value, UIntPtr valueSize);
+
+        #endregion
 
         #endregion
     }
