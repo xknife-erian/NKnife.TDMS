@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using NKnife.TDMS.Common;
+using NKnife.TDMS.Externals;
 
 namespace NKnife.TDMS.Default
 {
@@ -18,7 +19,6 @@ namespace NKnife.TDMS.Default
 
         protected abstract void UpdateProperty<T>(string propertyName, T value);
         protected abstract void CreateProperty<T>(string propertyName, T value);
-        protected abstract T GetProperty<T>(string propertyName);
 
         protected abstract DateTime GetPropertyTimestampComponents(string propertyName);
         protected abstract void UpdatePropertyTimestampComponents(string propertyName, DateTime dateTime);
@@ -44,25 +44,96 @@ namespace NKnife.TDMS.Default
                 return false;
             }
 
-            var dataType = typeof(T).ToDataType();
+            var success = DDC.GetFilePropertyType(_SelfPtr, propertyName, out var srcDataType);
+            TDMSErrorException.ThrowIfError(success, $"Failed to get property type, Key:[{propertyName}]");
 
-            switch (dataType)
+            var type = typeof(T).ToDataType();
+
+            if(srcDataType != type)
             {
-                case TDMSDataType.Timestamp:
+                var e = new InvalidCastException($"The data type of the property '{propertyName}' is not '{type}', is '{srcDataType}'.");
+
+                throw new TDMSErrorException($"{type} is error input arg", e);
+            }
+
+            switch (type)
+            {
+                case TDMSDataType.String:
                 {
-                    var dateTime = GetPropertyTimestampComponents(propertyName);
-                    propertyValue = (T)Convert.ChangeType(dateTime, typeof(T));
+                    success = DDC.GetFileStringPropertyLength(_SelfPtr, propertyName, out var length);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get file string property length, Key:[{propertyName}]");
+
+                    var charArray = new char[length];
+                    success = DDC.GetFilePropertyString(_SelfPtr, propertyName, charArray, (UIntPtr)length);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
+
+                    propertyValue = (T)(object)new string(charArray).TrimEnd('\0');
 
                     return true;
                 }
-                case TDMSDataType.String:
                 case TDMSDataType.UInt8:
+                {
+                    success = DDC.GetFilePropertyUInt8(_SelfPtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                    propertyValue = (T)(object)value;
+
+                    return true;
+                }
                 case TDMSDataType.Int16:
+                {
+                    success = DDC.GetFilePropertyInt16(_SelfPtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                    propertyValue = (T)(object)value;
+
+                    return true;
+                }
                 case TDMSDataType.Int32:
-                case TDMSDataType.Double:
+                {
+                    success = DDC.GetFilePropertyInt32(_SelfPtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                    propertyValue = (T)(object)value;
+
+                    return true;
+                }
                 case TDMSDataType.Float:
                 {
-                    propertyValue = GetProperty<T>(propertyName);
+                    success = DDC.GetFilePropertyFloat(_SelfPtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                    propertyValue = (T)(object)value;
+
+                    return true;
+                }
+                case TDMSDataType.Double:
+                {
+                    success = DDC.GetFilePropertyDouble(_SelfPtr, propertyName, out var value);
+                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
+
+                    propertyValue = (T)(object)value;
+
+                    return true;
+                }
+                case TDMSDataType.Timestamp:
+                {
+                    success = DDC.GetFilePropertyTimestampComponents(_SelfPtr,
+                                                                     propertyName,
+                                                                     out var year,
+                                                                     out var month,
+                                                                     out var day,
+                                                                     out var hour,
+                                                                     out var minute,
+                                                                     out var second,
+                                                                     out var milli,
+                                                                     out var weekDay);
+                    TDMSErrorException.ThrowIfError(success,
+                                                    $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
+                    var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
+
+                    propertyValue = (T)(object)dt.ToDateTime();
+
                     return true;
                 }
                 case TDMSDataType.UnDefine:
