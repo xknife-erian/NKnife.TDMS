@@ -146,16 +146,13 @@ namespace UnitTests.NKnife.TDMS
             var group = (TDMSChannelGroup)file.AddGroup("Group1");
 
             // Act
-            DDC.CreateChannelGroupProperty(group.GetPtr(), "test", TDMSDataType.String, new RuntimeArgumentHandle());
-
             group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
+            var success = group.TryGetProperty(propertyName, out double value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.Double);
         }
     }
 }

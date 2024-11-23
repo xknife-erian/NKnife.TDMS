@@ -23,11 +23,10 @@ namespace UnitTests.NKnife.TDMS
             group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
+            var success = group.TryGetProperty(propertyName, out string value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.String);
         }
 
         [Fact(DisplayName = "UInt8数据属性的读取,新建属性")]
@@ -47,11 +46,10 @@ namespace UnitTests.NKnife.TDMS
             group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
+            var success = group.TryGetProperty(propertyName, out byte value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.UInt8);
         }
 
         [Fact(DisplayName = "Int16数据属性的读取,新建属性")]
@@ -71,11 +69,10 @@ namespace UnitTests.NKnife.TDMS
             group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
+            var success = group.TryGetProperty(propertyName, out short value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.Int16);
         }
 
         [Fact(DisplayName = "Int32数据属性的读取,新建属性")]
@@ -95,11 +92,10 @@ namespace UnitTests.NKnife.TDMS
             group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
+            var success = group.TryGetProperty(propertyName, out int value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.Int32);
         }
 
         [Fact(DisplayName = "Float数据属性的读取,新建属性")]
@@ -119,11 +115,10 @@ namespace UnitTests.NKnife.TDMS
             group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
+            var success = group.TryGetProperty(propertyName, out float value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.Float);
         }
 
         [Fact(DisplayName = "Double数据属性的读取,新建属性")]
@@ -143,11 +138,10 @@ namespace UnitTests.NKnife.TDMS
             group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
+            var success = group.TryGetProperty(propertyName, out double value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.Double);
         }
 
         [Fact(DisplayName = "Timestamp数据属性的读取,新建属性")]
@@ -167,11 +161,10 @@ namespace UnitTests.NKnife.TDMS
             group.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = group.TryGetProperty(propertyName, out TODO, out var type);
+            var success = group.TryGetProperty(propertyName, out DateTime value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.Timestamp);
         }
     }
 }

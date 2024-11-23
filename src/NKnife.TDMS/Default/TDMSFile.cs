@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using NKnife.TDMS.Common;
@@ -43,9 +44,10 @@ namespace NKnife.TDMS.Default
             var success = DDC.OpenFile(fileInfo.FilePath, fileInfo.FileType, out var filePtr);
             TDMSErrorException.ThrowIfError(success, $"Failed to open file:{fileInfo.FilePath},Type:{fileInfo.FileType}");
 
-            _SelfPtr = filePtr;
+            _SelfPtr         = filePtr;
+            PropertyOperator = new FilePropertyOperator(_SelfPtr);
 
-            if(TryGetProperty<DateTime>(Constants.DDC_FILE_DATETIME, out var dateTime))
+            if (TryGetProperty<DateTime>(Constants.DDC_FILE_DATETIME, out var dateTime))
                 fileInfo.DateTime = dateTime;
 
             if(TryGetProperty(Constants.DDC_FILE_NAME, out string name))
@@ -97,7 +99,8 @@ namespace NKnife.TDMS.Default
                                          out var filePtr);
             TDMSErrorException.ThrowIfError(success, $"Failed to create file:[{FileInfo.FilePath}][{FileInfo.FileType}]");
 
-            _SelfPtr = filePtr;
+            _SelfPtr         = filePtr;
+            PropertyOperator = new FilePropertyOperator(_SelfPtr);
 
             SetNameAndDescription();
             CreateOrUpdateProperty(Constants.DDC_FILE_DATETIME, FileInfo.DateTime); //即将存储，添加文件创建时间
@@ -117,7 +120,7 @@ namespace NKnife.TDMS.Default
                     throw new ArgumentOutOfRangeException(nameof(index), "Index must be greater than or equal to 0");
                 var channelGroupsBuffer = new IntPtr[ChildCount];
                 var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)ChildCount);
-                TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
+                TDMSErrorException.ThrowIfError(success, "Failed to get channels");
 
                 if(index >= channelGroupsBuffer.Length)
                     throw new ArgumentOutOfRangeException(nameof(index), "Index must be less than the number of channel groups");
@@ -138,21 +141,15 @@ namespace NKnife.TDMS.Default
                 var channelGroupsBuffer = new IntPtr[ChildCount];
                 var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)ChildCount);
 
-                TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
+                TDMSErrorException.ThrowIfError(success, "Failed to get channel groups");
 
                 foreach (var intPtr in channelGroupsBuffer)
                 {
                     var group = new TDMSChannelGroup(intPtr);
 
-                    if(group.TryGetProperty(Constants.DDC_FILE_NAME, out string name)
-                       && name != groupName)
-                    {
-                        group.Dispose();
-
-                        continue;
-                    }
-
-                    return group;
+                    if(group.Name == groupName) 
+                        return group;
+                    group.Dispose();
                 }
 
                 return null;
@@ -233,281 +230,6 @@ namespace NKnife.TDMS.Default
             return new TDMSChannelGroup(groupPtr);
         }
 
-        #region Implementation of ITDMSLevelPropertyOperation
-        /// <inheritdoc />
-        protected override void CreatePropertyTimestampComponents(string propertyName, DateTime dateTime)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override void CreateOrUpdateProperty<T>(string propertyName, T propertyValue)
-        {
-            if(!PropertyExists(propertyName))
-                CreateProperty(propertyName, propertyValue);
-            else
-                UpdateProperty(propertyName, propertyValue);
-        }
-
-        protected override void CreateProperty<T>(string propertyName, T propertyValue)
-        {
-            int success;
-
-            switch (propertyValue)
-            {
-                case string stringValue:
-                    stringValue = $"{stringValue}+";
-                    success     = DDC.CreateFilePropertyString(_SelfPtr, propertyName, stringValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyString");
-
-                    break;
-                case byte byteValue:
-                    success = DDC.CreateFilePropertyUInt8(_SelfPtr, propertyName, byteValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyUInt8");
-
-                    break;
-                case short shortValue:
-                    success = DDC.CreateFilePropertyInt16(_SelfPtr, propertyName, shortValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyInt16");
-
-                    break;
-                case int intValue:
-                    success = DDC.CreateFilePropertyInt32(_SelfPtr, propertyName, intValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyInt32");
-
-                    break;
-                case float floatValue:
-                    success = DDC.CreateFilePropertyFloat(_SelfPtr, propertyName, floatValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyFloat");
-
-                    break;
-                case double doubleValue:
-                    success = DDC.CreateFilePropertyDouble(_SelfPtr, propertyName, doubleValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyDouble");
-
-                    break;
-                case DateTime dateTimeValue:
-                {
-                    var dt = new TDMSDateTime(dateTimeValue);
-                    success = DDC.CreateFilePropertyTimestampComponents(_SelfPtr,
-                                                                        propertyName,
-                                                                        dt.Year,
-                                                                        dt.Month,
-                                                                        dt.Day,
-                                                                        dt.Hour,
-                                                                        dt.Minute,
-                                                                        dt.Second,
-                                                                        dt.MilliSecond);
-                    TDMSErrorException.ThrowIfError(success, "Failed to CreateFilePropertyTimestampComponents");
-
-                    break;
-                }
-                default:
-                    throw new ArgumentException("Unsupported property value type");
-            }
-        }
-
-        protected override void UpdateProperty<T>(string propertyName, T propertyValue)
-        {
-            int success;
-
-            switch (propertyValue)
-            {
-                case string stringValue:
-                    stringValue = $"{stringValue}+";
-                    success     = DDC.SetFilePropertyString(_SelfPtr, propertyName, stringValue);
-                    TDMSErrorException.ThrowIfError(success,
-                                                    $"Failed to SetFilePropertyString, KEY:[{propertyName}]; VALUE:[{propertyValue}]");
-
-                    break;
-                case byte byteValue:
-                    success = DDC.SetFilePropertyUInt8(_SelfPtr, propertyName, byteValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyUInt8");
-
-                    break;
-                case short shortValue:
-                    success = DDC.SetFilePropertyInt16(_SelfPtr, propertyName, shortValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyInt16");
-
-                    break;
-                case int intValue:
-                    success = DDC.SetFilePropertyInt32(_SelfPtr, propertyName, intValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyInt32");
-
-                    break;
-                case float floatValue:
-                    success = DDC.SetFilePropertyFloat(_SelfPtr, propertyName, floatValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyFloat");
-
-                    break;
-                case double doubleValue:
-                    success = DDC.SetFilePropertyDouble(_SelfPtr, propertyName, doubleValue);
-                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyDouble");
-
-                    break;
-                case DateTime dateTimeValue:
-                {
-                    var dt = new TDMSDateTime(dateTimeValue);
-                    success = DDC.SetFilePropertyTimestampComponents(_SelfPtr,
-                                                                     propertyName,
-                                                                     dt.Year,
-                                                                     dt.Month,
-                                                                     dt.Day,
-                                                                     dt.Hour,
-                                                                     dt.Minute,
-                                                                     dt.Second,
-                                                                     dt.MilliSecond);
-                    TDMSErrorException.ThrowIfError(success, "Failed to SetFilePropertyTimestampComponents");
-
-                    break;
-                }
-                default:
-                    throw new ArgumentException("Unsupported property value type");
-            }
-        }
-
-        /// <inheritdoc />
-        protected override T GetProperty<T>(string propertyName)
-        {
-            var type = typeof(T).ToDataType();
-
-            switch (type)
-            {
-                case TDMSDataType.String:
-                {
-                    var success = DDC.GetFileStringPropertyLength(_SelfPtr, propertyName, out var length);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get file string property length, Key:[{propertyName}]");
-
-                    var charArray = new char[length];
-                    success = DDC.GetFilePropertyString(_SelfPtr, propertyName, charArray, (UIntPtr)length);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
-
-                    return (T)(object)new string(charArray).TrimEnd('\0');
-                }
-                case TDMSDataType.UInt8:
-                {
-                    var success = DDC.GetFilePropertyUInt8(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    return (T)(object)value;
-                }
-                case TDMSDataType.Int16:
-                {
-                    var success = DDC.GetFilePropertyInt16(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    return (T)(object)value;
-                }
-                case TDMSDataType.Int32:
-                {
-                    var success = DDC.GetFilePropertyInt32(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    return (T)(object)value;
-                }
-                case TDMSDataType.Float:
-                {
-                    var success = DDC.GetFilePropertyFloat(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    return (T)(object)value;
-                }
-                case TDMSDataType.Double:
-                {
-                    var success = DDC.GetFilePropertyDouble(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    return (T)(object)value;
-                }
-                case TDMSDataType.Timestamp:
-                {
-                    var success = DDC.GetFilePropertyTimestampComponents(_SelfPtr,
-                                                                         propertyName,
-                                                                         out var year,
-                                                                         out var month,
-                                                                         out var day,
-                                                                         out var hour,
-                                                                         out var minute,
-                                                                         out var second,
-                                                                         out var milli,
-                                                                         out var weekDay);
-                    TDMSErrorException.ThrowIfError(success,
-                                                    $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
-                    var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
-
-                    return (T)(object)dt.ToDateTime();
-                }
-                case TDMSDataType.UnDefine:
-                default:
-                    throw new InvalidEnumArgumentException();
-            }
-        }
-
-        /// <inheritdoc />
-        public override string[] GetPropertyNames()
-        {
-            var success = DDC.CountFileProperties(_SelfPtr, out var count);
-            TDMSErrorException.ThrowIfError(success, "Failed to get property count");
-
-            var names = new IntPtr[count];
-            success = DDC.GetFilePropertyNames(_SelfPtr, names, (UIntPtr)count);
-            TDMSErrorException.ThrowIfError(success, "Failed to get property names");
-
-            var result = new string[count];
-
-            for (var i = 0; i < count; i++)
-            {
-                result[i] = Marshal.PtrToStringAnsi(names[i]);
-            }
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        public override bool PropertyExists(string propertyName)
-        {
-            var success = DDC.FilePropertyExists(_SelfPtr, propertyName, out var isExists);
-            TDMSErrorException.ThrowIfError(success, "Failed to check property exists");
-
-            return isExists == 1;
-        }
-
-        /// <inheritdoc />
-        protected override TDMSDataType GetPropertyType(string propertyName)
-        {
-            var success = DDC.GetFilePropertyType(_SelfPtr, propertyName, out var type);
-            TDMSErrorException.ThrowIfError(success, "Failed to get property type");
-
-            return type;
-        }
-
-        /// <inheritdoc />
-        protected override DateTime GetPropertyTimestampComponents(string propertyName)
-        {
-            var success = DDC.GetFilePropertyTimestampComponents(_SelfPtr,
-                                                                 propertyName,
-                                                                 out var year,
-                                                                 out var month,
-                                                                 out var day,
-                                                                 out var hour,
-                                                                 out var minute,
-                                                                 out var second,
-                                                                 out var milli,
-                                                                 out var weekDay);
-            TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
-            var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
-
-            return dt.ToDateTime();
-        }
-
-        /// <inheritdoc />
-        protected override void UpdatePropertyTimestampComponents(string propertyName, DateTime dateTime)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
         /// <inheritdoc />
         public override bool Clear()
         {
@@ -529,24 +251,11 @@ namespace NKnife.TDMS.Default
         {
             var count = ChildCount;
 
-            if(count == 0)
+            if (count == 0)
                 return false;
 
-            var channelGroupsBuffer = new IntPtr[count];
-
-            var success = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)count);
-            TDMSErrorException.ThrowIfError(success, "Failed to get channel group names");
-
-            foreach (var intPtr in channelGroupsBuffer)
-            {
-                using var group = new TDMSChannelGroup(intPtr);
-
-                if(group.TryGetProperty(Constants.DDC_FILE_NAME, out string name)
-                   && name == groupName)
-                    return true;
-            }
-
-            return false;
+            var names = PropertyOperator.GetPropertyNames();
+            return names.Any(name => name.Equals(groupName));
         }
 
         /// <inheritdoc />
@@ -569,11 +278,9 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public override bool Remove(string groupName)
         {
-            var group = this[groupName];
-
-            if(group is TDMSChannelGroup groupIn)
+            if (TryGetItem(groupName, out var group) && group is TDMSChannelGroup @in)
             {
-                var success = DDC.RemoveChannelGroup(groupIn.GetPtr());
+                var success = DDC.RemoveChannelGroup(@in.GetPtr());
                 TDMSErrorException.ThrowIfError(success, "Failed to remove channel group");
             }
 
@@ -592,18 +299,6 @@ namespace NKnife.TDMS.Default
             }
 
             return false;
-        }
-
-        /// <inheritdoc />
-        protected override bool ManualCloseNode()
-        {
-            if(!_IsClosed)
-            {
-                var success = DDC.CloseFile(_SelfPtr);
-                TDMSErrorException.ThrowIfError(success, "Failed to close file");
-            }
-
-            return _IsClosed = true;
         }
         #endregion
     }

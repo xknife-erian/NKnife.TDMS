@@ -22,7 +22,7 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
+            var success = file.TryGetProperty(propertyName, out string value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -45,7 +45,7 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
+            var success = file.TryGetProperty(propertyName, out string value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -54,7 +54,8 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
+            success = file.TryGetProperty(propertyName, out string type2);
+
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
         }
@@ -76,7 +77,7 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
+            var success = file.TryGetProperty(propertyName, out string value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
@@ -85,7 +86,7 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
+            success = file.TryGetProperty(propertyName, out string type2);
             success.Should().BeTrue();
             value.Should().Be(propertyValue2);
         }
@@ -106,7 +107,7 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
+            var success = file.TryGetProperty(propertyName, out byte value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -128,7 +129,7 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
+            var success = file.TryGetProperty(propertyName, out short value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -150,7 +151,7 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
+            var success = file.TryGetProperty(propertyName, out int value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -172,7 +173,7 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
+            var success = file.TryGetProperty(propertyName, out float value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
@@ -194,11 +195,10 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
+            var success = file.TryGetProperty(propertyName, out double value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.Double);
         }
 
         [Fact(DisplayName = "Timestamp数据属性的读取,新建属性")]
@@ -217,11 +217,10 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type);
+            var success = file.TryGetProperty(propertyName, out DateTime value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue);
-            type.Should().Be(TDMSDataType.Timestamp);
         }
 
         [Fact(DisplayName = "String数据属性的读取,新建属性,多个属性")]
@@ -249,14 +248,13 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName4, propertyValue4);
 
             // Assert
-            var (success1, value1) = file.TryGetProperty(propertyName1, out TODO, out var type1);
-            var (success2, value2) = file.TryGetProperty(propertyName2, out TODO, out var type2);
-            var (success3, value3) = file.TryGetProperty(propertyName3, out TODO, out var type3);
-            var (success4, value4) = file.TryGetProperty(propertyName4, out TODO, out var type4);
+            var success1 = file.TryGetProperty(propertyName1, out string value1);
+            var success2 = file.TryGetProperty(propertyName2, out string value2);
+            var success3 = file.TryGetProperty(propertyName3, out string value3);
+            var success4 = file.TryGetProperty(propertyName4, out string value4);
 
             success1.Should().BeTrue();
             value1.Should().Be(propertyValue1);
-            type1.Should().Be(TDMSDataType.String);
             success2.Should().BeTrue();
             value2.Should().Be(propertyValue2);
             success3.Should().BeTrue();
@@ -282,20 +280,18 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
+            var success = file.TryGetProperty(propertyName, out byte value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
-            type1.Should().Be(TDMSDataType.UInt8);
 
             // Act
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
+            success = file.TryGetProperty(propertyName, out byte value1);
             success.Should().BeTrue();
-            value.Should().Be(propertyValue2);
-            type2.Should().Be(TDMSDataType.UInt8);
+            value1.Should().Be(propertyValue2);
         }
 
         [Fact(DisplayName = "Int16数据属性的读取,更新属性")]
@@ -315,20 +311,18 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
+            var success = file.TryGetProperty(propertyName, out short value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
-            type1.Should().Be(TDMSDataType.Int16);
 
             // Act
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
+            success = file.TryGetProperty(propertyName, out short value1);
             success.Should().BeTrue();
-            value.Should().Be(propertyValue2);
-            type2.Should().Be(TDMSDataType.Int16);
+            value1.Should().Be(propertyValue2);
         }
 
         [Fact(DisplayName = "Int32数据属性的读取,更新属性")]
@@ -348,20 +342,18 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
+            var success = file.TryGetProperty(propertyName, out int value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
-            type1.Should().Be(TDMSDataType.Int32);
 
             // Act
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
+            success = file.TryGetProperty(propertyName, out int value1);
             success.Should().BeTrue();
-            value.Should().Be(propertyValue2);
-            type2.Should().Be(TDMSDataType.Int32);
+            value1.Should().Be(propertyValue2);
         }
 
         [Fact(DisplayName = "Float数据属性的读取,更新属性")]
@@ -381,20 +373,18 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
+            var success = file.TryGetProperty(propertyName, out float value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
-            type1.Should().Be(TDMSDataType.Float);
 
             // Act
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
+            success = file.TryGetProperty(propertyName, out float value1);
             success.Should().BeTrue();
-            value.Should().Be(propertyValue2);
-            type2.Should().Be(TDMSDataType.Float);
+            value1.Should().Be(propertyValue2);
         }
 
         [Fact(DisplayName = "Double数据属性的读取,更新属性")]
@@ -414,20 +404,18 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
+            var success = file.TryGetProperty(propertyName, out double value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
-            type1.Should().Be(TDMSDataType.Double);
 
             // Act
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
+            success = file.TryGetProperty(propertyName, out double value1);
             success.Should().BeTrue();
-            value.Should().Be(propertyValue2);
-            type2.Should().Be(TDMSDataType.Double);
+            value1.Should().Be(propertyValue2);
         }
 
         [Fact(DisplayName = "Timestamp数据属性的读取,更新属性")]
@@ -447,20 +435,18 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var (success, value) = file.TryGetProperty(propertyName, out TODO, out var type1);
+            var success = file.TryGetProperty(propertyName, out DateTime value);
 
             success.Should().BeTrue();
             value.Should().Be(propertyValue1);
-            type1.Should().Be(TDMSDataType.Timestamp);
 
             // Act
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            (success, value) = file.TryGetProperty(propertyName, out TODO, out var type2);
+            success = file.TryGetProperty(propertyName, out DateTime value1);
             success.Should().BeTrue();
-            value.Should().Be(propertyValue2);
-            type2.Should().Be(TDMSDataType.Timestamp);
+            value1.Should().Be(propertyValue2);
         }
     }
 }

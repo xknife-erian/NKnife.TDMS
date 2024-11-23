@@ -14,26 +14,79 @@ namespace NKnife.TDMS.Default
             return _SelfPtr;
         }
 
-        #region protected abstract
-        protected abstract TDMSDataType GetPropertyType(string propertyName);
-
-        protected abstract void UpdateProperty<T>(string propertyName, T value);
-        protected abstract void CreateProperty<T>(string propertyName, T value);
-
-        protected abstract DateTime GetPropertyTimestampComponents(string propertyName);
-        protected abstract void UpdatePropertyTimestampComponents(string propertyName, DateTime dateTime);
-        protected abstract void CreatePropertyTimestampComponents(string propertyName, DateTime dateTime);
-        #endregion
+        public PropertyOperator PropertyOperator { get; protected internal set; }
 
         #region Implementation of ITDMSLevelPropertyOperation
         /// <inheritdoc />
-        public abstract void CreateOrUpdateProperty<T>(string propertyName, T propertyValue);
+        public virtual void CreateOrUpdateProperty<T>(string propertyName, T propertyValue)
+        {
+            if (!PropertyExists(propertyName))
+                CreateProperty(propertyName, propertyValue);
+            else
+                UpdateProperty(propertyName, propertyValue);
+        }
+
+        protected virtual void CreateProperty<T>(string propertyName, T propertyValue)
+        {
+            int success;
+
+            switch (propertyValue)
+            {
+                case string stringValue:
+                    PropertyOperator.CreateStringValue(propertyName, stringValue); break;
+                case byte byteValue:
+                    PropertyOperator.CreateByteValue(propertyName, byteValue); break;
+                case short shortValue:
+                    PropertyOperator.CreateShortValue(propertyName, shortValue); break;
+                case int intValue:
+                    PropertyOperator.CreateIntValue(propertyName, intValue); break;
+                case float floatValue:
+                    PropertyOperator.CreateFloatValue(propertyName, floatValue); break;
+                case double doubleValue:
+                    PropertyOperator.CreateDoubleValue(propertyName, doubleValue); break;
+                case DateTime dateTimeValue:
+                    PropertyOperator.CreateDateTimeValue(propertyName, dateTimeValue); break;
+                default:
+                    throw new ArgumentException("Unsupported property value type");
+            }
+        }
+
+        protected virtual void UpdateProperty<T>(string propertyName, T propertyValue)
+        {
+            int success;
+
+            switch (propertyValue)
+            {
+                case string stringValue:
+                    PropertyOperator.SetStringValue(propertyName, stringValue); break;
+                case byte byteValue:
+                    PropertyOperator.SetByteValue(propertyName, byteValue); break;
+                case short shortValue:
+                    PropertyOperator.SetShortValue(propertyName, shortValue); break;
+                case int intValue:
+                    PropertyOperator.SetIntValue(propertyName, intValue); break;
+                case float floatValue:
+                    PropertyOperator.SetFloatValue(propertyName, floatValue); break;
+                case double doubleValue:
+                    PropertyOperator.SetDoubleValue(propertyName, doubleValue); break;
+                case DateTime dateTimeValue:
+                    PropertyOperator.SetDateTimeValue(propertyName, dateTimeValue); break;
+                default:
+                    throw new ArgumentException("Unsupported property value type");
+            }
+        }
 
         /// <inheritdoc />
-        public abstract bool PropertyExists(string propertyName);
+        public virtual bool PropertyExists(string propertyName)
+        {
+            return PropertyOperator.Exists(propertyName);
+        }
 
         /// <inheritdoc />
-        public abstract string[] GetPropertyNames();
+        public string[] GetPropertyNames()
+        {
+            return PropertyOperator.GetPropertyNames();
+        }
 
         /// <inheritdoc />
         public virtual bool TryGetProperty<T>(string propertyName, out T propertyValue)
@@ -60,80 +113,37 @@ namespace NKnife.TDMS.Default
             {
                 case TDMSDataType.String:
                 {
-                    success = DDC.GetFileStringPropertyLength(_SelfPtr, propertyName, out var length);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get file string property length, Key:[{propertyName}]");
-
-                    var charArray = new char[length];
-                    success = DDC.GetFilePropertyString(_SelfPtr, propertyName, charArray, (UIntPtr)length);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to GetFilePropertyString, Key:[{propertyName}]");
-
-                    propertyValue = (T)(object)new string(charArray).TrimEnd('\0');
-
+                    propertyValue = (T)(object)PropertyOperator.GetStringValue(propertyName);
                     return true;
                 }
                 case TDMSDataType.UInt8:
                 {
-                    success = DDC.GetFilePropertyUInt8(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    propertyValue = (T)(object)value;
-
+                    propertyValue = (T)(object)PropertyOperator.GetByteValue(propertyName);
                     return true;
                 }
                 case TDMSDataType.Int16:
                 {
-                    success = DDC.GetFilePropertyInt16(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    propertyValue = (T)(object)value;
-
+                    propertyValue = (T)(object)PropertyOperator.GetShortValue(propertyName);
                     return true;
                 }
                 case TDMSDataType.Int32:
                 {
-                    success = DDC.GetFilePropertyInt32(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    propertyValue = (T)(object)value;
-
+                    propertyValue = (T)(object)PropertyOperator.GetIntValue(propertyName);
                     return true;
                 }
                 case TDMSDataType.Float:
                 {
-                    success = DDC.GetFilePropertyFloat(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    propertyValue = (T)(object)value;
-
+                    propertyValue = (T)(object)PropertyOperator.GetFloatValue(propertyName);
                     return true;
                 }
                 case TDMSDataType.Double:
                 {
-                    success = DDC.GetFilePropertyDouble(_SelfPtr, propertyName, out var value);
-                    TDMSErrorException.ThrowIfError(success, $"Failed to get property value, Key:[{propertyName}]");
-
-                    propertyValue = (T)(object)value;
-
+                    propertyValue = (T)(object)PropertyOperator.GetDoubleValue(propertyName);
                     return true;
                 }
                 case TDMSDataType.Timestamp:
                 {
-                    success = DDC.GetFilePropertyTimestampComponents(_SelfPtr,
-                                                                     propertyName,
-                                                                     out var year,
-                                                                     out var month,
-                                                                     out var day,
-                                                                     out var hour,
-                                                                     out var minute,
-                                                                     out var second,
-                                                                     out var milli,
-                                                                     out var weekDay);
-                    TDMSErrorException.ThrowIfError(success,
-                                                    $"Failed to GetFilePropertyTimestampComponents, Key:[{propertyName}]");
-                    var dt = new TDMSDateTime(year, month, day, hour, minute, second, milli);
-
-                    propertyValue = (T)(object)dt.ToDateTime();
-
+                    propertyValue = (T)(object)PropertyOperator.GetDateTimeValue(propertyName);
                     return true;
                 }
                 case TDMSDataType.UnDefine:
@@ -200,9 +210,10 @@ namespace NKnife.TDMS.Default
 
         protected virtual void Dispose(bool disposing)
         {
+            PropertyOperator.Dispose();
             if(_SelfPtr != IntPtr.Zero)
             {
-                _IsClosed = ManualCloseNode();
+                _IsClosed = Close();
                 _SelfPtr  = IntPtr.Zero;
             }
 
@@ -211,11 +222,6 @@ namespace NKnife.TDMS.Default
                 // 释放托管资源
             }
         }
-
-        /// <summary>
-        ///     手动关闭节点相关的资源。本方法会被<see cref="Dispose" />方法调用。
-        /// </summary>
-        protected abstract bool ManualCloseNode();
 
         public void Dispose()
         {

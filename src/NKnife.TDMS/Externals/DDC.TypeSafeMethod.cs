@@ -155,6 +155,10 @@ namespace NKnife.TDMS.Externals
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateFilePropertyString")]
         public static extern int CreateFilePropertyString(IntPtr file, string property, string value);
 
+        #endregion
+
+        #region SetFileProperty
+
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetFilePropertyUInt8")]
         public static extern int SetFilePropertyUInt8(IntPtr file, string property, byte value);
 
@@ -221,6 +225,10 @@ namespace NKnife.TDMS.Externals
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelGroupPropertyString")]
         public static extern int CreateChannelGroupPropertyString(IntPtr file, string property, string value);
 
+        #endregion
+
+        #region SetChannelGroupProperty
+
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelGroupPropertyUInt8")]
         public static extern int SetChannelGroupPropertyUInt8(IntPtr file, string property, byte value);
 
@@ -286,6 +294,10 @@ namespace NKnife.TDMS.Externals
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_CreateChannelPropertyString")]
         public static extern int CreateChannelPropertyString(IntPtr file, string property, string value);
+
+        #endregion
+
+        #region SetChannelProperty
 
         [DllImport(DLL, CallingConvention = CallingConvention.StdCall, EntryPoint = "DDC_SetChannelPropertyUInt8")]
         public static extern int SetChannelPropertyUInt8(IntPtr file, string property, byte value);
