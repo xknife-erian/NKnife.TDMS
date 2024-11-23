@@ -6,7 +6,7 @@ namespace NKnife.TDMS.Common
 {
     internal class ChannelPropertyOperator(IntPtr selfPtr) : PropertyOperator(selfPtr)
     {
-        public override TDMSDataType GetTypeFunc(string propertyName)
+        public override TDMSDataType GetDataType(string propertyName)
         {
             var success = DDC.GetChannelPropertyType(_SelfPtr, propertyName, out var type);
             TDMSErrorException.ThrowIfError(success, $"Failed to get property type, Key:[{propertyName}]");
@@ -49,14 +49,11 @@ namespace NKnife.TDMS.Common
             return result;
         }
 
-        public override string GetStringValue(string propertyName)
+        protected override int DDCGetStringValue(string propertyName, char[] chars, uint length)
         {
-            var length  = GetStringLength(propertyName);
-            var chars   = new char[length];
             var success = DDC.GetChannelPropertyString(_SelfPtr, propertyName, chars, (UIntPtr)length);
             TDMSErrorException.ThrowIfError(success, $"Failed to get string property value, Key:[{propertyName}]");
-
-            return new string(chars);
+            return success;
         }
 
         public override byte GetByteValue(string propertyName)
@@ -219,7 +216,7 @@ namespace NKnife.TDMS.Common
 
     internal class ChannelGroupPropertyOperator(IntPtr selfPtr) : PropertyOperator(selfPtr)
     {
-        public override TDMSDataType GetTypeFunc(string propertyName)
+        public override TDMSDataType GetDataType(string propertyName)
         {
             var success = DDC.GetChannelGroupPropertyType(_SelfPtr, propertyName, out var type);
             TDMSErrorException.ThrowIfError(success, $"Failed to get property type, Key:[{propertyName}]");
@@ -262,14 +259,11 @@ namespace NKnife.TDMS.Common
             return result;
         }
 
-        public override string GetStringValue(string propertyName)
+        protected override int DDCGetStringValue(string propertyName, char[] chars, uint length)
         {
-            var length  = GetStringLength(propertyName);
-            var chars   = new char[length];
             var success = DDC.GetChannelGroupPropertyString(_SelfPtr, propertyName, chars, (UIntPtr)length);
             TDMSErrorException.ThrowIfError(success, $"Failed to get string property value, Key:[{propertyName}]");
-
-            return new string(chars);
+            return success;
         }
 
         public override byte GetByteValue(string propertyName)
@@ -432,7 +426,7 @@ namespace NKnife.TDMS.Common
 
     internal class FilePropertyOperator(IntPtr selfPtr) : PropertyOperator(selfPtr)
     {
-        public override TDMSDataType GetTypeFunc(string propertyName)
+        public override TDMSDataType GetDataType(string propertyName)
         {
             var success = DDC.GetFilePropertyType(_SelfPtr, propertyName, out var type);
             TDMSErrorException.ThrowIfError(success, $"Failed to get property type, Key:[{propertyName}]");
@@ -475,14 +469,11 @@ namespace NKnife.TDMS.Common
             return result;
         }
 
-        public override string GetStringValue(string propertyName)
+        protected override int DDCGetStringValue(string propertyName, char[] chars, uint length)
         {
-            var length  = GetStringLength(propertyName);
-            var chars   = new char[length];
             var success = DDC.GetFilePropertyString(_SelfPtr, propertyName, chars, (UIntPtr)length);
             TDMSErrorException.ThrowIfError(success, $"Failed to get string property value, Key:[{propertyName}]");
-
-            return new string(chars);
+            return success;
         }
 
         public override byte GetByteValue(string propertyName)
@@ -647,12 +638,29 @@ namespace NKnife.TDMS.Common
     {
         protected IntPtr _SelfPtr = selfPtr;
 
-        public abstract TDMSDataType GetTypeFunc(string propertyName);
+        public abstract TDMSDataType GetDataType(string propertyName);
         public abstract bool Exists(string propertyName);
         public abstract uint GetStringLength(string propertyName);
         public abstract string[] GetPropertyNames();
 
-        public abstract string GetStringValue(string propertyName);
+        public string GetStringValue(string propertyName)
+        {
+            if (!Exists(propertyName))
+                return string.Empty;
+
+            var length = GetStringLength(propertyName);
+
+            if (length <= 0)
+                return string.Empty;
+
+            var chars   = new char[length];
+            var success = DDCGetStringValue(propertyName, chars, length);
+            TDMSErrorException.ThrowIfError(success, $"Failed to get string property value, Key:[{propertyName}]");
+
+            return new string(chars).TrimEnd('\0');
+        }
+        protected abstract int DDCGetStringValue(string propertyName, char[] chars, uint length);
+
         public abstract byte GetByteValue(string propertyName);
         public abstract short GetShortValue(string propertyName);
         public abstract int GetIntValue(string propertyName);

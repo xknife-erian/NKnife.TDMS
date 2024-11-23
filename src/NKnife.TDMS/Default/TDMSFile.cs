@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -138,8 +139,13 @@ namespace NKnife.TDMS.Default
                 if(string.IsNullOrEmpty(groupName))
                     throw new ArgumentNullException(nameof(groupName), "Group name cannot be null or empty");
 
-                var channelGroupsBuffer = new IntPtr[ChildCount];
-                var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)ChildCount);
+                var count = ChildCount;
+
+                if(count <= 0)
+                    return null;
+
+                var channelGroupsBuffer = new IntPtr[count];
+                var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)count);
 
                 TDMSErrorException.ThrowIfError(success, "Failed to get channel groups");
 
@@ -147,7 +153,7 @@ namespace NKnife.TDMS.Default
                 {
                     var group = new TDMSChannelGroup(intPtr);
 
-                    if(group.Name == groupName) 
+                    if(group.Name == groupName)
                         return group;
                     group.Dispose();
                 }
@@ -224,7 +230,7 @@ namespace NKnife.TDMS.Default
             if(Contains(groupName))
                 return null;
 
-            var success = DDC.AddChannelGroup(_SelfPtr, groupName, description, out var groupPtr);
+            var success = DDC.AddChannelGroup(_SelfPtr, Tail(groupName), Tail(description), out var groupPtr);
             TDMSErrorException.ThrowIfError(success, "Failed to add channel group");
 
             return new TDMSChannelGroup(groupPtr);
@@ -249,13 +255,27 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public override bool Contains(string groupName)
         {
-            var count = ChildCount;
-
-            if (count == 0)
+            if(string.IsNullOrEmpty(groupName))
                 return false;
 
-            var names = PropertyOperator.GetPropertyNames();
-            return names.Any(name => name.Equals(groupName));
+            var count = ChildCount;
+            if (count <= 0)
+                return false;
+
+            var channelGroupsBuffer = new IntPtr[count];
+            var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)count);
+
+            TDMSErrorException.ThrowIfError(success, "Failed to get channel groups");
+
+            foreach (var intPtr in channelGroupsBuffer)
+            {
+                using var group = new TDMSChannelGroup(intPtr);
+
+                if(group.Name == groupName)
+                    return true;
+            }
+
+            return false;
         }
 
         /// <inheritdoc />
@@ -266,7 +286,6 @@ namespace NKnife.TDMS.Default
             if(has)
             {
                 level = this[groupName];
-
                 return true;
             }
 

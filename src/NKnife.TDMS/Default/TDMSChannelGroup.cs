@@ -19,7 +19,7 @@ namespace NKnife.TDMS.Default
                                        string unit,
                                        string description = "")
         {
-            var success = DDC.AddChannel(_SelfPtr, dataType, channelName, description, unit, out var channelPtr);
+            var success = DDC.AddChannel(_SelfPtr, dataType, Tail(channelName), Tail(description), Tail(unit), out var channelPtr);
 
             if(success == (int)Error.NoError)
                 return new TDMSChannel(channelPtr);
@@ -107,14 +107,28 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public override bool Contains(string channelName)
         {
+            if(string.IsNullOrEmpty(channelName))
+                throw new ArgumentNullException(nameof(channelName), "Channel name cannot be null or empty");
+
             var count = ChildCount;
 
-            if(count == 0)
+            if(count <= 0)
                 return false;
 
-            var names = PropertyOperator.GetPropertyNames();
+            var channelsBuf = new IntPtr[count];
+            var success     = DDC.GetChannels(_SelfPtr, channelsBuf, (UIntPtr)count);
 
-            return names.Any(name => name.Equals(channelName));
+            TDMSErrorException.ThrowIfError(success, "Failed to get channels");
+
+            foreach (var intPtr in channelsBuf)
+            {
+                using var channel = new TDMSChannel(intPtr);
+
+                if(channel.Name == channelName)
+                    return true;
+            }
+
+            return success == 0;
         }
 
         /// <inheritdoc />

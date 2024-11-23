@@ -33,7 +33,7 @@ namespace NKnife.TDMS.Default
             switch (propertyValue)
             {
                 case string stringValue:
-                    PropertyOperator.CreateStringValue(propertyName, stringValue); break;
+                    PropertyOperator.CreateStringValue(propertyName, Tail(stringValue)); break;
                 case byte byteValue:
                     PropertyOperator.CreateByteValue(propertyName, byteValue); break;
                 case short shortValue:
@@ -58,7 +58,7 @@ namespace NKnife.TDMS.Default
             switch (propertyValue)
             {
                 case string stringValue:
-                    PropertyOperator.SetStringValue(propertyName, stringValue); break;
+                    PropertyOperator.SetStringValue(propertyName, Tail(stringValue)); break;
                 case byte byteValue:
                     PropertyOperator.SetByteValue(propertyName, byteValue); break;
                 case short shortValue:
@@ -94,17 +94,17 @@ namespace NKnife.TDMS.Default
             if(!PropertyExists(propertyName))
             {
                 propertyValue = default;
+
                 return false;
             }
 
-            var success = DDC.GetFilePropertyType(_SelfPtr, propertyName, out var srcDataType);
-            TDMSErrorException.ThrowIfError(success, $"Failed to get property type, Key:[{propertyName}]");
-
-            var type = typeof(T).ToDataType();
+            var srcDataType = PropertyOperator.GetDataType(propertyName);
+            var type        = typeof(T).ToDataType();
 
             if(srcDataType != type)
             {
-                var e = new InvalidCastException($"The data type of the property '{propertyName}' is not '{type}', is '{srcDataType}'.");
+                var e = new InvalidCastException(
+                    $"The data type of the property '{propertyName}' is not '{type}', is '{srcDataType}'.");
 
                 throw new TDMSErrorException($"{type} is error input arg", e);
             }
@@ -114,36 +114,43 @@ namespace NKnife.TDMS.Default
                 case TDMSDataType.String:
                 {
                     propertyValue = (T)(object)PropertyOperator.GetStringValue(propertyName);
+
                     return true;
                 }
                 case TDMSDataType.UInt8:
                 {
                     propertyValue = (T)(object)PropertyOperator.GetByteValue(propertyName);
+
                     return true;
                 }
                 case TDMSDataType.Int16:
                 {
                     propertyValue = (T)(object)PropertyOperator.GetShortValue(propertyName);
+
                     return true;
                 }
                 case TDMSDataType.Int32:
                 {
                     propertyValue = (T)(object)PropertyOperator.GetIntValue(propertyName);
+
                     return true;
                 }
                 case TDMSDataType.Float:
                 {
                     propertyValue = (T)(object)PropertyOperator.GetFloatValue(propertyName);
+
                     return true;
                 }
                 case TDMSDataType.Double:
                 {
                     propertyValue = (T)(object)PropertyOperator.GetDoubleValue(propertyName);
+
                     return true;
                 }
                 case TDMSDataType.Timestamp:
                 {
                     propertyValue = (T)(object)PropertyOperator.GetDateTimeValue(propertyName);
+
                     return true;
                 }
                 case TDMSDataType.UnDefine:
@@ -167,7 +174,8 @@ namespace NKnife.TDMS.Default
         {
             var has = TryGetProperty<string>(propertyName, out var propertyValue);
 
-            if(!has) throw new TDMSErrorException($"Failed to retrieve the default '{propertyName}' property.");
+            if(!has)
+                throw new TDMSErrorException($"Failed to retrieve the default '{propertyName}' property.");
 
             return propertyValue;
         }
@@ -210,7 +218,7 @@ namespace NKnife.TDMS.Default
 
         protected virtual void Dispose(bool disposing)
         {
-            PropertyOperator.Dispose();
+            PropertyOperator?.Dispose();
             if(_SelfPtr != IntPtr.Zero)
             {
                 _IsClosed = Close();
@@ -229,5 +237,10 @@ namespace NKnife.TDMS.Default
             GC.SuppressFinalize(this);
         }
         #endregion
+
+        protected static string Tail(string source)
+        {
+            return $"{source}~";
+        }
     }
 }

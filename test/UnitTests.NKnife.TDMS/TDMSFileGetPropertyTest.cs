@@ -45,19 +45,19 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var success = file.TryGetProperty(propertyName, out string value);
+            var success = file.TryGetProperty(propertyName, out string value1);
 
             success.Should().BeTrue();
-            value.Should().Be(propertyValue1);
+            value1.Should().Be(propertyValue1);
 
             // Act
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            success = file.TryGetProperty(propertyName, out string type2);
+            success = file.TryGetProperty(propertyName, out string value2);
 
             success.Should().BeTrue();
-            value.Should().Be(propertyValue2);
+            value2.Should().Be(propertyValue2);
         }
 
         [Fact(DisplayName = "String数据属性的读取,中文,更新属性")]
@@ -77,18 +77,18 @@ namespace UnitTests.NKnife.TDMS
             file.CreateOrUpdateProperty(propertyName, propertyValue1);
 
             // Assert
-            var success = file.TryGetProperty(propertyName, out string value);
+            var success = file.TryGetProperty(propertyName, out string value1);
 
             success.Should().BeTrue();
-            value.Should().Be(propertyValue1);
+            value1.Should().Be(propertyValue1);
 
             // Act
             file.CreateOrUpdateProperty(propertyName, propertyValue2);
 
             // Assert
-            success = file.TryGetProperty(propertyName, out string type2);
+            success = file.TryGetProperty(propertyName, out string value2);
             success.Should().BeTrue();
-            value.Should().Be(propertyValue2);
+            value2.Should().Be(propertyValue2);
         }
 
         [Fact(DisplayName = "UInt8数据属性的读取,新建属性")]
