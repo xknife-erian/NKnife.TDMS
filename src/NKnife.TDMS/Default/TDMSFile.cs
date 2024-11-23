@@ -117,14 +117,18 @@ namespace NKnife.TDMS.Default
         {
             get
             {
-                if(index < 0)
-                    throw new ArgumentOutOfRangeException(nameof(index), "Index must be greater than or equal to 0");
-                var channelGroupsBuffer = new IntPtr[ChildCount];
-                var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)ChildCount);
+                if (index < 0)
+                    throw new IndexOutOfRangeException($"Index[{index}] must be greater than or equal to 0");
+
+                var count = (int)ChildCount;
+
+                if (index >= count)
+                    throw new IndexOutOfRangeException($"Index[{index}] must be less than the number of channel groups");
+
+                var channelGroupsBuffer = new IntPtr[count];
+                var success             = DDC.GetChannelGroups(_SelfPtr, channelGroupsBuffer, (UIntPtr)count);
                 TDMSErrorException.ThrowIfError(success, "Failed to get channels");
 
-                if(index >= channelGroupsBuffer.Length)
-                    throw new ArgumentOutOfRangeException(nameof(index), "Index must be less than the number of channel groups");
                 var groupPtr = channelGroupsBuffer[index];
 
                 return new TDMSChannelGroup(groupPtr);

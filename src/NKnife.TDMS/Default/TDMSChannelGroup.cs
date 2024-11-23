@@ -33,13 +33,17 @@ namespace NKnife.TDMS.Default
             get
             {
                 if(index < 0)
-                    throw new ArgumentOutOfRangeException(nameof(index), "Index must be greater than or equal to 0");
-                var channelsBuf = new IntPtr[ChildCount];
-                var success     = DDC.GetChannels(_SelfPtr, channelsBuf, (UIntPtr)ChildCount);
+                    throw new IndexOutOfRangeException($"Index[{index}] must be greater than or equal to 0");
+
+                var count = (int)ChildCount;
+
+                if(index >= count)
+                    throw new IndexOutOfRangeException($"Index[{index}] must be less than the number of channels");
+
+                var channelsBuf = new IntPtr[count];
+                var success     = DDC.GetChannels(_SelfPtr, channelsBuf, (UIntPtr)count);
                 TDMSErrorException.ThrowIfError(success, "Failed to get channels");
 
-                if(index >= channelsBuf.Length)
-                    throw new ArgumentOutOfRangeException(nameof(index), "Index must be less than the number of channels");
                 var groupPtr = channelsBuf[index];
 
                 return new TDMSChannel(groupPtr);
@@ -54,8 +58,9 @@ namespace NKnife.TDMS.Default
                 if(string.IsNullOrEmpty(groupName))
                     throw new ArgumentNullException(nameof(groupName), "Group name cannot be null or empty");
 
-                var channelsBuf = new IntPtr[ChildCount];
-                var success     = DDC.GetChannels(_SelfPtr, channelsBuf, (UIntPtr)ChildCount);
+                var count       = ChildCount;
+                var channelsBuf = new IntPtr[count];
+                var success     = DDC.GetChannels(_SelfPtr, channelsBuf, (UIntPtr)count);
 
                 TDMSErrorException.ThrowIfError(success, "Failed to get channels");
 

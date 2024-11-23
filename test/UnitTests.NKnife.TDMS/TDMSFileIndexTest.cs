@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using NKnife.TDMS;
+using NKnife.TDMS.Common;
 using NKnife.TDMS.Default;
 
 namespace UnitTests.NKnife.TDMS
@@ -67,8 +69,42 @@ namespace UnitTests.NKnife.TDMS
             gr4.Name.Should().Be(groupName4);
         }
 
-        [Fact(DisplayName = "3. 添加1个ChannelGroup，测试通过名称索引器方式获取Group。")]
-        public void Indexer_Test03()
+        [Fact(DisplayName = "Indexer_Test_3: 没有channel group时，返回空")]
+        public void Indexer_Test_3()
+        {
+            using var context  = new TestFileContext();
+            var       fileInfo = context.CreateTestFile();
+
+            using var file = new TDMSFile();
+            file.Open(fileInfo);
+
+            file.ChildCount.Should().Be(0);
+            file.Invoking(f => f[0]).Should().Throw<IndexOutOfRangeException>();
+        }
+
+        [Fact(DisplayName = "Indexer_Test_4: 当索引号大于channel group数量时，抛出异常")]
+        public void Indexer_Test_4()
+        {
+            using var context    = new TestFileContext();
+            var       fileInfo   = context.CreateTestFile();
+            var       groupName1 = "group1";
+
+            using var file = new TDMSFile();
+            file.Open(fileInfo);
+
+            file.ChildCount.Should().Be(0);
+            file.Invoking(f => f[0]).Should().Throw<IndexOutOfRangeException>();
+
+            using var group1 = file.AddGroup(groupName1);
+            file.ChildCount.Should().Be(1);
+            using var gr1 = file[0];
+            gr1.Should().NotBeNull();
+            gr1.Name.Should().Be(groupName1);
+            file.Invoking(f => f[1]).Should().Throw<IndexOutOfRangeException>();
+        }
+
+        [Fact(DisplayName = "10. 添加1个ChannelGroup，测试通过名称索引器方式获取Group。")]
+        public void Indexer_Test10()
         {
             // Arrange
             var groupName = "group1";
@@ -89,8 +125,8 @@ namespace UnitTests.NKnife.TDMS
             group.Name.Should().Be(groupName);
         }
 
-        [Fact(DisplayName = "4. 添加多个ChannelGroup，测试可以通过任意名称索引器方式获取Group。")]
-        public void Indexer_Test04()
+        [Fact(DisplayName = "11. 添加多个ChannelGroup，测试可以通过任意名称索引器方式获取Group。")]
+        public void Indexer_Test11()
         {
             // Arrange
             var groupName1 = "group1";
