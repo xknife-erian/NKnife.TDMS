@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using NKnife.TDMS.Common;
@@ -49,13 +50,46 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public bool AppendData<T>(T[] values) where T : struct
         {
-            throw new NotImplementedException();
+            var success = -1;
+            try
+            {
+                using var data = new Data<T>(values);
+
+                var v = data.GetValues();
+                success = DDC.AppendDataValues(_SelfPtr, v.Values, v.Length);
+
+                throw new TDMSErrorException(success, "Failed to append data.");
+            }
+            catch (Exception e)
+            {
+                if (success == -1)
+                    throw new TDMSErrorException("Failed to append data.", e);
+            }
+
+            return success == 0;
         }
 
         /// <inheritdoc />
         public bool UpdateData<T>(int index, T[] values) where T : struct
         {
-            throw new NotImplementedException();
+            var success = -1;
+
+            try
+            {
+                using var data = new Data<T>(values);
+
+                var v = data.GetValues();
+                success = DDC.ReplaceDataValues(_SelfPtr, (UIntPtr)index, v.Values, v.Length);
+
+                throw new TDMSErrorException(success, "Failed to update data.");
+            }
+            catch (Exception e)
+            {
+                if (success == -1)
+                    throw new TDMSErrorException("Failed to update data.", e);
+            }
+
+            return success == 0;
         }
 
         /// <inheritdoc />
@@ -92,34 +126,36 @@ namespace NKnife.TDMS.Default
         /// <inheritdoc />
         public override ulong ChildCount => DDC.CountDataValues(_SelfPtr, out var numValues) == 0 ? numValues : 0;
 
+
         /// <inheritdoc />
         public override bool Clear()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         /// <inheritdoc />
         public override bool Contains(string levelName)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         /// <inheritdoc />
         public override bool TryGetItem(string levelName, out ITDMSLevel level)
         {
-            throw new NotImplementedException();
+            level = null;
+            return false;
         }
 
         /// <inheritdoc />
         public override bool Remove(string levelName)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         /// <inheritdoc />
         public override bool RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            return false;
         }
         #endregion
     }
