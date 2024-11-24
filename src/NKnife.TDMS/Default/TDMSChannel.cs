@@ -25,7 +25,7 @@ namespace NKnife.TDMS.Default
         }
 
         #region Implementation of ITDMSChannel
-        public bool SetData<T>(T[] values) where T : struct
+        public bool SetData<T>(params T[] values)
         {
             var success = -1;
 
@@ -48,7 +48,7 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public bool AppendData<T>(T[] values) where T : struct
+        public bool AppendData<T>(params T[] values)
         {
             var success = -1;
             try
@@ -70,7 +70,7 @@ namespace NKnife.TDMS.Default
         }
 
         /// <inheritdoc />
-        public bool UpdateData<T>(int index, T[] values) where T : struct
+        public bool UpdateData<T>(int index, params T[] values)
         {
             var success = -1;
 

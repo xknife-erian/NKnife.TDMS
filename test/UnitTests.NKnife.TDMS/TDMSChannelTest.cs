@@ -15,11 +15,11 @@ namespace UnitTests.NKnife.TDMS
         public void TDMSChannel_Constructor_Test()
         {
             // Arrange
-            using var context       = new TestFileContext();
-            var       fileInfo      = context.CreateTestFile();
-            var       name  = "Channel1";
-            var       unit = "Unit1";
-            var description = "Description1";
+            using var context     = new TestFileContext();
+            var       fileInfo    = context.CreateTestFile();
+            var       name        = "Channel1";
+            var       unit        = "Unit1";
+            var       description = "Description1";
 
             using var file = new TDMSFile();
             file.Open(fileInfo);

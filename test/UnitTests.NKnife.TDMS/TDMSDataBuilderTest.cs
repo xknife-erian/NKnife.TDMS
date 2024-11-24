@@ -14,22 +14,7 @@ namespace UnitTests.NKnife.TDMS
 {
     public class TDMSDataBuilderTest
     {
-        public TDMSDataBuilderTest()
-        {
-        }
-    
-        [Fact(DisplayName = "Weave_Test_1: 当调用Weave方法时，应返回一个ITDMSFile实例")]
-        public void Weave_Test_1()
-        {
-            // Act
-            using var result = TDMSDataBuilder.Build();
-
-            // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<TDMSFile>();
-        }
-
-        [Fact(DisplayName = "CreateNewFile_Test_1: 当调用CreateNewFile方法时，应创建一个新的ITDMSFile实例并返回")]
+        [Fact(DisplayName = "CreateNewFile_Test_1: 当调用BuildNew方法时，应创建一个新的ITDMSFile实例并返回")]
         public void CreateNewFile_Test_1()
         {
             // Arrange
@@ -43,7 +28,24 @@ namespace UnitTests.NKnife.TDMS
             string author      = "John Doe";
 
             // Act
-            using var result = TDMSDataBuilder.BuildNew(filePath, fileType, name, description, title, author);
+            using var result = TDMSDataBuilder.BuildNew(filePath, name, description, title, author, fileType);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<TDMSFile>();
+        }
+
+        [Fact(DisplayName = "CreateNewFile_Test_2: 当调用BuildNew方法时，应创建一个新的ITDMSFile实例并返回")]
+        public void CreateNewFile_Test_2()
+        {
+            // Arrange
+            using var context     = new TestFileContext();
+            var       fileInfo    = context.CreateTestFile();
+            string    filePath    = fileInfo.FilePath;
+            string    name        = "Test File";
+
+            // Act
+            using var result = TDMSDataBuilder.BuildNew(filePath, name);
 
             // Assert
             result.Should().NotBeNull();

@@ -11,7 +11,7 @@ namespace NKnife.TDMS.Common
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="values"></param>
-    internal class Data<T>(T[] values) : IDisposable where T : struct
+    internal class Data<T>(T[] values) : IDisposable
     {
         private readonly T[] _values = values ?? throw new ArgumentNullException(nameof(values));
         private SafeBufferHandle _valuesHandle;
@@ -19,31 +19,65 @@ namespace NKnife.TDMS.Common
 
         public (IntPtr Values, UIntPtr Length) GetValues()
         {
-            if (_valuesHandle is { IsInvalid: false })
+            if (typeof(T) == typeof(string))
             {
-                // 如果已经分配了内存，直接返回
+                var stringValues = _values.Cast<string>().ToArray();
+                var stringPointers = new IntPtr[stringValues.Length];
+                _lengthPtr = (UIntPtr)stringValues.Length;
+                _valuesHandle = new SafeBufferHandle(IntPtr.Size * stringValues.Length);
+
+                try
+                {
+                    for (var i = 0; i < stringValues.Length; i++)
+                    {
+                        stringPointers[i] = Marshal.StringToHGlobalUni(stringValues[i]);
+                        Marshal.WriteIntPtr(_valuesHandle.DangerousGetHandle() + i * IntPtr.Size, stringPointers[i]);
+                    }
+                }
+                catch
+                {
+                    // 如果发生异常，释放已分配的内存
+                    foreach (var ptr in stringPointers)
+                    {
+                        if (ptr != IntPtr.Zero)
+                        {
+                            Marshal.FreeHGlobal(ptr);
+                        }
+                    }
+                    Dispose();
+                    throw;
+                }
+
                 return (_valuesHandle.DangerousGetHandle(), _lengthPtr);
             }
-
-            _lengthPtr = (UIntPtr)_values.Length;
-            var size = Marshal.SizeOf<T>();
-            _valuesHandle = new SafeBufferHandle(size * _values.Length);
-
-            try
+            else
             {
-                for (var i = 0; i < _values.Length; i++)
+                if (_valuesHandle is { IsInvalid: false })
                 {
-                    Marshal.StructureToPtr(_values[i], _valuesHandle.DangerousGetHandle() + i * size, false);
+                    // 如果已经分配了内存，直接返回
+                    return (_valuesHandle.DangerousGetHandle(), _lengthPtr);
                 }
-            }
-            catch
-            {
-                // 如果发生异常，释放已分配的内存
-                Dispose();
-                throw;
-            }
 
-            return (_valuesHandle.DangerousGetHandle(), _lengthPtr);
+                _lengthPtr = (UIntPtr)_values.Length;
+                var size = Marshal.SizeOf<T>();
+                _valuesHandle = new SafeBufferHandle(size * _values.Length);
+
+                try
+                {
+                    for (var i = 0; i < _values.Length; i++)
+                    {
+                        Marshal.StructureToPtr(_values[i], _valuesHandle.DangerousGetHandle() + i * size, false);
+                    }
+                }
+                catch
+                {
+                    // 如果发生异常，释放已分配的内存
+                    Dispose();
+                    throw;
+                }
+
+                return (_valuesHandle.DangerousGetHandle(), _lengthPtr);
+            }
         }
 
         public void Dispose()

@@ -15,7 +15,7 @@ namespace NKnife.TDMS
         /// <typeparam name="T">数据的类型</typeparam>
         /// <param name="values">数据集合</param>
         /// <returns>是否执行成功</returns>
-        bool SetData<T>(T[] values) where T : struct;
+        bool SetData<T>(params T[] values);
 
         /// <summary>
         ///     向通道内追加数据。
@@ -23,7 +23,7 @@ namespace NKnife.TDMS
         /// <typeparam name="T">数据的类型</typeparam>
         /// <param name="values">数据集合</param>
         /// <returns>是否执行成功</returns>
-        bool AppendData<T>(T[] values) where T : struct;
+        bool AppendData<T>(params T[] values);
 
         /// <summary>
         ///     向通道内更新指定位置的数据。
@@ -34,7 +34,7 @@ namespace NKnife.TDMS
         /// </param>
         /// <param name="values">数据集合</param>
         /// <returns>是否执行成功</returns>
-        bool UpdateData<T>(int index, T[] values) where T : struct;
+        bool UpdateData<T>(int index, params T[] values);
 
         /// <summary>
         ///     获取指定通道中从指定的某一个位置开始共计指定的数量的数据值
