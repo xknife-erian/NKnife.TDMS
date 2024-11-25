@@ -11,19 +11,13 @@ namespace UnitTests.NKnife.TDMS
 {
     public class TDMSFilePropertyTest : IClassFixture<TestFileContext>
     {
-        private readonly TestFileContext _context;
-
-        public TDMSFilePropertyTest(TestFileContext context)
-        {
-            _context = context;
-            context.CleanFiles();
-        }
 
         [Fact(DisplayName = "检查属性是否存在")]
         public void PropertyExists_Test()
         {
             // Arrange
-            var       fileInfo = _context.CreateTestFile();
+            using var context  = new TestFileContext();
+            var       fileInfo = context.CreateTestFile();
             using var tdmsFile = new TDMSFile();
             tdmsFile.Open(fileInfo);
             
@@ -40,7 +34,8 @@ namespace UnitTests.NKnife.TDMS
         public void PropertyExists_AfterAdding_Test()
         {
             // Arrange
-            var       fileInfo = _context.CreateTestFile();
+            using var context  = new TestFileContext();
+            var       fileInfo = context.CreateTestFile();
             using var tdmsFile = new TDMSFile();
             tdmsFile.Open(fileInfo);
 
@@ -58,7 +53,8 @@ namespace UnitTests.NKnife.TDMS
         public void GetPropertyNames_Test()
         {
             // Arrange
-            var       fileInfo = _context.CreateTestFile();
+            using var context  = new TestFileContext();
+            var       fileInfo = context.CreateTestFile();
             using var tdmsFile = new TDMSFile();
             tdmsFile.Open(fileInfo);
 
@@ -77,7 +73,8 @@ namespace UnitTests.NKnife.TDMS
         public void GetPropertyNames_WhenNoProperties_Test()
         {
             // Arrange
-            var       fileInfo = _context.CreateTestFile();
+            using var context  = new TestFileContext();
+            var       fileInfo = context.CreateTestFile();
             using var tdmsFile = new TDMSFile();
             tdmsFile.Open(fileInfo);
 
@@ -92,7 +89,8 @@ namespace UnitTests.NKnife.TDMS
         public void GetDefaultPropertyNames_Test1()
         {
             // Arrange
-            var       fileInfo = _context.CreateTestFile();
+            using var context  = new TestFileContext();
+            var       fileInfo = context.CreateTestFile();
             using var tdmsFile = new TDMSFile();
             tdmsFile.Open(fileInfo);
 
@@ -113,7 +111,7 @@ namespace UnitTests.NKnife.TDMS
         public void GetDefaultPropertyNames_Test2()
         {
             // Arrange
-            var fileInfo = new TDMSFileInfo("GetDefaultPropertyNames_Test2");
+            var fileInfo = new TDMSFileInfo($"~tdms{nameof(GetDefaultPropertyNames_Test2)}.tdms");
 
             using (var tdmsFile = new TDMSFile())
             {
