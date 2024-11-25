@@ -112,5 +112,49 @@ namespace NKnife.TDMS.Common
                 throw new TDMSErrorException("Unsupported data type.");
             }
         }
+
+        public static DatetimeFactor Factoring(this DateTime[] values)
+        {
+            var df = new DatetimeFactor(values.Length);
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                var t = (DateTime)(object)values[i];
+                df.Years[i]        = (uint)t.Year;
+                df.Months[i]       = (uint)t.Month;
+                df.Days[i]         = (uint)t.Day;
+                df.Hours[i]        = (uint)t.Hour;
+                df.Minutes[i]      = (uint)t.Minute;
+                df.Seconds[i]      = (uint)t.Second;
+                df.Milliseconds[i] = (double)t.Millisecond;
+            }
+
+            return df;
+        }
+    }
+
+    /// <summary>
+    /// 用于存储DateTime数组的各个时间分量
+    /// </summary>
+    class DatetimeFactor(int count)
+    {
+        public uint[] Years { get; } = new uint[count];
+        public uint[] Months { get; } = new uint[count];
+        public uint[] Days { get; } = new uint[count];
+        public uint[] Hours { get; } = new uint[count];
+        public uint[] Minutes { get; } = new uint[count];
+        public uint[] Seconds { get; } = new uint[count];
+        public double[] Milliseconds { get; } = new double[count];
+        public uint[] WeekDays { get; } = new uint[count];
+
+        public DateTime[] ToDateTimeArray()
+        {
+            var result = new DateTime[Years.Length];
+            for (int i = 0; i < Years.Length; i++)
+            {
+                result[i] = new DateTime((int)Years[i], (int)Months[i], (int)Days[i], (int)Hours[i], (int)Minutes[i], (int)Seconds[i], (int)Milliseconds[i]);
+            }
+            return result;
+        }
     }
 }

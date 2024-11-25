@@ -1,84 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace NKnife.TDMS.Common
 {
     /// <summary>
-    /// 面向Channel里存储的数据集合的数据结构；用于将数据集合转换为指针和长度，以便传递给C++的DLL。
+    ///     面向Channel里存储的数据集合的数据结构；用于将数据集合转换为指针和长度，以便传递给C++的DLL。
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="values"></param>
-    internal class Data<T>(T[] values) : IDisposable
+    internal class Data<T>(T[] values) : IDisposable where T : struct
     {
         private readonly T[] _values = values ?? throw new ArgumentNullException(nameof(values));
-        private SafeBufferHandle _valuesHandle;
         private UIntPtr _lengthPtr;
-
-        public (IntPtr Values, UIntPtr Length) GetValues()
-        {
-            if (typeof(T) == typeof(string))
-            {
-                var stringValues = _values.Cast<string>().ToArray();
-                var stringPointers = new IntPtr[stringValues.Length];
-                _lengthPtr = (UIntPtr)stringValues.Length;
-                _valuesHandle = new SafeBufferHandle(IntPtr.Size * stringValues.Length);
-
-                try
-                {
-                    for (var i = 0; i < stringValues.Length; i++)
-                    {
-                        stringPointers[i] = Marshal.StringToHGlobalUni(stringValues[i]);
-                        Marshal.WriteIntPtr(_valuesHandle.DangerousGetHandle() + i * IntPtr.Size, stringPointers[i]);
-                    }
-                }
-                catch
-                {
-                    // 如果发生异常，释放已分配的内存
-                    foreach (var ptr in stringPointers)
-                    {
-                        if (ptr != IntPtr.Zero)
-                        {
-                            Marshal.FreeHGlobal(ptr);
-                        }
-                    }
-                    Dispose();
-                    throw;
-                }
-
-                return (_valuesHandle.DangerousGetHandle(), _lengthPtr);
-            }
-            else
-            {
-                if (_valuesHandle is { IsInvalid: false })
-                {
-                    // 如果已经分配了内存，直接返回
-                    return (_valuesHandle.DangerousGetHandle(), _lengthPtr);
-                }
-
-                _lengthPtr = (UIntPtr)_values.Length;
-                var size = Marshal.SizeOf<T>();
-                _valuesHandle = new SafeBufferHandle(size * _values.Length);
-
-                try
-                {
-                    for (var i = 0; i < _values.Length; i++)
-                    {
-                        Marshal.StructureToPtr(_values[i], _valuesHandle.DangerousGetHandle() + i * size, false);
-                    }
-                }
-                catch
-                {
-                    // 如果发生异常，释放已分配的内存
-                    Dispose();
-                    throw;
-                }
-
-                return (_valuesHandle.DangerousGetHandle(), _lengthPtr);
-            }
-        }
+        private SafeBufferHandle _valuesHandle;
 
         public void Dispose()
         {
@@ -86,9 +20,39 @@ namespace NKnife.TDMS.Common
             GC.SuppressFinalize(this);
         }
 
+        public (IntPtr Values, UIntPtr Length) GetValues()
+        {
+            if(_valuesHandle is { IsInvalid: false })
+            {
+                // 如果已经分配了内存，直接返回
+                return (_valuesHandle.DangerousGetHandle(), _lengthPtr);
+            }
+
+            _lengthPtr = (UIntPtr)_values.Length;
+            var size = Marshal.SizeOf<T>();
+            _valuesHandle = new SafeBufferHandle(size * _values.Length);
+
+            try
+            {
+                for (var i = 0; i < _values.Length; i++)
+                {
+                    Marshal.StructureToPtr(_values[i], _valuesHandle.DangerousGetHandle() + i * size, false);
+                }
+            }
+            catch
+            {
+                // 如果发生异常，释放已分配的内存
+                Dispose();
+
+                throw;
+            }
+
+            return (_valuesHandle.DangerousGetHandle(), _lengthPtr);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if(disposing)
             {
                 _valuesHandle?.Dispose();
             }
@@ -111,11 +75,12 @@ namespace NKnife.TDMS.Common
 
         protected override bool ReleaseHandle()
         {
-            if (!IsInvalid)
+            if(!IsInvalid)
             {
                 Marshal.FreeHGlobal(handle);
                 handle = IntPtr.Zero;
             }
+
             return true;
         }
     }
