@@ -5,13 +5,12 @@
     <!-- AssemblyInfo -->
     <PropertyGroup>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-
         <Company>Jeelu Software &amp; Hardware Development Studio</Company>
         <Product>Jeelu NKnife Circe</Product>
-        <Copyright>Copyright © 2014 - $([System.DateTime]::Today.ToString(yyyy)) RAY Everest.</Copyright>
+        <Copyright>Copyright © 2014 - $([System.DateTime]::Today.ToString(yyyy)) jeelu.com.</Copyright>
 
         <!-- 手动定义主要版本号 -->
-        <VersionMajor>5</VersionMajor>
+        <VersionMajor>1</VersionMajor>
 
         <!-- 手动定义次要版本号（与内部研发迭代基本对齐） -->
         <VersionMinor>0</VersionMinor>
@@ -27,10 +26,6 @@
     <PropertyGroup>
         <Version>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</Version>
         <AssemblyVersion>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</AssemblyVersion>
-        <FileVersion>$(VersionMajor).$(VersionMinor).0</FileVersion>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <PluginBuildCfg>Debug</PluginBuildCfg> <!-- Module独立加载，请设置为Isolated；非独立加载为Debug-->
+        <FileVersion>$(VersionMajor).$(VersionMinor).$(VersionBuild).0</FileVersion>
     </PropertyGroup>
 </Project>
