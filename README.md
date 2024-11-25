@@ -15,7 +15,7 @@ NI提供 **TDM C DLL** 免费下载。它包含从任何应用开发环境读取
 - https://www.ni.com/en/support/documentation/supplemental/06/the-ni-tdms-file-format.html
 - https://www.ni.com/en/support/documentation/supplemental/06/introduction-to-labview-tdm-streaming-vis.html
 
-**但是**，NI提供的DLL明显是c-style的面向过程的函数范式，在C#这样的面向对象的语言框架下使用起来有着种种不便。**NKnife.TDMS** 就是一个基于 .NET Standard 2.0的对 **TDM C DLL** 的调用封装，以期以面向对象的模式进行程序设计。
+**但是**，NI提供的DLL明显是c-style的面向过程的函数范式，在C#这样的面向对象的语言框架下使用起来有着种种不便。**NKnife.TDMS** 就是一个基于 .NET Standard 2.0的对 **TDM C DLL** 的调用封装，以便于可以更好的以面向对象的模式进行程序设计。
 
 #### 软件架构
 软件架构说明：

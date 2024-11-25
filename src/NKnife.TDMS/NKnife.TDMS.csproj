@@ -7,7 +7,20 @@
         <Product>NKnife.TDMS</Product>
         <Copyright>Copyright © 2014 - $([System.DateTime]::Today.ToString(yyyy)) Jeelu S&amp;H Studio.</Copyright>
         <FileVersion>$(VersionMajor).$(VersionMinor).$(VersionBuild)</FileVersion>
+        <Authors>Jeelu S&amp;H Studio.</Authors>
+        <PackageProjectUrl>https://github.com/xknife-erian/NKnife.TDMS</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/xknife-erian/NKnife.TDMS</RepositoryUrl>
+        <PackageTags>TDM,TDMS,jeelu,xknife</PackageTags>
+        <Description>NKnife.TDMS是一个基于.NET Standard 2.0的对NI面向第三库公开接口&lt;TDM_C.DLL&gt;的调用封装，以便于可以更好的以面向对象的模式进行程序设计。</Description>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 
     <ItemGroup>
         <None Update="Libs\dacasr.dll">
