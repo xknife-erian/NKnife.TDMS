@@ -6,8 +6,6 @@ on:
       - master
     paths:
       - 'src/**'
-      - 'sample/**'
-      - 'test/**'
       - 'NKnife.TDMS.sln'
 
 jobs:
