@@ -16,7 +16,7 @@
         <VersionMinor>0</VersionMinor>
 
         <!-- 设置构建版本号为每次修改. -->
-        <VersionBuild>2</VersionBuild>
+        <VersionBuild>3</VersionBuild>
 
         <!-- 定义修订版本号，当前月份和日期 -->
         <VersionRevision>$([System.DateTime]::Now.ToString("MMdd"))</VersionRevision>
