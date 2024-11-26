@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'src/**'
+      - 'sample/**'
+      - 'test/**'
+      - 'NKnife.TDMS.sln'
 
 jobs:
   publish:
@@ -19,7 +24,7 @@ jobs:
         dotnet-version: '6.x'
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore /p:EnableWindowsTargeting=true
 
     - name: Build
       run: dotnet build --configuration Release --no-restore /p:EnableWindowsTargeting=true
