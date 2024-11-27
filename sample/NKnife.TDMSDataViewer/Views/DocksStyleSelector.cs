@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using NKnife.TDMSDataViewer.ViewModels;
+using NKnife.TDMSDataViewer.ViewModels.Common;
 
 namespace NKnife.TDMSDataViewer.Views
 {

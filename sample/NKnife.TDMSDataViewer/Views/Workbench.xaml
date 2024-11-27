@@ -1,4 +1,4 @@
-﻿<Window x:Class="NKnife.TDMSDataViewer.Views.MainWindow"
+﻿<Window x:Class="NKnife.TDMSDataViewer.Views.Workbench"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,7 +8,8 @@
         xmlns:viewModels="clr-namespace:NKnife.TDMSDataViewer.ViewModels"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Background="#717195"
+        Background="#BBB"
+        DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
         d:DataContext="{d:DesignInstance viewModels:WorkbenchViewModel}"
         d:DesignHeight="260"
         Title="NKnife TDMSDataViewer" Width="960" Height="720">
@@ -25,13 +26,14 @@
                         <MenuItem Header="New..."
                                   Command="{Binding CreateDataFileCmd}"/>
                         <MenuItem Header="Open..."
-                                  Command="{Binding OpenFileCmd}"/>
+                                  Command="{Binding OpenDataFileCmd}"/>
                         <Separator/>
                         <MenuItem Header="Exit" />
                     </MenuItem>
                     <MenuItem Header="View"></MenuItem>
                     <MenuItem Header="Help">
-                        <MenuItem Header="Sample Data..."/>
+                        <MenuItem Header="Sample Data..."
+                                  Command="{Binding CreateSampleDataFileCmd}"/>
                         <Separator/>
                         <MenuItem Header="About..."/>
                     </MenuItem>
@@ -43,6 +45,7 @@
             <Border>
                 <xcad:DockingManager x:Name="DockingManager"
                      PreviewMouseRightButtonDown="OnPreviewMouseRightDown"
+                     Background="Transparent"
                      ActiveContent="{Binding ActivePaneViewModel, Mode=TwoWay}"
                      AnchorablesSource="{Binding Tools}"
                      DocumentsSource="{Binding Documents}"

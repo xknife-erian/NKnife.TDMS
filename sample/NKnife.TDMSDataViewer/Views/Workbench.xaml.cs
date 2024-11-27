@@ -5,11 +5,11 @@ using Xceed.Wpf.AvalonDock.Layout;
 namespace NKnife.TDMSDataViewer.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Workbench.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Workbench : Window
     {
-        public MainWindow()
+        public Workbench()
         {
             InitializeComponent();
         }
