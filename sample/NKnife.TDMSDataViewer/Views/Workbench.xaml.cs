@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using AvalonDock.Layout;
-using AvalonDock.Themes;
+using Xceed.Wpf.AvalonDock.Layout;
 
 namespace NKnife.TDMSDataViewer.Views
 {
@@ -13,7 +12,6 @@ namespace NKnife.TDMSDataViewer.Views
         public MainWindow()
         {
             InitializeComponent();
-            DockingManager.Theme = new Vs2013BlueTheme();
         }
 
         private void OnPreviewMouseRightDown(object sender, MouseButtonEventArgs e)

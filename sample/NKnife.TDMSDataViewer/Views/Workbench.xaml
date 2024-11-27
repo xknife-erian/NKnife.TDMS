@@ -4,12 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:NKnife.TDMSDataViewer.Views"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:viewModels="clr-namespace:NKnife.TDMSDataViewer.ViewModels"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Background="#717195"
+        d:DataContext="{d:DesignInstance viewModels:WorkbenchViewModel}"
+        d:DesignHeight="260"
         Title="NKnife TDMSDataViewer" Width="960" Height="720">
     <Window.Resources>
-        <BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <xcad:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <views:DocksTemplateSelector x:Key="TemplateSelector" />
     </Window.Resources>
 
@@ -17,57 +21,73 @@
         <DockPanel>
             <Border DockPanel.Dock="Top" Background="#EEE">
                 <Menu Margin="0,5" Background="#EEE">
-                    <MenuItem Header="File"></MenuItem>
+                    <MenuItem Header="File">
+                        <MenuItem Header="New..."
+                                  Command="{Binding CreateDataFileCmd}"/>
+                        <MenuItem Header="Open..."
+                                  Command="{Binding OpenFileCmd}"/>
+                        <Separator/>
+                        <MenuItem Header="Exit" />
+                    </MenuItem>
                     <MenuItem Header="View"></MenuItem>
-                    <MenuItem Header="Help"></MenuItem>
+                    <MenuItem Header="Help">
+                        <MenuItem Header="Sample Data..."/>
+                        <Separator/>
+                        <MenuItem Header="About..."/>
+                    </MenuItem>
                 </Menu>
             </Border>
             <Border DockPanel.Dock="Bottom">
                 <StackPanel Height="30" Background="#EEE"></StackPanel>
             </Border>
             <Border>
-                <DockingManager x:Name="DockingManager"
+                <xcad:DockingManager x:Name="DockingManager"
                      PreviewMouseRightButtonDown="OnPreviewMouseRightDown"
                      ActiveContent="{Binding ActivePaneViewModel, Mode=TwoWay}"
                      AnchorablesSource="{Binding Tools}"
                      DocumentsSource="{Binding Documents}"
                      LayoutItemTemplateSelector="{StaticResource TemplateSelector}">
 
-                    <DockingManager.LayoutItemContainerStyleSelector>
+                    <xcad:DockingManager.LayoutItemContainerStyleSelector>
                         <views:DocksStyleSelector>
-                            <views:DocksStyleSelector.ToolPanelStyle>
-                                <Style TargetType="{x:Type LayoutAnchorableItem}">
+                            <views:DocksStyleSelector.ToolPaneStyle>
+                                <Style TargetType="{x:Type xcad:LayoutAnchorableItem}">
                                     <Setter Property="Title" Value="{Binding Model.Title}" />
                                     <Setter Property="CanHide" Value="{Binding Model.CanHide}" />
                                     <Setter Property="ContentId" Value="{Binding Model.ContentId}" />
-                                    <Setter Property="Visibility"
-                            Value="{Binding Model.IsVisible, Converter={StaticResource BoolToVisibilityConverter}, Mode=TwoWay}" />
                                     <Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}" />
-                                    <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}" />
                                     <Setter Property="HideCommand" Value="{Binding Model.HideCommand}" />
+                                    <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}" />
+                                    <Setter Property="Visibility">
+                                        <Setter.Value>
+                                            <Binding Path="Model.IsVisible"
+                                                     Converter="{StaticResource BoolToVisibilityConverter}" 
+                                                     Mode="TwoWay" />
+                                        </Setter.Value>
+                                    </Setter>
                                 </Style>
-                            </views:DocksStyleSelector.ToolPanelStyle>
-                            <views:DocksStyleSelector.DocumentStyle>
-                                <Style TargetType="{x:Type LayoutItem}">
+                            </views:DocksStyleSelector.ToolPaneStyle>
+                            <views:DocksStyleSelector.DocumentPaneStyle>
+                                <Style TargetType="{x:Type xcad:LayoutItem}">
                                     <Setter Property="Title" Value="{Binding Model.Title}" />
                                     <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
                                     <Setter Property="ContentId" Value="{Binding Model.ContentId}" />
                                 </Style>
-                            </views:DocksStyleSelector.DocumentStyle>
+                            </views:DocksStyleSelector.DocumentPaneStyle>
                         </views:DocksStyleSelector>
-                    </DockingManager.LayoutItemContainerStyleSelector>
+                    </xcad:DockingManager.LayoutItemContainerStyleSelector>
 
-                    <DockingManager.LayoutUpdateStrategy>
+                    <xcad:DockingManager.LayoutUpdateStrategy>
                         <views:DockLayoutInitializer />
-                    </DockingManager.LayoutUpdateStrategy>
+                    </xcad:DockingManager.LayoutUpdateStrategy>
 
-                    <LayoutRoot>
-                        <LayoutPanel Orientation="Horizontal">
-                            <LayoutAnchorablePane Name="ToolsPane" DockHeight="300" DockMinWidth="250" />
-                            <LayoutDocumentPane />
-                        </LayoutPanel>
-                    </LayoutRoot>
-                </DockingManager>
+                    <xcad:LayoutRoot>
+                        <xcad:LayoutPanel Orientation="Horizontal">
+                            <xcad:LayoutAnchorablePane Name="ToolsPane" DockHeight="300" DockMinWidth="250" />
+                            <xcad:LayoutDocumentPane />
+                        </xcad:LayoutPanel>
+                    </xcad:LayoutRoot>
+                </xcad:DockingManager>
             </Border>
         </DockPanel>
     </Border>
