@@ -47,6 +47,8 @@ namespace NKnife.TDMSDataViewer
                 .AsSelf()
                 .AsImplementedInterfaces();
             builder.RegisterType<Workbench>().AsSelf().AsImplementedInterfaces();
+            builder.RegisterType<DialogService>().AsSelf().AsImplementedInterfaces();
+            builder.RegisterType<CustomFrameworkDialogFactory>().AsSelf().AsImplementedInterfaces();
 
             s_rootScope = builder.Build();
             Ioc.Default.ConfigureServices(new AutofacServiceProvider(s_rootScope));

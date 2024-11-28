@@ -75,6 +75,7 @@ namespace NKnife.TDMSDataViewer
         private void HandleException(Exception exception)
         {
             s_logger.Error(exception);
+            MessageBox.Show(exception.Message);
         }
     }
 }
