@@ -1,58 +1,49 @@
-﻿using Autofac;
-using Autofac.Util;
-using Microsoft.VisualBasic;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using NKnife.TDMSDataViewer.Views;
+using NLog;
 using System.Configuration;
-using System.Data;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using NLog;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using NKnife.TDMSDataViewer.ViewModels;
 
 namespace NKnife.TDMSDataViewer
 {
     public partial class App : Application
     {
-        private static readonly NLog.Logger s_logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
+
         public App()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
-            Application.Current.DispatcherUnhandledException += DispatcherOnUnhandledException;
-            TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+            Current.DispatcherUnhandledException       += DispatcherOnUnhandledException;
+            TaskScheduler.UnobservedTaskException      += TaskSchedulerOnUnobservedTaskException;
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            base.OnStartup(e);
             s_logger.Info("Starting");
-            s_logger.Info("Dispatcher managed thread identifier = {0}", System.Threading.Thread.CurrentThread.ManagedThreadId);
+            s_logger.Info("Dispatcher managed thread identifier = {0}", Thread.CurrentThread.ManagedThreadId);
             s_logger.Info("WPF rendering capability (tier) = {0}", RenderCapability.Tier / 0x10000);
             RenderCapability.TierChanged += (s, a) =>
             {
                 s_logger.Info("WPF rendering capability (tier) = {0}", RenderCapability.Tier / 0x10000);
             };
-
-            base.OnStartup(e);
-
-            BootStrapper.Start();
-
-            var workbench = new Workbench();
-
-            //workbench.DataContext = BootStrapper.RootVisual;
-
-            workbench.Closed += (s, a) =>
-            {
-                BootStrapper.Stop();
-            };
-
             Current.Exit += (s, a) =>
             {
                 s_logger.Info("Bye Bye!");
                 LogManager.Flush();
             };
 
+            BootStrapper.Start();
+
+            var workbench = Ioc.Default.GetService<Workbench>();
+
+            if(workbench == null)
+                throw new ConfigurationErrorsException("Workbench not found");
+
+            workbench.DataContext =  BootStrapper.RootVisual;
+            workbench.Closed      += (s, a) => { BootStrapper.Stop(); };
             workbench.Show();
 
             s_logger.Info("Started");
@@ -85,14 +76,5 @@ namespace NKnife.TDMSDataViewer
         {
             s_logger.Error(exception);
         }
-    }
-
-    class ViewModelLocator
-    {
-        public ViewModelLocator()
-        {
-            Workbench = Ioc.Default.GetRequiredService<WorkbenchViewModel>();
-        }
-        public WorkbenchViewModel Workbench { get; set; }
     }
 }

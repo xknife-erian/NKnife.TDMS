@@ -7,7 +7,6 @@
              xmlns:app="clr-namespace:NKnife.TDMSDataViewer">
     <Application.Resources>
         <ResourceDictionary>
-            <app:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

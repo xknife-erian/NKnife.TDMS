@@ -9,7 +9,6 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Background="#BBB"
-        DataContext="{Binding Source={StaticResource Locator}, Path=Workbench}"
         d:DataContext="{d:DesignInstance viewModels:WorkbenchViewModel}"
         d:DesignHeight="260"
         Title="NKnife TDMSDataViewer" Width="960" Height="720">

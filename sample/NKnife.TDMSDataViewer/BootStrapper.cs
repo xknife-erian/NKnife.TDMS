@@ -1,11 +1,13 @@
 using System.Reflection;
 using Autofac;
 using Autofac.Core;
+using Autofac.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using MvvmDialogs;
 using NKnife.TDMSDataViewer.ViewModels;
 using NKnife.TDMSDataViewer.ViewModels.Common;
 using NKnife.TDMSDataViewer.ViewModels.Dialogs;
+using NKnife.TDMSDataViewer.Views;
 
 namespace NKnife.TDMSDataViewer
 {
@@ -39,12 +41,12 @@ namespace NKnife.TDMSDataViewer
             var assemblies = new[] { Assembly.GetExecutingAssembly() };
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<CustomFrameworkDialogFactory>().SingleInstance();
-            builder.RegisterType<DialogService>().SingleInstance();
-
+            var vmInterface = typeof(IViewModel);
             builder.RegisterAssemblyTypes(assemblies)
-                .Where(t => typeof(IViewModel).IsAssignableFrom(t))
+                .Where(t => vmInterface.IsAssignableFrom(t))
+                .AsSelf()
                 .AsImplementedInterfaces();
+            builder.RegisterType<Workbench>().AsSelf().AsImplementedInterfaces();
 
             s_rootScope = builder.Build();
             Ioc.Default.ConfigureServices(new AutofacServiceProvider(s_rootScope));
