@@ -10,6 +10,7 @@ internal class DocksTemplateSelector : DataTemplateSelector
     static DocksTemplateSelector()
     {
         PaneModels.Add(nameof(TDMSDataPaneViewModel), typeof(TDMSDataPane));
+        PaneModels.Add(nameof(SampleDataCreateWizardViewModel), typeof(SampleDataCreateWizard));
     }
 
     /// <summary>

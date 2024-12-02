@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="NKnife.TDMSDataViewer.Views.Controls.FileInfoControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="500">
+    <StackPanel Orientation="Vertical">
+        <StackPanel.Resources>
+            <Style TargetType="StackPanel" x:Key="_KeyValueBox_">
+                <Setter Property="Orientation" Value="Horizontal"/>
+            </Style>
+            <Style TargetType="TextBlock" x:Key="_Key_">
+                <Setter Property="Width" Value="150" />
+                <Setter Property="TextAlignment" Value="Right" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,5,5,5" />
+            </Style>
+            <Style TargetType="TextBox" x:Key="_Value_">
+                <Setter Property="Width" Value="260" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="TextAlignment" Value="Left" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Padding" Value="3,0" />
+                <Setter Property="Margin" Value="0,3" />
+            </Style>
+        </StackPanel.Resources>
+        <StackPanel Style="{StaticResource _KeyValueBox_}">
+            <TextBlock Style="{StaticResource _Key_}" Text="Name" />
+            <TextBox Style="{StaticResource _Value_}" />
+        </StackPanel>
+        <StackPanel Style="{StaticResource _KeyValueBox_}">
+            <TextBlock Style="{StaticResource _Key_}" Text="Description" />
+            <TextBox Style="{StaticResource _Value_}"/>
+        </StackPanel>
+        <StackPanel Style="{StaticResource _KeyValueBox_}">
+            <TextBlock Style="{StaticResource _Key_}" Text="Title" />
+            <TextBox Style="{StaticResource _Value_}" />
+        </StackPanel>
+        <StackPanel Style="{StaticResource _KeyValueBox_}">
+            <TextBlock Style="{StaticResource _Key_}" Text="Author" />
+            <TextBox Style="{StaticResource _Value_}" />
+        </StackPanel>
+        <StackPanel Style="{StaticResource _KeyValueBox_}">
+            <TextBox Margin="52,3,3,3"
+                     Width="100"
+                     VerticalContentAlignment="Center"
+                     TextAlignment="Right"
+                     Text="sss"/>
+            <TextBox Style="{StaticResource _Value_}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

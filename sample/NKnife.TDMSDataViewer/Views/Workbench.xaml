@@ -8,7 +8,7 @@
         xmlns:viewModels="clr-namespace:NKnife.TDMSDataViewer.ViewModels"
         xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         mc:Ignorable="d"
-        md:DialogServiceViews.IsRegistered="True" 
+        md:DialogServiceViews.IsRegistered="True"
         WindowStartupLocation="CenterScreen"
         Background="#BBB"
         d:DataContext="{d:DesignInstance viewModels:WorkbenchViewModel}"
@@ -18,39 +18,42 @@
         <xcad:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <views:DocksTemplateSelector x:Key="TemplateSelector" />
     </Window.Resources>
-
+    <Window.InputBindings>
+        <KeyBinding Gesture="F5" Command="{Binding CreateSampleDataFileCmd}" />
+    </Window.InputBindings>
     <Border>
         <DockPanel>
             <Border DockPanel.Dock="Top" Background="#EEE">
                 <Menu Margin="0,5" Background="#EEE">
                     <MenuItem Header="File">
                         <MenuItem Header="New..."
-                                  Command="{Binding CreateDataFileCmd}"/>
+                                  Command="{Binding CreateDataFileCmd}" />
                         <MenuItem Header="Open..."
-                                  Command="{Binding OpenDataFileCmd}"/>
-                        <Separator/>
+                                  Command="{Binding OpenDataFileCmd}" />
+                        <Separator />
+                        <MenuItem Header="Sample Data..."
+                                  InputGestureText="F5"
+                                  Command="{Binding CreateSampleDataFileCmd}" />
+                        <Separator />
                         <MenuItem Header="Exit" />
                     </MenuItem>
-                    <MenuItem Header="View"></MenuItem>
+                    <MenuItem Header="View" />
                     <MenuItem Header="Help">
-                        <MenuItem Header="Sample Data..."
-                                  Command="{Binding CreateSampleDataFileCmd}"/>
-                        <Separator/>
-                        <MenuItem Header="About..."/>
+                        <MenuItem Header="About..." />
                     </MenuItem>
                 </Menu>
             </Border>
             <Border DockPanel.Dock="Bottom">
-                <StackPanel Height="30" Background="#EEE"></StackPanel>
+                <StackPanel Height="30" Background="#EEE" />
             </Border>
             <Border>
                 <xcad:DockingManager x:Name="DockingManager"
-                     PreviewMouseRightButtonDown="OnPreviewMouseRightDown"
-                     Background="Transparent"
-                     ActiveContent="{Binding ActivePaneViewModel, Mode=TwoWay}"
-                     AnchorablesSource="{Binding Tools}"
-                     DocumentsSource="{Binding Documents}"
-                     LayoutItemTemplateSelector="{StaticResource TemplateSelector}">
+                                     PreviewMouseRightButtonDown="OnPreviewMouseRightDown"
+                                     Background="Transparent"
+                                     ActiveContent="{Binding ActivePaneViewModel, Mode=TwoWay}"
+                                     AnchorablesSource="{Binding Tools}"
+                                     DocumentsSource="{Binding Documents}"
+                                     LayoutItemTemplateSelector="{StaticResource TemplateSelector}">
 
                     <xcad:DockingManager.LayoutItemContainerStyleSelector>
                         <views:DocksStyleSelector>
@@ -65,7 +68,7 @@
                                     <Setter Property="Visibility">
                                         <Setter.Value>
                                             <Binding Path="Model.IsVisible"
-                                                     Converter="{StaticResource BoolToVisibilityConverter}" 
+                                                     Converter="{StaticResource BoolToVisibilityConverter}"
                                                      Mode="TwoWay" />
                                         </Setter.Value>
                                     </Setter>

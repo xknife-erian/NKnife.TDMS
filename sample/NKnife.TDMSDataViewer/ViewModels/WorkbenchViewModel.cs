@@ -5,6 +5,7 @@ using MvvmDialogs;
 using MvvmDialogs.FrameworkDialogs.FolderBrowser;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
 using NKnife.TDMSDataViewer.ViewModels.Common;
+using NKnife.TDMSDataViewer.Views;
 
 namespace NKnife.TDMSDataViewer.ViewModels
 {
@@ -16,7 +17,7 @@ namespace NKnife.TDMSDataViewer.ViewModels
 
         public ICommand CreateSampleDataFileCmd => new RelayCommand(() =>
         {
-            __dialogService.ShowFolderBrowserDialog(this, new FolderBrowserDialogSettings());
+            __dialogService.Show(this, new SampleDataCreateWizardViewModel());
         });
 
         public ICommand CreateDataFileCmd => new RelayCommand(() =>

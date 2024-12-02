@@ -1,0 +1,39 @@
+﻿<Window x:Class="NKnife.TDMSDataViewer.Views.SampleDataCreateWizard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:NKnife.TDMSDataViewer.Views"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:controls="clr-namespace:NKnife.TDMSDataViewer.Views.Controls"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Height="400" Width="540">
+    <xctk:Wizard FinishButtonClosesWindow="True"
+                 HelpButtonVisibility="Collapsed">
+        <xctk:WizardPage Title="Welcome to sample data create wizard"
+                         Name="_WelcomePage_"
+                         Description="This Wizard will walk you though how to do something." />
+        <xctk:WizardPage PageType="Interior"
+                         Name="_Page1_"
+                         Title="Page 1"
+                         Description="This is the first page in the process."
+                         NextPage="{Binding ElementName=_Page2_}"
+                         PreviousPage="{Binding ElementName=_WelcomePage_}">
+            <controls:FileInfoControl/>
+        </xctk:WizardPage>
+        <xctk:WizardPage PageType="Interior"
+                         Name="_Page2_"
+                         Title="Page 2"
+                         Description="This is the second page in the process">
+            <local:FileStructuredTreeControl />
+        </xctk:WizardPage>
+        <xctk:WizardPage PageType="Interior"
+                         Name="_Page3_"
+                         Title="Last Page"
+                         Description="This is the last page in the process"
+                         CanFinish="True" />
+    </xctk:Wizard>
+</Window>
