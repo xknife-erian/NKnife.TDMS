@@ -22,12 +22,14 @@
                          Description="This is the first page in the process."
                          NextPage="{Binding ElementName=_Page2_}"
                          PreviousPage="{Binding ElementName=_WelcomePage_}">
-            <controls:FileInfoControl/>
+            <controls:LevelInfoControl/>
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
                          Name="_Page2_"
                          Title="Page 2"
-                         Description="This is the second page in the process">
+                         Description="This is the second page in the process"
+                         NextPage="{Binding ElementName=_Page3_}"
+                         PreviousPage="{Binding ElementName=_Page1_}">
             <local:FileStructuredTreeControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"

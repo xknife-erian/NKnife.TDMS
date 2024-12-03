@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace NKnife.TDMSDataViewer.Views.Controls
 {
     /// <summary>
-    /// FileInfoControl.xaml 的交互逻辑
+    /// LevelInfoControl.xaml 的交互逻辑
     /// </summary>
-    public partial class FileInfoControl : UserControl
+    public partial class LevelInfoControl : UserControl
     {
-        public FileInfoControl()
+        public LevelInfoControl()
         {
             InitializeComponent();
         }
