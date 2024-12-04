@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:NKnife.TDMSDataViewer.Views"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:controls="clr-namespace:NKnife.TDMSDataViewer.Views.Controls"
+        xmlns:viewModels="clr-namespace:NKnife.TDMSDataViewer.ViewModels"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance {x:Type viewModels:SampleDataCreateWizardViewModel}}"
+        ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -21,7 +24,8 @@
                          Title="Page 1"
                          Description="This is the first page in the process."
                          NextPage="{Binding ElementName=_Page2_}"
-                         PreviousPage="{Binding ElementName=_WelcomePage_}">
+                         PreviousPage="{Binding ElementName=_WelcomePage_}"
+                         DataContext="{Binding FileInfoVm}">
             <controls:LevelInfoControl/>
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"

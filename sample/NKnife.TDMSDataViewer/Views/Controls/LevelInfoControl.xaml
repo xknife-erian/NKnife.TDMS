@@ -10,7 +10,7 @@
     <StackPanel Orientation="Vertical">
         <StackPanel.Resources>
             <Style TargetType="StackPanel" x:Key="_KeyValueBox_">
-                <Setter Property="Orientation" Value="Horizontal"/>
+                <Setter Property="Orientation" Value="Horizontal" />
             </Style>
             <Style TargetType="TextBlock" x:Key="_Key_">
                 <Setter Property="Width" Value="150" />
@@ -26,16 +26,8 @@
                 <Setter Property="Padding" Value="3,0" />
                 <Setter Property="Margin" Value="0,3" />
             </Style>
-            <DataTemplate x:Key="_ItemTemplate_">
-                <StackPanel Style="{StaticResource _KeyValueBox_}">
-                    <TextBox Margin="3"
-                             Width="80" Height="26"
-                             VerticalContentAlignment="Center"
-                             TextAlignment="Right"
-                             Text="sss"/>
-                    <TextBox Width="160" Margin="0,3" />
-                </StackPanel>
-            </DataTemplate>
+            <controls:IsFileInfo2VisibilityCvt x:Key="_IsFileInfo2VisibilityCvt_" />
+
         </StackPanel.Resources>
         <StackPanel Style="{StaticResource _KeyValueBox_}">
             <TextBlock Style="{StaticResource _Key_}" Text="Name" />
@@ -43,17 +35,48 @@
         </StackPanel>
         <StackPanel Style="{StaticResource _KeyValueBox_}">
             <TextBlock Style="{StaticResource _Key_}" Text="Description" />
-            <TextBox Style="{StaticResource _Value_}"/>
+            <TextBox Style="{StaticResource _Value_}" />
         </StackPanel>
-        <StackPanel Style="{StaticResource _KeyValueBox_}">
+        <StackPanel Style="{StaticResource _KeyValueBox_}"
+                    Visibility="{Binding IsFileInfo, Converter={StaticResource _IsFileInfo2VisibilityCvt_}}">
             <TextBlock Style="{StaticResource _Key_}" Text="Title" />
             <TextBox Style="{StaticResource _Value_}" />
         </StackPanel>
-        <StackPanel Style="{StaticResource _KeyValueBox_}">
+        <StackPanel Style="{StaticResource _KeyValueBox_}"
+                    Visibility="{Binding IsFileInfo, Converter={StaticResource _IsFileInfo2VisibilityCvt_}}">
             <TextBlock Style="{StaticResource _Key_}" Text="Author" />
             <TextBox Style="{StaticResource _Value_}" />
         </StackPanel>
-        <ListBox Margin="70,0,0,0" Width="260" ItemTemplate="{StaticResource _ItemTemplate_}">
+        <StackPanel Margin="60,6,0,5" Width="260" Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="0,0,5,0"/>
+                    <Setter Property="Padding" Value="8,3"/>
+                    <Setter Property="Width" Value="110"/>
+                    <Setter Property="FontSize" Value="11"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button Content="Add Property" Command="{Binding AddPropertyCommand}"/>
+            <Button Content="Remove Property" Command="{Binding RemovePropertyCommand}"/>
+        </StackPanel>
+        <ListBox Margin="60,0,0,0" Width="260"
+                 ItemsSource="{Binding ValueTuples, Mode=TwoWay}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBox">
+                                <Setter Property="Margin" Value="2,0"/>
+                                <Setter Property="Height" Value="22"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="TextAlignment" Value="Left"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBox Width="80" Text="{Binding Name, Mode=TwoWay}" />
+                        <TextBox Width="158" Text="{Binding Value, Mode=TwoWay}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
     </StackPanel>
 </UserControl>
