@@ -18,11 +18,11 @@
                  HelpButtonVisibility="Collapsed">
         <xctk:WizardPage Title="Welcome to sample data create wizard"
                          Name="_WelcomePage_"
-                         Description="This Wizard will walk you though how to do something." />
+                         Description="本向导将指导您建立样本数据库." />
         <xctk:WizardPage PageType="Interior"
                          Name="_Page1_"
                          Title="Page 1"
-                         Description="This is the first page in the process."
+                         Description="请填写文件的基本属性和."
                          NextPage="{Binding ElementName=_Page2_}"
                          PreviousPage="{Binding ElementName=_WelcomePage_}"
                          DataContext="{Binding FileInfoVm}">
