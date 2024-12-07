@@ -18,13 +18,21 @@ namespace NKnife.TDMSDataViewer.Views.Controls
 
         public ICommand AddPropertyCommand => new RelayCommand(() =>
         {
-            ValueTuples.Add(new LevelProperty(){Name = "Name1", Value = "Value1"});
+            ValueTuples.Add(new LevelProperty() { Name = string.Empty, Value = string.Empty });
         });
 
         public ICommand RemovePropertyCommand => new RelayCommand(() =>
         {
-            ValueTuples.RemoveAt(ValueTuples.Count - 1);
+            if(SelectValueIndex >= 0
+               && SelectValueIndex < ValueTuples.Count)
+                ValueTuples.RemoveAt(SelectValueIndex);
         });
+
+        public int SelectValueIndex
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
     }
 
     public class LevelProperty : ObservableObject

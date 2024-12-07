@@ -21,7 +21,7 @@
                 </Style>
                 <Style TargetType="TextBox" x:Key="_Value_">
                     <Setter Property="Width" Value="260" />
-                    <Setter Property="Height" Value="30" />
+                    <Setter Property="Height" Value="28" />
                     <Setter Property="TextAlignment" Value="Left" />
                     <Setter Property="VerticalContentAlignment" Value="Center" />
                     <Setter Property="Padding" Value="3,0" />
@@ -48,38 +48,41 @@
                 <TextBlock Style="{StaticResource _Key_}" Text="Author" />
                 <TextBox Style="{StaticResource _Value_}" />
             </StackPanel>
-            <StackPanel Margin="60,6,0,5" Width="260" Orientation="Horizontal">
-                <StackPanel.Resources>
-                    <Style TargetType="Button">
-                        <Setter Property="Margin" Value="0,0,5,0" />
-                        <Setter Property="Padding" Value="8,3" />
-                        <Setter Property="Width" Value="110" />
-                        <Setter Property="FontSize" Value="11" />
-                    </Style>
-                </StackPanel.Resources>
-                <Button Content="Add Property" Command="{Binding AddPropertyCommand}" />
-                <Button Content="Remove Property" Command="{Binding RemovePropertyCommand}" />
+            <StackPanel Margin="155,5,98,0" Background="Transparent">
+                <StackPanel Orientation="Horizontal" Margin="0.5,0,0,3">
+                    <StackPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="0,0,5,0" />
+                            <Setter Property="Padding" Value="8,3" />
+                            <Setter Property="Width" Value="110" />
+                            <Setter Property="FontSize" Value="11" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Content="Add Property" Command="{Binding AddPropertyCommand}" />
+                    <Button Content="Remove Property" Command="{Binding RemovePropertyCommand}" />
+                </StackPanel>
+                <ListBox
+                    Visibility="{Binding ValueTuples.Count, Converter={StaticResource _Collection2ListVisibilityCvt_}}"
+                    ItemsSource="{Binding ValueTuples, Mode=TwoWay}"
+                    SelectedIndex="{Binding SelectValueIndex, Mode=TwoWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel.Resources>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Margin" Value="2,0" />
+                                        <Setter Property="Height" Value="24" />
+                                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                                        <Setter Property="TextAlignment" Value="Left" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <TextBox Width="80" Text="{Binding Name, Mode=TwoWay}" />
+                                <TextBox Width="156" Text="{Binding Value, Mode=TwoWay}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </StackPanel>
-            <ListBox Margin="60,0,0,0" Width="260"
-                     Visibility="{Binding ValueTuples.Count, Converter={StaticResource _Collection2ListVisibilityCvt_}}"
-                     ItemsSource="{Binding ValueTuples, Mode=TwoWay}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <StackPanel.Resources>
-                                <Style TargetType="TextBox">
-                                    <Setter Property="Margin" Value="2,0" />
-                                    <Setter Property="Height" Value="22" />
-                                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                                    <Setter Property="TextAlignment" Value="Left" />
-                                </Style>
-                            </StackPanel.Resources>
-                            <TextBox Width="80" Text="{Binding Name, Mode=TwoWay}" />
-                            <TextBox Width="158" Text="{Binding Value, Mode=TwoWay}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

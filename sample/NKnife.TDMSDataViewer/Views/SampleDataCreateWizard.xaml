@@ -13,7 +13,7 @@
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
         AllowsTransparency="True"
-        Height="400" Width="540">
+        Height="400" Width="560">
     <xctk:Wizard FinishButtonClosesWindow="True"
                  HelpButtonVisibility="Collapsed">
         <xctk:WizardPage Title="Welcome to sample data create wizard"
@@ -21,8 +21,8 @@
                          Description="本向导将指导您建立样本数据库." />
         <xctk:WizardPage PageType="Interior"
                          Name="_Page1_"
-                         Title="Page 1"
-                         Description="请填写文件的基本属性和."
+                         Title="文件属性"
+                         Description="请填写文件的基本属性；同时，也可以添加自定义属性。"
                          NextPage="{Binding ElementName=_Page2_}"
                          PreviousPage="{Binding ElementName=_WelcomePage_}"
                          DataContext="{Binding FileInfoVm}">
