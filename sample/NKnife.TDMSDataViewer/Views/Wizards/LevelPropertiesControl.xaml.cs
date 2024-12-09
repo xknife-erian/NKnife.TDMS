@@ -6,11 +6,11 @@ using System.Windows.Data;
 namespace NKnife.TDMSDataViewer.Views.Wizards
 {
     /// <summary>
-    /// LevelInfoControl.xaml 的交互逻辑
+    /// LevelPropertiesControl.xaml 的交互逻辑
     /// </summary>
-    public partial class LevelInfoControl : UserControl
+    public partial class LevelPropertiesControl : UserControl
     {
-        public LevelInfoControl()
+        public LevelPropertiesControl()
         {
             InitializeComponent();
         }

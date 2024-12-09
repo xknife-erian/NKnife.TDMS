@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 {
-    public class LevelInfoControlViewModel(bool __isFileInfo) : ObservableObject
+    public class LevelPropertiesControlViewModel(bool __isFileInfo) : ObservableObject
     {
         public bool IsFileInfo { get; set; } = __isFileInfo;
 

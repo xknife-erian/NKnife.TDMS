@@ -3,11 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:NKnife.TDMSDataViewer.Views"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:viewModels="clr-namespace:NKnife.TDMSDataViewer.ViewModels"
         xmlns:wizards="clr-namespace:NKnife.TDMSDataViewer.ViewModels.Wizards"
-        xmlns:wizards1="clr-namespace:NKnife.TDMSDataViewer.Views.Wizards"
+        xmlns:cvt="clr-namespace:NKnife.TDMSDataViewer.Views.Wizards"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance {x:Type wizards:SampleDataCreateWizardViewModel}}"
         ShowInTaskbar="False"
@@ -15,32 +13,49 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Height="400" Width="560">
+    <Window.Resources>
+        <cvt:CurrentPageName2PageCvt x:Key="_CurrentPageName2PageCvt_" />
+    </Window.Resources>
     <xctk:Wizard FinishButtonClosesWindow="True"
-                 HelpButtonVisibility="Collapsed">
-        <xctk:WizardPage Title="Welcome to sample data create wizard"
+                 HelpButtonVisibility="Collapsed"
+                 CurrentPage="{Binding PageName, Mode = TwoWay, Converter = {StaticResource _CurrentPageName2PageCvt_}}">
+        <xctk:WizardPage Title="数据创建向导"
                          Name="_WelcomePage_"
                          Description="本向导将指导您建立样本数据库." />
         <xctk:WizardPage PageType="Interior"
-                         Name="_Page1_"
+                         Name="_FilePropertyPage_"
                          Title="文件属性"
                          Description="请填写文件的基本属性；同时，也可以添加自定义属性。"
-                         NextPage="{Binding ElementName=_Page2_}"
-                         PreviousPage="{Binding ElementName=_WelcomePage_}"
-                         DataContext="{Binding FileInfo}">
-            <wizards1:LevelInfoControl/>
+                         DataContext="{Binding FileProperties}">
+            <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
-                         Name="_Page2_"
-                         Title="Page 2"
-                         Description="This is the second page in the process"
-                         NextPage="{Binding ElementName=_Page3_}"
-                         PreviousPage="{Binding ElementName=_Page1_}">
-            <wizards1:DataStructuredTreeControl />
+                         Name="_DataStructuredTreePage_"
+                         Title="数据结构"
+                         DataContext="{Binding DataStructuredTree}"
+                         NextPage="{Binding ElementName=_EndPage_}">
+            <cvt:DataStructuredTreeControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
-                         Name="_Page3_"
-                         Title="Last Page"
-                         Description="This is the last page in the process"
+                         Name="_GroupPropertyPage_"
+                         Title="通道组属性"
+                         Description="请填写通道组的基本属性；同时，也可以添加自定义属性。"
+                         NextPage="{Binding ElementName=_DataStructuredTreePage_}"
+                         DataContext="{Binding GroupProperties}">
+            <cvt:LevelPropertiesControl />
+        </xctk:WizardPage>
+        <xctk:WizardPage PageType="Interior"
+                         Name="_ChannelPropertyPage_"
+                         Title="通道属性"
+                         Description="请填写通道的基本属性；同时，也可以添加自定义属性。"
+                         NextPage="{Binding ElementName=_DataStructuredTreePage_}"
+                         DataContext="{Binding ChannelProperties}">
+            <cvt:LevelPropertiesControl />
+        </xctk:WizardPage>
+        <xctk:WizardPage PageType="Interior"
+                         Name="_EndPage_"
+                         Title="开始创建Sample数据文件"
+                         Description=""
                          CanFinish="True" />
     </xctk:Wizard>
 </Window>
