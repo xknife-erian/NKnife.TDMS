@@ -18,6 +18,7 @@
     </Window.Resources>
     <xctk:Wizard FinishButtonClosesWindow="True"
                  HelpButtonVisibility="Collapsed"
+                 PageChanged="Wizard_OnPageChanged"
                  CurrentPage="{Binding PageName, Mode = TwoWay, Converter = {StaticResource _CurrentPageName2PageCvt_}}">
         <xctk:WizardPage Title="数据创建向导"
                          Name="_WelcomePage_"
@@ -37,7 +38,7 @@
             <cvt:DataStructuredTreeControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
-                         Name="_GroupPropertyPage_"
+                         Name="_GroupPropertiesPage_"
                          Title="通道组属性"
                          Description="请填写通道组的基本属性；同时，也可以添加自定义属性。"
                          NextPage="{Binding ElementName=_DataStructuredTreePage_}"
@@ -45,7 +46,7 @@
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
-                         Name="_ChannelPropertyPage_"
+                         Name="_ChannelPropertiesPage_"
                          Title="通道属性"
                          Description="请填写通道的基本属性；同时，也可以添加自定义属性。"
                          NextPage="{Binding ElementName=_DataStructuredTreePage_}"
@@ -56,6 +57,7 @@
                          Name="_EndPage_"
                          Title="开始创建Sample数据文件"
                          Description=""
+                         BackButtonVisibility="Hidden"
                          CanFinish="True" />
     </xctk:Wizard>
 </Window>

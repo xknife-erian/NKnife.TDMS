@@ -28,7 +28,8 @@
                     <Setter Property="Padding" Value="3,0" />
                     <Setter Property="Margin" Value="0,3" />
                 </Style>
-                <wizards:IsFileInfo2VisibilityCvt x:Key="_IsFileInfo2VisibilityCvt_" />
+                <wizards:PropertiesType2FileVisibilityCvt x:Key="_PropertiesType2FileVisibilityCvt_" />
+                <wizards:PropertiesType2ChannelVisibilityCvt x:Key="_PropertiesType2ChannelVisibilityCvt_" />
                 <wizards:Collection2ListVisibilityCvt x:Key="_Collection2ListVisibilityCvt_" />
             </StackPanel.Resources>
             <StackPanel Style="{StaticResource _KeyValueBox_}">
@@ -40,13 +41,28 @@
                 <TextBox Style="{StaticResource _Value_}" />
             </StackPanel>
             <StackPanel Style="{StaticResource _KeyValueBox_}"
-                        Visibility="{Binding IsFileInfo, Converter={StaticResource _IsFileInfo2VisibilityCvt_}}">
+                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2FileVisibilityCvt_}}">
                 <TextBlock Style="{StaticResource _Key_}" Text="Title" />
                 <TextBox Style="{StaticResource _Value_}" />
             </StackPanel>
             <StackPanel Style="{StaticResource _KeyValueBox_}"
-                        Visibility="{Binding IsFileInfo, Converter={StaticResource _IsFileInfo2VisibilityCvt_}}">
+                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2FileVisibilityCvt_}}">
                 <TextBlock Style="{StaticResource _Key_}" Text="Author" />
+                <TextBox Style="{StaticResource _Value_}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource _KeyValueBox_}"
+                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2ChannelVisibilityCvt_}}">
+                <TextBlock Style="{StaticResource _Key_}" Text="Unit" />
+                <TextBox Style="{StaticResource _Value_}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource _KeyValueBox_}"
+                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2ChannelVisibilityCvt_}}">
+                <TextBlock Style="{StaticResource _Key_}" Text="Max" />
+                <TextBox Style="{StaticResource _Value_}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource _KeyValueBox_}"
+                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2ChannelVisibilityCvt_}}">
+                <TextBlock Style="{StaticResource _Key_}" Text="Min" />
                 <TextBox Style="{StaticResource _Value_}" />
             </StackPanel>
             <StackPanel Margin="155,5,98,0" Background="Transparent">

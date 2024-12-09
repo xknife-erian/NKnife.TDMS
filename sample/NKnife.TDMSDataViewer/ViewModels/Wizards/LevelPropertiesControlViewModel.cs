@@ -5,9 +5,9 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 {
-    public class LevelPropertiesControlViewModel(bool __isFileInfo) : ObservableObject
+    public class LevelPropertiesControlViewModel(PropertiesType __propertiesType) : ObservableObject
     {
-        public bool IsFileInfo { get; set; } = __isFileInfo;
+        public PropertiesType PropertiesType { get; set; } = __propertiesType;
 
         public ObservableCollection<LevelProperty> ValueTuples { get; set; } = new();
 
@@ -38,10 +38,17 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             set => SetProperty(ref field, value);
         }
 
-        public object? Value
+        public string? Value
         {
             get;
             set => SetProperty(ref field, value);
         }
+    }
+
+    public enum PropertiesType
+    {
+        File,
+        Group,
+        Channel
     }
 }

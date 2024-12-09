@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using NKnife.TDMSDataViewer.ViewModels.Wizards;
 using Xceed.Wpf.Toolkit;
 
 namespace NKnife.TDMSDataViewer.Views.Wizards
@@ -19,8 +20,14 @@ namespace NKnife.TDMSDataViewer.Views.Wizards
             Pages.Add($"{nameof(_EndPage_)}", _EndPage_);
             Pages.Add($"{nameof(_FilePropertyPage_)}", _FilePropertyPage_);
             Pages.Add($"{nameof(_DataStructuredTreePage_)}", _DataStructuredTreePage_);
-            Pages.Add($"{nameof(_GroupPropertyPage_)}", _GroupPropertyPage_);
-            Pages.Add($"{nameof(_ChannelPropertyPage_)}", _ChannelPropertyPage_);
+            Pages.Add($"{nameof(_GroupPropertiesPage_)}", _GroupPropertiesPage_);
+            Pages.Add($"{nameof(_ChannelPropertiesPage_)}", _ChannelPropertiesPage_);
+        }
+
+        private void Wizard_OnPageChanged(object sender, RoutedEventArgs e)
+        {
+            if(DataContext is SampleDataCreateWizardViewModel vm)
+                vm.PageChanged();
         }
     }
 
