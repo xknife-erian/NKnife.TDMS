@@ -1,14 +1,15 @@
-﻿<Window x:Class="NKnife.TDMSDataViewer.Views.SampleDataCreateWizard"
+﻿<Window x:Class="NKnife.TDMSDataViewer.Views.Wizards.SampleDataCreateWizard"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:NKnife.TDMSDataViewer.Views"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:controls="clr-namespace:NKnife.TDMSDataViewer.Views.Controls"
         xmlns:viewModels="clr-namespace:NKnife.TDMSDataViewer.ViewModels"
+        xmlns:wizards="clr-namespace:NKnife.TDMSDataViewer.ViewModels.Wizards"
+        xmlns:wizards1="clr-namespace:NKnife.TDMSDataViewer.Views.Wizards"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance {x:Type viewModels:SampleDataCreateWizardViewModel}}"
+        d:DataContext="{d:DesignInstance {x:Type wizards:SampleDataCreateWizardViewModel}}"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
@@ -25,8 +26,8 @@
                          Description="请填写文件的基本属性；同时，也可以添加自定义属性。"
                          NextPage="{Binding ElementName=_Page2_}"
                          PreviousPage="{Binding ElementName=_WelcomePage_}"
-                         DataContext="{Binding FileInfoVm}">
-            <controls:LevelInfoControl/>
+                         DataContext="{Binding FileInfo}">
+            <wizards1:LevelInfoControl/>
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
                          Name="_Page2_"
@@ -34,7 +35,7 @@
                          Description="This is the second page in the process"
                          NextPage="{Binding ElementName=_Page3_}"
                          PreviousPage="{Binding ElementName=_Page1_}">
-            <local:FileStructuredTreeControl />
+            <wizards1:DataStructuredTreeControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
                          Name="_Page3_"

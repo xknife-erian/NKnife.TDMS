@@ -4,7 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using MvvmDialogs;
 using MvvmDialogs.FrameworkDialogs.FolderBrowser;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
-using NKnife.TDMSDataViewer.ViewModels.Common;
+using NKnife.TDMSDataViewer.Common;
+using NKnife.TDMSDataViewer.ViewModels.Wizards;
 using NKnife.TDMSDataViewer.Views;
 
 namespace NKnife.TDMSDataViewer.ViewModels

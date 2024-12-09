@@ -4,9 +4,9 @@ using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using MvvmDialogs;
+using NKnife.TDMSDataViewer.Common;
+using NKnife.TDMSDataViewer.Common.Dialogs;
 using NKnife.TDMSDataViewer.ViewModels;
-using NKnife.TDMSDataViewer.ViewModels.Common;
-using NKnife.TDMSDataViewer.ViewModels.Dialogs;
 using NKnife.TDMSDataViewer.Views;
 
 namespace NKnife.TDMSDataViewer

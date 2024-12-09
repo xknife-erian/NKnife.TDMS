@@ -1,4 +1,4 @@
-﻿namespace NKnife.TDMSDataViewer.ViewModels.Common
+﻿namespace NKnife.TDMSDataViewer.Common
 {
     abstract class BaseToolViewModel : BaseViewModel
     {

@@ -2,6 +2,8 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using NKnife.TDMSDataViewer.ViewModels;
+using NKnife.TDMSDataViewer.ViewModels.Wizards;
+using NKnife.TDMSDataViewer.Views.Wizards;
 
 namespace NKnife.TDMSDataViewer.Views;
 

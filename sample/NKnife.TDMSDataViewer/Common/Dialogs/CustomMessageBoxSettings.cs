@@ -1,6 +1,6 @@
 ﻿using MvvmDialogs.FrameworkDialogs.MessageBox;
 
-namespace NKnife.TDMSDataViewer.ViewModels.Dialogs
+namespace NKnife.TDMSDataViewer.Common.Dialogs
 {
     public class CustomMessageBoxSettings : MessageBoxSettings
     {

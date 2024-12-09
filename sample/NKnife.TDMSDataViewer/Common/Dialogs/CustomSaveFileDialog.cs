@@ -1,41 +1,40 @@
 ﻿using System.Windows;
-using Microsoft.Win32;
 using MvvmDialogs.FrameworkDialogs;
-using MvvmDialogs.FrameworkDialogs.OpenFile;
+using MvvmDialogs.FrameworkDialogs.SaveFile;
+using Ookii.Dialogs.Wpf;
 
-namespace NKnife.TDMSDataViewer.ViewModels.Dialogs;
-
-public class CustomOpenFileDialog : IFrameworkDialog
+namespace NKnife.TDMSDataViewer.Common.Dialogs;
+public class CustomSaveFileDialog : IFrameworkDialog
 {
-    private readonly OpenFileDialogSettings _settings;
-    private readonly OpenFileDialog _openFileDialog;
+    private readonly SaveFileDialogSettings _settings;
+    private readonly VistaSaveFileDialog _saveFileDialog;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CustomOpenFileDialog"/> class.
+    /// Initializes a new instance of the <see cref="CustomSaveFileDialog"/> class.
     /// </summary>
-    /// <param name="settings">The settings for the open file dialog.</param>
-    public CustomOpenFileDialog(OpenFileDialogSettings settings)
+    /// <param name="settings">The settings for the save file dialog.</param>
+    public CustomSaveFileDialog(SaveFileDialogSettings settings)
     {
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-
-        _openFileDialog = new OpenFileDialog
+        
+        _saveFileDialog = new VistaSaveFileDialog
         {
             AddExtension = settings.AddExtension,
             CheckFileExists = settings.CheckFileExists,
             CheckPathExists = settings.CheckPathExists,
+            CreatePrompt = settings.CreatePrompt,
             DefaultExt = settings.DefaultExt,
             FileName = settings.FileName,
             Filter = settings.Filter,
             FilterIndex = settings.FilterIndex,
             InitialDirectory = settings.InitialDirectory,
-            Multiselect = settings.Multiselect,
-            Title = settings.Title,
-            ValidateNames = true
+            OverwritePrompt = settings.OverwritePrompt,
+            Title = settings.Title
         };
     }
 
     /// <summary>
-    /// Opens a open file dialog with specified owner.
+    /// Opens a save file dialog with specified owner.
     /// </summary>
     /// <param name="owner">
     /// Handle to the window that owns the dialog.
@@ -47,12 +46,12 @@ public class CustomOpenFileDialog : IFrameworkDialog
     {
         if (owner == null) throw new ArgumentNullException(nameof(owner));
 
-        var result = _openFileDialog.ShowDialog(owner);
+        var result = _saveFileDialog.ShowDialog(owner);
 
         // Update settings
-        _settings.FileName = _openFileDialog.FileName;
-        _settings.FileNames = _openFileDialog.FileNames;
-        _settings.FilterIndex = _openFileDialog.FilterIndex;
+        _settings.FileName = _saveFileDialog.FileName;
+        _settings.FileNames = _saveFileDialog.FileNames;
+        _settings.FilterIndex = _saveFileDialog.FilterIndex;
 
         return result;
     }

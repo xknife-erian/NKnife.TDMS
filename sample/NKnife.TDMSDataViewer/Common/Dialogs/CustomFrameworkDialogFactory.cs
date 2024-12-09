@@ -4,7 +4,7 @@ using MvvmDialogs.FrameworkDialogs.MessageBox;
 using MvvmDialogs.FrameworkDialogs.OpenFile;
 using MvvmDialogs.FrameworkDialogs.SaveFile;
 
-namespace NKnife.TDMSDataViewer.ViewModels.Dialogs;
+namespace NKnife.TDMSDataViewer.Common.Dialogs;
 
 public class CustomFrameworkDialogFactory : DefaultFrameworkDialogFactory
 {

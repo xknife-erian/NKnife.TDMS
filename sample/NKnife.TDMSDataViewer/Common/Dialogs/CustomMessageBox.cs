@@ -2,7 +2,7 @@
 using MvvmDialogs.FrameworkDialogs.MessageBox;
 using Ookii.Dialogs.Wpf;
 
-namespace NKnife.TDMSDataViewer.ViewModels.Dialogs;
+namespace NKnife.TDMSDataViewer.Common.Dialogs;
 public class CustomMessageBox : IMessageBox
 {
     private readonly CustomMessageBoxSettings _settings;
