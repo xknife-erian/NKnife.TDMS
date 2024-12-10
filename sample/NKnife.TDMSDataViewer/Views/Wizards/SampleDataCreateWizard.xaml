@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:wizards="clr-namespace:NKnife.TDMSDataViewer.ViewModels.Wizards"
@@ -18,8 +19,12 @@
     </Window.Resources>
     <xctk:Wizard FinishButtonClosesWindow="True"
                  HelpButtonVisibility="Collapsed"
-                 PageChanged="Wizard_OnPageChanged"
                  CurrentPage="{Binding PageName, Mode = TwoWay, Converter = {StaticResource _CurrentPageName2PageCvt_}}">
+        <b:Interaction.Triggers>
+            <b:EventTrigger EventName="PageChangedCommand">
+                <b:InvokeCommandAction Command="{Binding PageChangedCommand}" />
+            </b:EventTrigger>
+        </b:Interaction.Triggers>
         <xctk:WizardPage Title="数据创建向导"
                          Name="_WelcomePage_"
                          Description="本向导将指导您建立样本数据库." />

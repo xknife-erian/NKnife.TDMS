@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MvvmDialogs;
 using NKnife.TDMSDataViewer.Common;
+using NKnife.TDMSDataViewer.Entities;
 
 namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 {
@@ -15,7 +16,10 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             DataStructuredTree = new(this);
         }
 
-        public string PageName
+        /// <inheritdoc />
+        public bool? DialogResult { get; } = null;
+
+        public string? FileFullPath
         {
             get;
             set => SetProperty(ref field, value);
@@ -26,33 +30,29 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
         public LevelPropertiesControlViewModel ChannelProperties { get; init; } = new(PropertiesType.Channel);
         public DataStructuredTreeControlViewModel DataStructuredTree { get; init; }
 
-        /// <inheritdoc />
-        public bool? DialogResult { get; } = null;
-
-        public void PageChanged()
+        public ICommand PageChangedCommand => new RelayCommand(() =>
         {
-            switch (PageName)
+            switch (_lastPageName)
             {
                 case "_FilePropertyPage_":
-                    DataFile.FileProperties.Clear();
-                    DataFile.FileProperties.AddRange(FileProperties.ValueTuples);
+                    DataFileInfo.FileProperties.Clear();
+                    // DataFileInfo.FileProperties.AddRange(FileProperties.LevelPropertiesSet);
+
                     break;
                 case "_GroupPropertiesPage_":
                 case "_ChannelPropertiesPage_":
                     break;
             }
+
             _lastPageName = PageName;
+        });
+
+        public DataFileInfo DataFileInfo { get; set; } = new();
+
+        public string PageName
+        {
+            get;
+            set => SetProperty(ref field, value);
         }
-
-        public DataFile DataFile { get; set; } = new();
-
-    }
-
-
-    class DataFile
-    {
-        public List<LevelProperty> FileProperties { get; set; } = new();
-        public List<LevelProperty> GroupProperties { get; set; } = new();
-        public List<LevelProperty> ChannelProperties { get; set; } = new();
     }
 }

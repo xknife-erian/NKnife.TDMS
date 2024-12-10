@@ -2,25 +2,74 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NKnife.TDMSDataViewer.Entities;
 
 namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 {
-    public class LevelPropertiesControlViewModel(PropertiesType __propertiesType) : ObservableObject
+    public class LevelPropertiesControlViewModel : ObservableObject
     {
-        public PropertiesType PropertiesType { get; set; } = __propertiesType;
+        public LevelPropertiesControlViewModel(PropertiesType propertiesType)
+        {
+            PropertiesType = propertiesType;
+            Name           = new LevelProperty() { Name = "Name" };
+            Description    = new LevelProperty() { Name = "Description" };
+            Title          = new LevelProperty() { Name = "Title" };
+            Author         = new LevelProperty() { Name = "Author" };
+            Unit           = new LevelProperty() { Name = "Unit" };
+            Max            = new LevelProperty() { Name = "Max" };
+            Min            = new LevelProperty() { Name = "Min" };
+        }
 
-        public ObservableCollection<LevelProperty> ValueTuples { get; set; } = new();
+        public PropertiesType PropertiesType { get; set; }
+
+        public LevelProperty Name
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
+        public LevelProperty Description
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
+        public LevelProperty Title
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
+        public LevelProperty Author
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
+        public LevelProperty Unit
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
+        public LevelProperty Max
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
+        public LevelProperty Min
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
+
+        public LevelPropertiesSet LevelPropertiesSet { get; set; } = new();
 
         public ICommand AddPropertyCommand => new RelayCommand(() =>
         {
-            ValueTuples.Add(new LevelProperty() { Name = string.Empty, Value = string.Empty });
+            LevelPropertiesSet.Add(new LevelProperty() { Name = string.Empty, Value = string.Empty });
         });
 
         public ICommand RemovePropertyCommand => new RelayCommand(() =>
         {
             if(SelectValueIndex >= 0
-               && SelectValueIndex < ValueTuples.Count)
-                ValueTuples.RemoveAt(SelectValueIndex);
+               && SelectValueIndex < LevelPropertiesSet.Count)
+                LevelPropertiesSet.RemoveAt(SelectValueIndex);
         });
 
         public int SelectValueIndex
@@ -28,27 +77,5 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             get;
             set => SetProperty(ref field, value);
         }
-    }
-
-    public class LevelProperty : ObservableObject
-    {
-        public string? Name
-        {
-            get;
-            set => SetProperty(ref field, value);
-        }
-
-        public string? Value
-        {
-            get;
-            set => SetProperty(ref field, value);
-        }
-    }
-
-    public enum PropertiesType
-    {
-        File,
-        Group,
-        Channel
     }
 }

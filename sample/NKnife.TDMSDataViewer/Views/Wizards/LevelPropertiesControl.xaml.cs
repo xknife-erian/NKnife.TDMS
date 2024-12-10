@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using NKnife.TDMSDataViewer.Entities;
 
 namespace NKnife.TDMSDataViewer.Views.Wizards
 {
@@ -63,7 +64,7 @@ namespace NKnife.TDMSDataViewer.Views.Wizards
         #endregion
     }
 
-    class Collection2ListVisibilityCvt : IValueConverter
+    class Collection2VisibilityCvt : IValueConverter
     {
         #region Implementation of IValueConverter
         /// <inheritdoc />

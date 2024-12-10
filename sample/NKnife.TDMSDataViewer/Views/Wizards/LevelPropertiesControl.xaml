@@ -11,60 +11,27 @@
     <ScrollViewer>
         <StackPanel Orientation="Vertical" CanVerticallyScroll="True">
             <StackPanel.Resources>
-                <Style TargetType="StackPanel" x:Key="_KeyValueBox_">
-                    <Setter Property="Orientation" Value="Horizontal" />
-                </Style>
-                <Style TargetType="TextBlock" x:Key="_Key_">
-                    <Setter Property="Width" Value="150" />
-                    <Setter Property="TextAlignment" Value="Right" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                    <Setter Property="Margin" Value="0,5,5,5" />
-                </Style>
-                <Style TargetType="TextBox" x:Key="_Value_">
-                    <Setter Property="Width" Value="260" />
-                    <Setter Property="Height" Value="28" />
-                    <Setter Property="TextAlignment" Value="Left" />
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                    <Setter Property="Padding" Value="3,0" />
-                    <Setter Property="Margin" Value="0,3" />
-                </Style>
                 <wizards:PropertiesType2FileVisibilityCvt x:Key="_PropertiesType2FileVisibilityCvt_" />
                 <wizards:PropertiesType2ChannelVisibilityCvt x:Key="_PropertiesType2ChannelVisibilityCvt_" />
-                <wizards:Collection2ListVisibilityCvt x:Key="_Collection2ListVisibilityCvt_" />
+                <wizards:Collection2VisibilityCvt x:Key="_Collection2VisibilityCvt_" />
             </StackPanel.Resources>
-            <StackPanel Style="{StaticResource _KeyValueBox_}">
-                <TextBlock Style="{StaticResource _Key_}" Text="Name" />
-                <TextBox Style="{StaticResource _Value_}" />
-            </StackPanel>
-            <StackPanel Style="{StaticResource _KeyValueBox_}">
-                <TextBlock Style="{StaticResource _Key_}" Text="Description" />
-                <TextBox Style="{StaticResource _Value_}" />
-            </StackPanel>
-            <StackPanel Style="{StaticResource _KeyValueBox_}"
-                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2FileVisibilityCvt_}}">
-                <TextBlock Style="{StaticResource _Key_}" Text="Title" />
-                <TextBox Style="{StaticResource _Value_}" />
-            </StackPanel>
-            <StackPanel Style="{StaticResource _KeyValueBox_}"
-                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2FileVisibilityCvt_}}">
-                <TextBlock Style="{StaticResource _Key_}" Text="Author" />
-                <TextBox Style="{StaticResource _Value_}" />
-            </StackPanel>
-            <StackPanel Style="{StaticResource _KeyValueBox_}"
-                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2ChannelVisibilityCvt_}}">
-                <TextBlock Style="{StaticResource _Key_}" Text="Unit" />
-                <TextBox Style="{StaticResource _Value_}" />
-            </StackPanel>
-            <StackPanel Style="{StaticResource _KeyValueBox_}"
-                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2ChannelVisibilityCvt_}}">
-                <TextBlock Style="{StaticResource _Key_}" Text="Max" />
-                <TextBox Style="{StaticResource _Value_}" />
-            </StackPanel>
-            <StackPanel Style="{StaticResource _KeyValueBox_}"
-                        Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2ChannelVisibilityCvt_}}">
-                <TextBlock Style="{StaticResource _Key_}" Text="Min" />
-                <TextBox Style="{StaticResource _Value_}" />
-            </StackPanel>
+            <wizards:LevelPropertyControl DataContext="{Binding Name}" />
+            <wizards:LevelPropertyControl DataContext="{Binding Description}" />
+            <Border Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2FileVisibilityCvt_}}">
+                <wizards:LevelPropertyControl DataContext="{Binding Title}" />
+            </Border>
+            <Border Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2FileVisibilityCvt_}}">
+                <wizards:LevelPropertyControl DataContext="{Binding Author}" />
+            </Border>
+            <Border Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2ChannelVisibilityCvt_}}">
+                <wizards:LevelPropertyControl DataContext="{Binding Unit}" />
+            </Border>
+            <Border Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2ChannelVisibilityCvt_}}">
+                <wizards:LevelPropertyControl DataContext="{Binding Max}" />
+            </Border>
+            <Border Visibility="{Binding PropertiesType, Converter={StaticResource _PropertiesType2ChannelVisibilityCvt_}}">
+                <wizards:LevelPropertyControl DataContext="{Binding Min}" />
+            </Border>
             <StackPanel Margin="155,5,98,0" Background="Transparent">
                 <StackPanel Orientation="Horizontal" Margin="0.5,0,0,3">
                     <StackPanel.Resources>
@@ -79,8 +46,8 @@
                     <Button Content="Remove Property" Command="{Binding RemovePropertyCommand}" />
                 </StackPanel>
                 <ListBox
-                    Visibility="{Binding ValueTuples.Count, Converter={StaticResource _Collection2ListVisibilityCvt_}}"
-                    ItemsSource="{Binding ValueTuples, Mode=TwoWay}"
+                    Visibility="{Binding LevelPropertiesSet.Count, Converter={StaticResource _Collection2VisibilityCvt_}}"
+                    ItemsSource="{Binding LevelPropertiesSet, Mode=TwoWay}"
                     SelectedIndex="{Binding SelectValueIndex, Mode=TwoWay}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>

@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="NKnife.TDMSDataViewer.Views.Wizards.LevelPropertyControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NKnife.TDMSDataViewer.Views.Wizards"
+             xmlns:entities="clr-namespace:NKnife.TDMSDataViewer.Entities"
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="480"
+             d:DataContext="{d:DesignInstance {x:Type entities:LevelProperty}}">
+    <UserControl.Resources>
+        <Style TargetType="StackPanel" x:Key="_KeyValueBox_">
+            <Setter Property="Orientation" Value="Horizontal" />
+        </Style>
+        <Style TargetType="TextBlock" x:Key="_Key_">
+            <Setter Property="Width" Value="150" />
+            <Setter Property="TextAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,5,5,5" />
+        </Style>
+        <Style TargetType="TextBox" x:Key="_Value_">
+            <Setter Property="Width" Value="260" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="TextAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="3,0" />
+            <Setter Property="Margin" Value="0,3" />
+        </Style>
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource _KeyValueBox_}">
+        <TextBlock Style="{StaticResource _Key_}" Text="{Binding Name}" />
+        <TextBox Style="{StaticResource _Value_}" Text="{Binding Value}"/>
+    </StackPanel>
+</UserControl>

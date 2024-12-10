@@ -15,8 +15,8 @@
         d:DesignHeight="260"
         Title="NKnife TDMSDataViewer" Width="960" Height="720">
     <Window.Resources>
-        <xcad:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <views:DocksTemplateSelector x:Key="TemplateSelector" />
+        <xcad:BoolToVisibilityConverter x:Key="_BoolToVisibilityConverter_" />
+        <views:DocksTemplateSelector x:Key="_TemplateSelector_" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Gesture="F5" Command="{Binding CreateSampleDataFileCmd}" />
@@ -53,7 +53,7 @@
                                      ActiveContent="{Binding ActivePaneViewModel, Mode=TwoWay}"
                                      AnchorablesSource="{Binding Tools}"
                                      DocumentsSource="{Binding Documents}"
-                                     LayoutItemTemplateSelector="{StaticResource TemplateSelector}">
+                                     LayoutItemTemplateSelector="{StaticResource _TemplateSelector_}">
 
                     <xcad:DockingManager.LayoutItemContainerStyleSelector>
                         <views:DocksStyleSelector>
@@ -68,7 +68,7 @@
                                     <Setter Property="Visibility">
                                         <Setter.Value>
                                             <Binding Path="Model.IsVisible"
-                                                     Converter="{StaticResource BoolToVisibilityConverter}"
+                                                     Converter="{StaticResource _BoolToVisibilityConverter_}"
                                                      Mode="TwoWay" />
                                         </Setter.Value>
                                     </Setter>

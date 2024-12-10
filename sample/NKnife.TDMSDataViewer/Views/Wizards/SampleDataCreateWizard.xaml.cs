@@ -23,12 +23,6 @@ namespace NKnife.TDMSDataViewer.Views.Wizards
             Pages.Add($"{nameof(_GroupPropertiesPage_)}", _GroupPropertiesPage_);
             Pages.Add($"{nameof(_ChannelPropertiesPage_)}", _ChannelPropertiesPage_);
         }
-
-        private void Wizard_OnPageChanged(object sender, RoutedEventArgs e)
-        {
-            if(DataContext is SampleDataCreateWizardViewModel vm)
-                vm.PageChanged();
-        }
     }
 
     internal class CurrentPageName2PageCvt : IValueConverter
