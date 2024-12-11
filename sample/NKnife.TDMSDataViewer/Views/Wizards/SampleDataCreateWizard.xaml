@@ -21,8 +21,11 @@
                  HelpButtonVisibility="Collapsed"
                  CurrentPage="{Binding PageName, Mode = TwoWay, Converter = {StaticResource _CurrentPageName2PageCvt_}}">
         <b:Interaction.Triggers>
-            <b:EventTrigger EventName="PageChangedCommand">
+            <b:EventTrigger EventName="PageChanged">
                 <b:InvokeCommandAction Command="{Binding PageChangedCommand}" />
+            </b:EventTrigger>    
+            <b:EventTrigger EventName="Next">
+                <b:InvokeCommandAction Command="{Binding NextCommand}" />
             </b:EventTrigger>
         </b:Interaction.Triggers>
         <xctk:WizardPage Title="数据创建向导"
@@ -32,14 +35,13 @@
                          Name="_FilePropertyPage_"
                          Title="文件属性"
                          Description="请填写文件的基本属性；同时，也可以添加自定义属性。"
-                         DataContext="{Binding FileProperties}">
+                         DataContext="{Binding FilePropertiesVm}">
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
                          Name="_DataStructuredTreePage_"
                          Title="数据结构"
-                         DataContext="{Binding DataStructuredTree}"
-                         NextPage="{Binding ElementName=_EndPage_}">
+                         DataContext="{Binding DataStructuredTree}">
             <cvt:DataStructuredTreeControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
@@ -47,7 +49,7 @@
                          Title="通道组属性"
                          Description="请填写通道组的基本属性；同时，也可以添加自定义属性。"
                          NextPage="{Binding ElementName=_DataStructuredTreePage_}"
-                         DataContext="{Binding GroupProperties}">
+                         DataContext="{Binding GroupPropertiesVm}">
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"
@@ -55,7 +57,7 @@
                          Title="通道属性"
                          Description="请填写通道的基本属性；同时，也可以添加自定义属性。"
                          NextPage="{Binding ElementName=_DataStructuredTreePage_}"
-                         DataContext="{Binding ChannelProperties}">
+                         DataContext="{Binding ChannelPropertiesVm}">
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
         <xctk:WizardPage PageType="Interior"

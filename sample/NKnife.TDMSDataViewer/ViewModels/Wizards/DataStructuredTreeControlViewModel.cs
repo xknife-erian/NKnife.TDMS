@@ -1,14 +1,15 @@
 ﻿using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NKnife.TDMSDataViewer.Entities;
 
 namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 {
-    internal class DataStructuredTreeControlViewModel(
-        SampleDataCreateWizardViewModel __parentVm) : ObservableObject
+    internal class DataStructuredTreeControlViewModel(SampleDataCreateWizardViewModel __parentVm) : ObservableObject
     {
         public ICommand AddGroupCmd => new RelayCommand(() =>
         {
+            __parentVm.GroupPropertiesVm = new(PropertiesType.Group);
             __parentVm.PageName = "_GroupPropertiesPage_";
         });
 

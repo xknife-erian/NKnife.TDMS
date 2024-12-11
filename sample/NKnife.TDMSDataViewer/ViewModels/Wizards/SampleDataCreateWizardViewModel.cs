@@ -14,6 +14,9 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
         {
             PageName           = _lastPageName;
             DataStructuredTree = new(this);
+
+            GroupPropertiesVm = new(PropertiesType.Group);
+            ChannelPropertiesVm = new(PropertiesType.Channel);
         }
 
         /// <inheritdoc />
@@ -25,10 +28,34 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             set => SetProperty(ref field, value);
         }
 
-        public LevelPropertiesControlViewModel FileProperties { get; init; } = new(PropertiesType.File);
-        public LevelPropertiesControlViewModel GroupProperties { get; init; } = new(PropertiesType.Group);
-        public LevelPropertiesControlViewModel ChannelProperties { get; init; } = new(PropertiesType.Channel);
+        public LevelPropertiesControlViewModel FilePropertiesVm { get; init; } = new(PropertiesType.File);
+
         public DataStructuredTreeControlViewModel DataStructuredTree { get; init; }
+
+        public LevelPropertiesControlViewModel GroupPropertiesVm
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
+
+        public LevelPropertiesControlViewModel ChannelPropertiesVm
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
+
+        public ICommand NextCommand => new RelayCommand(() =>
+        {
+            switch (PageName)
+            {
+                case "_FilePropertyPage_":
+                    if(string.IsNullOrEmpty(FilePropertiesVm.Name.Value)
+                       || string.IsNullOrEmpty(FilePropertiesVm.Description.Value))
+                        PageName = "_FilePropertyPage_";
+
+                    break;
+            }
+        });
 
         public ICommand PageChangedCommand => new RelayCommand(() =>
         {
@@ -36,7 +63,21 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             {
                 case "_FilePropertyPage_":
                     DataFileInfo.FileProperties.Clear();
-                    // DataFileInfo.FileProperties.AddRange(FileProperties.LevelPropertiesSet);
+
+                    DataFileInfo.FileProperties.Add(FilePropertiesVm.Name);
+                    DataFileInfo.FileProperties.Add(FilePropertiesVm.Description);
+
+                    if(!string.IsNullOrEmpty(FilePropertiesVm.Title.Value))
+                        DataFileInfo.FileProperties.Add(FilePropertiesVm.Title);
+                    if(!string.IsNullOrEmpty(FilePropertiesVm.Author.Value))
+                        DataFileInfo.FileProperties.Add(FilePropertiesVm.Author);
+
+                    foreach (var lp in FilePropertiesVm.LevelPropertiesSet)
+                    {
+                        if(!string.IsNullOrEmpty(lp.Name)
+                           && !string.IsNullOrEmpty(lp.Value))
+                            DataFileInfo.FileProperties.Add(lp);
+                    }
 
                     break;
                 case "_GroupPropertiesPage_":
@@ -54,5 +95,6 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             get;
             set => SetProperty(ref field, value);
         }
+
     }
 }
