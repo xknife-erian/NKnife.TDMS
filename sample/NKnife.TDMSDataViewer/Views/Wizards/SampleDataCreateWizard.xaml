@@ -15,11 +15,10 @@
         AllowsTransparency="True"
         Height="400" Width="560">
     <Window.Resources>
-        <cvt:CurrentPageName2PageCvt x:Key="_CurrentPageName2PageCvt_" />
+        <cvt:PageName2PageCvt x:Key="_PageName2PageCvt_" />
     </Window.Resources>
     <xctk:Wizard FinishButtonClosesWindow="True"
-                 HelpButtonVisibility="Collapsed"
-                 CurrentPage="{Binding PageName, Mode = TwoWay, Converter = {StaticResource _CurrentPageName2PageCvt_}}">
+                 HelpButtonVisibility="Collapsed">
         <b:Interaction.Triggers>
             <b:EventTrigger EventName="PageChanged">
                 <b:InvokeCommandAction Command="{Binding PageChangedCommand}" />
@@ -30,7 +29,8 @@
         </b:Interaction.Triggers>
         <xctk:WizardPage Title="数据创建向导"
                          Name="_WelcomePage_"
-                         Description="本向导将指导您建立样本数据库." />
+                         Description="本向导将指导您建立样本数据库."
+                         NextPage="{Binding PageName, Converter = {StaticResource _PageName2PageCvt_}}"/>
         <xctk:WizardPage PageType="Interior"
                          Name="_FilePropertyPage_"
                          Title="文件属性"
@@ -38,17 +38,18 @@
                          DataContext="{Binding FilePropertiesVm}">
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
+        
         <xctk:WizardPage PageType="Interior"
                          Name="_DataStructuredTreePage_"
                          Title="数据结构"
                          DataContext="{Binding DataStructuredTree}">
             <cvt:DataStructuredTreeControl />
         </xctk:WizardPage>
+        
         <xctk:WizardPage PageType="Interior"
                          Name="_GroupPropertiesPage_"
                          Title="通道组属性"
                          Description="请填写通道组的基本属性；同时，也可以添加自定义属性。"
-                         NextPage="{Binding ElementName=_DataStructuredTreePage_}"
                          DataContext="{Binding GroupPropertiesVm}">
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
@@ -56,10 +57,25 @@
                          Name="_ChannelPropertiesPage_"
                          Title="通道属性"
                          Description="请填写通道的基本属性；同时，也可以添加自定义属性。"
-                         NextPage="{Binding ElementName=_DataStructuredTreePage_}"
                          DataContext="{Binding ChannelPropertiesVm}">
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
+
+        <xctk:WizardPage PageType="Interior"
+                         Name="_DataFormatSettingsPage_"
+                         Title="设置数据格式"
+                         Description="请填写当前通道将要存储的样本数据的格式，以及相关的设定。">
+        </xctk:WizardPage>   
+
+        <xctk:WizardPage PageType="Interior"
+                         Name="_ResultConfirmationPage_"
+                         Title="设置结果确认">
+        </xctk:WizardPage>
+        <xctk:WizardPage PageType="Interior"
+                         Name="_BuildProgressPage_"
+                         Title="开始数据文件">
+        </xctk:WizardPage>
+
         <xctk:WizardPage PageType="Interior"
                          Name="_EndPage_"
                          Title="开始创建Sample数据文件"

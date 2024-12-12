@@ -48,12 +48,28 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
         {
             switch (PageName)
             {
-                case "_FilePropertyPage_":
+                case WizardPageNames.WelcomePage:
+                    PageName = WizardPageNames.FilePropertyPage;
+                    break;
+                case WizardPageNames.FilePropertyPage:
                     if(string.IsNullOrEmpty(FilePropertiesVm.Name.Value)
                        || string.IsNullOrEmpty(FilePropertiesVm.Description.Value))
-                        PageName = "_FilePropertyPage_";
-
+                        PageName = WizardPageNames.FilePropertyPage;
+                    else
+                        PageName = WizardPageNames.DataStructuredTreePage;
+            
                     break;
+                case "_GroupPropertiesPage_":
+                    if (string.IsNullOrEmpty(GroupPropertiesVm.Name.Value)
+                       || string.IsNullOrEmpty(GroupPropertiesVm.Description.Value))
+                        PageName = "_GroupPropertiesPage_";
+                    break;
+                case "_ChannelPropertiesPage_":
+                    if (string.IsNullOrEmpty(ChannelPropertiesVm.Name.Value)
+                       || string.IsNullOrEmpty(ChannelPropertiesVm.Description.Value))
+                        PageName = "_ChannelPropertiesPage_";
+                    break;
+            
             }
         });
 
