@@ -18,6 +18,22 @@
         Height="400" Width="560">
     <Window.Resources>
         <cvt:PageName2PageCvt x:Key="_PageName2PageCvt_" />
+        <Style TargetType="xctk:WizardPage" x:Key="_WizardPageCommonStyle_">
+            <Setter Property="PreviousPage">
+                <Setter.Value>
+                    <Binding Path="DataContext.PreviousPageName" 
+                             RelativeSource="{RelativeSource AncestorType=Window}"
+                             Converter="{StaticResource _PageName2PageCvt_}" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="NextPage">
+                <Setter.Value>
+                    <Binding Path="DataContext.NextPageName" 
+                             RelativeSource="{RelativeSource AncestorType=Window}"
+                             Converter="{StaticResource _PageName2PageCvt_}" />
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <xctk:Wizard FinishButtonClosesWindow="True"
                  HelpButtonVisibility="Collapsed"
@@ -29,43 +45,37 @@
             <b:EventTrigger EventName="Next">
                 <b:InvokeCommandAction Command="{Binding NextCommand}" />
             </b:EventTrigger>
-            <b:EventTrigger EventName="Next">
-                <b:InvokeCommandAction Command="{Binding NextCommand}" />
+            <b:EventTrigger EventName="Previous">
+                <b:InvokeCommandAction Command="{Binding PreviousCommand}" />
             </b:EventTrigger>
-            <b:EventTrigger EventName="Next">
-                <b:InvokeCommandAction Command="{Binding NextCommand}" />
+            <b:EventTrigger EventName="Cancel">
+                <b:InvokeCommandAction Command="{Binding CancelCommand}" />
+            </b:EventTrigger>
+            <b:EventTrigger EventName="Finish">
+                <b:InvokeCommandAction Command="{Binding FinishCommand}" />
             </b:EventTrigger>
         </b:Interaction.Triggers>
 
         <xctk:WizardPage Title="数据创建向导"
                          Name="_WelcomePage_"
-                         Description="本向导将指导您建立样本数据库.">
-            <xctk:WizardPage.NextPage>
-                <Binding Path="DataContext.NextPageName" RelativeSource="{RelativeSource AncestorType=Window}"
-                         Converter="{StaticResource _PageName2PageCvt_}" />
-            </xctk:WizardPage.NextPage>
+                         Description="本向导将指导您建立样本数据库."
+                         Style="{StaticResource _WizardPageCommonStyle_}">
         </xctk:WizardPage>
 
         <xctk:WizardPage PageType="Interior"
                          Name="_FilePropertiesPage_"
                          Title="文件属性"
                          Description="请填写文件的基本属性；同时，也可以添加自定义属性。"
+                         Style="{StaticResource _WizardPageCommonStyle_}"
                          DataContext="{Binding FilePropertiesVm}">
-            <xctk:WizardPage.NextPage>
-                <Binding Path="DataContext.NextPageName" RelativeSource="{RelativeSource AncestorType=Window}"
-                         Converter="{StaticResource _PageName2PageCvt_}" />
-            </xctk:WizardPage.NextPage>
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
 
         <xctk:WizardPage PageType="Interior"
                          Name="_DataStructuredTreePage_"
                          Title="数据结构"
+                         Style="{StaticResource _WizardPageCommonStyle_}"
                          DataContext="{Binding DataStructuredTree}">
-            <xctk:WizardPage.NextPage>
-                <Binding Path="DataContext.NextPageName" RelativeSource="{RelativeSource AncestorType=Window}"
-                         Converter="{StaticResource _PageName2PageCvt_}" />
-            </xctk:WizardPage.NextPage>
             <cvt:DataStructuredTreeControl />
         </xctk:WizardPage>
 
@@ -73,11 +83,8 @@
                          Name="_GroupPropertiesPage_"
                          Title="通道组属性"
                          Description="请填写通道组的基本属性；同时，也可以添加自定义属性。"
+                         Style="{StaticResource _WizardPageCommonStyle_}"
                          DataContext="{Binding GroupPropertiesVm}">
-            <xctk:WizardPage.NextPage>
-                <Binding Path="DataContext.NextPageName" RelativeSource="{RelativeSource AncestorType=Window}"
-                         Converter="{StaticResource _PageName2PageCvt_}" />
-            </xctk:WizardPage.NextPage>
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
 
@@ -85,46 +92,34 @@
                          Name="_ChannelPropertiesPage_"
                          Title="通道属性"
                          Description="请填写通道的基本属性；同时，也可以添加自定义属性。"
+                         Style="{StaticResource _WizardPageCommonStyle_}"
                          DataContext="{Binding ChannelPropertiesVm}">
-            <xctk:WizardPage.NextPage>
-                <Binding Path="DataContext.NextPageName" RelativeSource="{RelativeSource AncestorType=Window}"
-                         Converter="{StaticResource _PageName2PageCvt_}" />
-            </xctk:WizardPage.NextPage>
             <cvt:LevelPropertiesControl />
         </xctk:WizardPage>
 
         <xctk:WizardPage PageType="Interior"
                          Name="_DataFormatSettingsPage_"
                          Title="设置数据格式"
-                         Description="请填写当前通道将要存储的样本数据的格式，以及相关的设定。">
-            <xctk:WizardPage.NextPage>
-                <Binding Path="DataContext.NextPageName" RelativeSource="{RelativeSource AncestorType=Window}"
-                         Converter="{StaticResource _PageName2PageCvt_}" />
-            </xctk:WizardPage.NextPage>
+                         Description="请填写当前通道将要存储的样本数据的格式，以及相关的设定。"
+                         Style="{StaticResource _WizardPageCommonStyle_}">
         </xctk:WizardPage>
 
         <xctk:WizardPage PageType="Interior"
                          Name="_ResultConfirmationPage_"
-                         Title="设置结果确认">
-            <xctk:WizardPage.NextPage>
-                <Binding Path="DataContext.NextPageName" RelativeSource="{RelativeSource AncestorType=Window}"
-                         Converter="{StaticResource _PageName2PageCvt_}" />
-            </xctk:WizardPage.NextPage>
+                         Title="设置结果确认"
+                         Style="{StaticResource _WizardPageCommonStyle_}">
         </xctk:WizardPage>
 
         <xctk:WizardPage PageType="Interior"
                          Name="_BuildProgressPage_"
-                         Title="开始创建Sample数据文件">
-            <xctk:WizardPage.NextPage>
-                <Binding Path="DataContext.NextPageName" RelativeSource="{RelativeSource AncestorType=Window}"
-                         Converter="{StaticResource _PageName2PageCvt_}" />
-            </xctk:WizardPage.NextPage>
+                         Title="开始创建Sample数据文件"
+                         Style="{StaticResource _WizardPageCommonStyle_}">
         </xctk:WizardPage>
 
         <xctk:WizardPage PageType="Interior"
                          Name="_EndPage_"
                          Title="数据文件完成"
-                         Description=""
+                         Style="{StaticResource _WizardPageCommonStyle_}"
                          BackButtonVisibility="Hidden"
                          CanFinish="True" />
     </xctk:Wizard>
