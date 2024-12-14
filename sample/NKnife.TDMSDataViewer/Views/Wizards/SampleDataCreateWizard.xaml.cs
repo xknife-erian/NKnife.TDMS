@@ -17,7 +17,7 @@ namespace NKnife.TDMSDataViewer.Views.Wizards
             InitializeComponent();
             Pages.Clear();
             Pages.Add($"{nameof(_WelcomePage_)}", _WelcomePage_);
-            Pages.Add($"{nameof(_FilePropertyPage_)}", _FilePropertyPage_);
+            Pages.Add($"{nameof(_FilePropertiesPage_)}", _FilePropertiesPage_);
             Pages.Add($"{nameof(_DataStructuredTreePage_)}", _DataStructuredTreePage_);
             Pages.Add($"{nameof(_GroupPropertiesPage_)}", _GroupPropertiesPage_);
             Pages.Add($"{nameof(_ChannelPropertiesPage_)}", _ChannelPropertiesPage_);

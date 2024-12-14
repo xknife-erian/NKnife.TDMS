@@ -18,7 +18,7 @@ namespace NKnife.TDMSDataViewer.ViewModels
 
         public ICommand CreateSampleDataFileCmd => new RelayCommand(() =>
         {
-            __dialogService.ShowDialog(this, new SampleDataCreateWizardViewModel());
+            __dialogService.ShowDialog(this, new SampleDataCreateWizardViewModel(__dialogService));
         });
 
         public ICommand CreateDataFileCmd => new RelayCommand(() =>

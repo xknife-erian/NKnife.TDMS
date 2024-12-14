@@ -7,7 +7,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
     {
         public const string WelcomePage = "_WelcomePage_";
 
-        public const string FilePropertyPage = "_FilePropertyPage_";
+        public const string FilePropertiesPage = "_FilePropertiesPage_";
 
         public const string DataStructuredTreePage = "_DataStructuredTreePage_";
 

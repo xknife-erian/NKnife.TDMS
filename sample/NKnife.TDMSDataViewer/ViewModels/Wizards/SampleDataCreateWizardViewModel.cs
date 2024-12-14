@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using MvvmDialogs;
 using NKnife.TDMSDataViewer.Common;
@@ -8,11 +9,17 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 {
     internal class SampleDataCreateWizardViewModel : BaseViewModel, IModalDialogViewModel
     {
-        private string _lastPageName = "_WelcomePage_";
+        private readonly DialogService _dialogService;
 
-        public SampleDataCreateWizardViewModel()
+        public SampleDataCreateWizardViewModel(DialogService dialogService)
         {
-            PageName           = _lastPageName;
+            _dialogService   = dialogService;
+            NextPageName         = WizardPageNames.WelcomePage;
+            SkipPageName     = NextPageName;
+            FilePropertiesVm = new(PropertiesType.File);
+#if DEBUG
+            FilePropertiesVm.Name.Value = $"SampleDataFile-{Guid.NewGuid().ToString().ToUpper().Substring(0,6)}";
+#endif
             DataStructuredTree = new(this);
 
             GroupPropertiesVm = new(PropertiesType.Group);
@@ -27,8 +34,23 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             get;
             set => SetProperty(ref field, value);
         }
+        public string NextPageName
+        {
+            get;
+            set => SetProperty(ref field, value);
+        }
 
-        public LevelPropertiesControlViewModel FilePropertiesVm { get; init; } = new(PropertiesType.File);
+        public string SkipPageName
+        {
+            get;
+            set
+            {
+                SetProperty(ref field, value);
+                NextPageName = value;
+            }
+        }
+
+        public LevelPropertiesControlViewModel FilePropertiesVm { get; init; }
 
         public DataStructuredTreeControlViewModel DataStructuredTree { get; init; }
 
@@ -46,38 +68,84 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 
         public ICommand NextCommand => new RelayCommand(() =>
         {
-            switch (PageName)
+            switch (NextPageName)
             {
                 case WizardPageNames.WelcomePage:
-                    PageName = WizardPageNames.FilePropertyPage;
+                    NextPageName = WizardPageNames.FilePropertiesPage;
+
                     break;
-                case WizardPageNames.FilePropertyPage:
-                    if(string.IsNullOrEmpty(FilePropertiesVm.Name.Value)
-                       || string.IsNullOrEmpty(FilePropertiesVm.Description.Value))
-                        PageName = WizardPageNames.FilePropertyPage;
-                    else
-                        PageName = WizardPageNames.DataStructuredTreePage;
-            
+                case WizardPageNames.FilePropertiesPage:
+                    OnFilePropertiesPage();
+
                     break;
-                case "_GroupPropertiesPage_":
-                    if (string.IsNullOrEmpty(GroupPropertiesVm.Name.Value)
-                       || string.IsNullOrEmpty(GroupPropertiesVm.Description.Value))
-                        PageName = "_GroupPropertiesPage_";
+                case WizardPageNames.DataStructuredTreePage:
+                    NextPageName = WizardPageNames.ResultConfirmationPage;
+
                     break;
-                case "_ChannelPropertiesPage_":
-                    if (string.IsNullOrEmpty(ChannelPropertiesVm.Name.Value)
-                       || string.IsNullOrEmpty(ChannelPropertiesVm.Description.Value))
-                        PageName = "_ChannelPropertiesPage_";
+                case WizardPageNames.GroupPropertiesPage:
+                    OnGroupPropertiesPage();
+
                     break;
-            
+                case WizardPageNames.ChannelPropertiesPage:
+                    OnChannelPropertiesPage();
+
+                    break;
+                case WizardPageNames.DataFormatSettingsPage:
+                    NextPageName = WizardPageNames.DataStructuredTreePage;
+
+                    break;
+                case WizardPageNames.ResultConfirmationPage:
+                    NextPageName = WizardPageNames.BuildProgressPage;
+
+                    break;
+                case WizardPageNames.BuildProgressPage:
+                    NextPageName = WizardPageNames.EndPage;
+
+                    break;
+                case WizardPageNames.EndPage:
+                    break;
+
             }
         });
 
+        private void OnChannelPropertiesPage()
+        {
+            if(string.IsNullOrEmpty(ChannelPropertiesVm.Name.Value))
+                NextPageName = WizardPageNames.ChannelPropertiesPage;
+            else
+                NextPageName = WizardPageNames.DataStructuredTreePage;
+        }
+
+        private void OnGroupPropertiesPage()
+        {
+            if(string.IsNullOrEmpty(GroupPropertiesVm.Name.Value))
+                NextPageName = WizardPageNames.GroupPropertiesPage;
+            else
+                NextPageName = WizardPageNames.DataStructuredTreePage;
+        }
+
+        private void OnFilePropertiesPage()
+        {
+            if(string.IsNullOrEmpty(FilePropertiesVm.Name.Value))
+            {
+                _dialogService.ShowMessageBox(this,
+                                              "Name是必填项，请填写后继续下一步。",
+                                              "请完整填写",
+                                              MessageBoxButton.OK,
+                                              MessageBoxImage.Asterisk);
+                NextPageName = WizardPageNames.FilePropertiesPage;
+            }
+            else
+            {
+                NextPageName = WizardPageNames.DataStructuredTreePage;
+            }
+        }
+
         public ICommand PageChangedCommand => new RelayCommand(() =>
         {
-            switch (_lastPageName)
+            switch (NextPageName)
             {
-                case "_FilePropertyPage_":
+                case WizardPageNames.DataStructuredTreePage:
                     DataFileInfo.FileProperties.Clear();
 
                     DataFileInfo.FileProperties.Add(FilePropertiesVm.Name);
@@ -96,21 +164,9 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
                     }
 
                     break;
-                case "_GroupPropertiesPage_":
-                case "_ChannelPropertiesPage_":
-                    break;
             }
-
-            _lastPageName = PageName;
         });
 
         public DataFileInfo DataFileInfo { get; set; } = new();
-
-        public string PageName
-        {
-            get;
-            set => SetProperty(ref field, value);
-        }
-
     }
 }
