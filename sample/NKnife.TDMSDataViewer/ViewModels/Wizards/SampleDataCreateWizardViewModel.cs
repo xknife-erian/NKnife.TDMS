@@ -16,6 +16,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             _dialogService   = dialogService;
             NextPageName     = WizardPageNames.WelcomePage;
             SkipPageName     = NextPageName;
+            PreviousPageName = NextPageName;
             FilePropertiesVm = new LevelPropertiesControlViewModel(PropertiesType.File);
 #if DEBUG
             FilePropertiesVm.Name.Value = $"SampleDataFile-{Guid.NewGuid().ToString().ToUpper().Substring(0, 6)}";
@@ -37,6 +38,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             get;
             set => SetProperty(ref field, value);
         }
+
         public string PreviousPageName
         {
             get;
@@ -48,8 +50,11 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             get;
             set
             {
-                SetProperty(ref field, value);
+                if(value == WizardPageNames.GroupPropertiesPage
+                   || value == WizardPageNames.ChannelPropertiesPage)
+                    PreviousPageName = WizardPageNames.DataStructuredTreePage;
                 NextPageName = value;
+                SetProperty(ref field, value);
             }
         }
 
@@ -77,6 +82,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             {
                 case WizardPageNames.WelcomePage:
                     NextPageName = WizardPageNames.FilePropertiesPage;
+                    PreviousPageName = WizardPageNames.WelcomePage;
 
                     break;
                 case WizardPageNames.FilePropertiesPage:
@@ -85,6 +91,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
                     break;
                 case WizardPageNames.DataStructuredTreePage:
                     NextPageName = WizardPageNames.ResultConfirmationPage;
+                    PreviousPageName = WizardPageNames.DataStructuredTreePage;
 
                     break;
                 case WizardPageNames.GroupPropertiesPage:
@@ -101,10 +108,12 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
                     break;
                 case WizardPageNames.ResultConfirmationPage:
                     NextPageName = WizardPageNames.BuildProgressPage;
+                    PreviousPageName = WizardPageNames.DataStructuredTreePage;
 
                     break;
                 case WizardPageNames.BuildProgressPage:
                     NextPageName = WizardPageNames.EndPage;
+                    PreviousPageName = WizardPageNames.BuildProgressPage;
 
                     break;
                 case WizardPageNames.EndPage:
@@ -148,34 +157,51 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
         private void OnChannelPropertiesPage()
         {
             if(string.IsNullOrEmpty(ChannelPropertiesVm.Name.Value))
-                NextPageName = WizardPageNames.ChannelPropertiesPage;
+            {
+                PromptNamePropertyNotFilled();
+                NextPageName     = WizardPageNames.ChannelPropertiesPage;
+                PreviousPageName = WizardPageNames.DataStructuredTreePage;
+            }
             else
-                NextPageName = WizardPageNames.DataStructuredTreePage;
+            {
+                NextPageName     = WizardPageNames.DataStructuredTreePage;
+                PreviousPageName = WizardPageNames.FilePropertiesPage;
+            }
         }
 
         private void OnGroupPropertiesPage()
         {
             if(string.IsNullOrEmpty(GroupPropertiesVm.Name.Value))
-                NextPageName = WizardPageNames.GroupPropertiesPage;
+            {
+                PromptNamePropertyNotFilled();
+                NextPageName     = WizardPageNames.GroupPropertiesPage;
+                PreviousPageName = WizardPageNames.DataStructuredTreePage;
+            }
             else
-                NextPageName = WizardPageNames.DataStructuredTreePage;
+            {
+                NextPageName     = WizardPageNames.DataStructuredTreePage;
+                PreviousPageName = WizardPageNames.FilePropertiesPage;
+            }
         }
 
         private void OnFilePropertiesPage()
         {
             if(string.IsNullOrEmpty(FilePropertiesVm.Name.Value))
             {
-                _dialogService.ShowMessageBox(this,
-                                              "Name是必填项，请填写后继续下一步。",
-                                              "请完整填写",
-                                              MessageBoxButton.OK,
-                                              MessageBoxImage.Asterisk);
-                NextPageName = WizardPageNames.FilePropertiesPage;
+                PromptNamePropertyNotFilled();
+                NextPageName     = WizardPageNames.FilePropertiesPage;
+                PreviousPageName = WizardPageNames.WelcomePage;
             }
             else
             {
-                NextPageName = WizardPageNames.DataStructuredTreePage;
+                NextPageName     = WizardPageNames.DataStructuredTreePage;
+                PreviousPageName = WizardPageNames.FilePropertiesPage;
             }
+        }
+
+        private void PromptNamePropertyNotFilled()
+        {
+            _dialogService.ShowMessageBox(this, "[Name] 是必填项，请填写后继续下一步。", "请完整填写", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
     }
 }

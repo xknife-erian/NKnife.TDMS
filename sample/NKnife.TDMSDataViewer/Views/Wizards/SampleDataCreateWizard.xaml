@@ -59,6 +59,7 @@
         <xctk:WizardPage Title="数据创建向导"
                          Name="_WelcomePage_"
                          Description="本向导将指导您建立样本数据库."
+                         BackButtonVisibility="Hidden"
                          Style="{StaticResource _WizardPageCommonStyle_}">
         </xctk:WizardPage>
 
@@ -121,6 +122,7 @@
                          Title="数据文件完成"
                          Style="{StaticResource _WizardPageCommonStyle_}"
                          BackButtonVisibility="Hidden"
+                         CancelButtonVisibility="Collapsed"
                          CanFinish="True" />
     </xctk:Wizard>
 </Window>
