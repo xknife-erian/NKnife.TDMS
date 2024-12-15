@@ -18,10 +18,10 @@ namespace NKnife.TDMSDataViewer.Views.Wizards
             Pages.Clear();
             Pages.Add($"{nameof(_WelcomePage_)}", _WelcomePage_);
             Pages.Add($"{nameof(_FilePropertiesPage_)}", _FilePropertiesPage_);
-            Pages.Add($"{nameof(_DataStructuredTreePage_)}", _DataStructuredTreePage_);
+            Pages.Add($"{nameof(_DataStructurePage_)}", _DataStructurePage_);
             Pages.Add($"{nameof(_GroupPropertiesPage_)}", _GroupPropertiesPage_);
             Pages.Add($"{nameof(_ChannelPropertiesPage_)}", _ChannelPropertiesPage_);
-            Pages.Add($"{nameof(_DataFormatSettingsPage_)}", _DataFormatSettingsPage_);
+            Pages.Add($"{nameof(_EditDataFormatSettingsPage_)}", _EditDataFormatSettingsPage_);
             Pages.Add($"{nameof(_ResultConfirmationPage_)}", _ResultConfirmationPage_);
             Pages.Add($"{nameof(_BuildProgressPage_)}", _BuildProgressPage_);
             Pages.Add($"{nameof(_EndPage_)}", _EndPage_);

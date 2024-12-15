@@ -7,30 +7,98 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance {x:Type wizards:DataStructuredTreeControlViewModel}}">
+    <UserControl.Resources>
+        <DataTemplate x:Key="_PropertiesTemplate_">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Name, FallbackValue='[No Name]'}" Margin="0,0,5,0" />
+                <TextBlock Text="{Binding Value, FallbackValue='[No Name]'}" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
     <Border>
         <DockPanel>
             <Border DockPanel.Dock="Top">
-                <ToolBar Background="Transparent" Margin="-5,0,0,0"
-                         ToolBarTray.IsLocked="True">
-                    <ToolBar.Resources>
-                        <Style TargetType="Button" x:Key="_ToolButtonStyle_">
+                <Menu Margin="-3,0,0,6">
+                    <Menu.Resources>
+                        <Style TargetType="MenuItem" x:Key="_MainMenuStyle_">
+                            <Setter Property="Margin" Value="3,0,1,0" />
+                            <Setter Property="Padding" Value="10,5" />
                             <Setter Property="BorderBrush" Value="Gray" />
-                            <Setter Property="Margin" Value="2,0" />
-                            <Setter Property="Padding" Value="8,3" />
+                            <Setter Property="BorderThickness" Value="0.6" />
                         </Style>
-                    </ToolBar.Resources>
-                    <Button Content="Add Group" Style="{StaticResource _ToolButtonStyle_}"
-                            Command="{Binding AddGroupCmd}" />
-                    <Button Content="Remove Group" Style="{StaticResource _ToolButtonStyle_}"
-                            Command="{Binding RemoveGroupCmd}" />
-                    <Separator />
-                    <Button Content="Add Channel" Style="{StaticResource _ToolButtonStyle_}"
-                            Command="{Binding AddChannelCmd}" />
-                    <Button Content="Remove Channel" Style="{StaticResource _ToolButtonStyle_}"
-                            Command="{Binding RemoveChannelCmd}" />
-                </ToolBar>
+                    </Menu.Resources>
+                    <MenuItem Header="Group"
+                              Style="{StaticResource _MainMenuStyle_}">
+                        <MenuItem Header="Add Channel Group"
+                                  Command="{Binding AddGroupCmd}" />
+                        <MenuItem Header="Remove Channel Group"
+                                  Command="{Binding RemoveGroupCmd}" />
+                    </MenuItem>
+                    <MenuItem Header="Channel"
+                              Style="{StaticResource _MainMenuStyle_}">
+                        <MenuItem Header="Add Channel"
+                                  Command="{Binding AddChannelCmd}" />
+                        <MenuItem Header="Remove Channel"
+                                  Command="{Binding RemoveChannelCmd}" />
+                    </MenuItem>
+                    <MenuItem Header="Data"
+                              Style="{StaticResource _MainMenuStyle_}">
+                        <MenuItem Header="Edit Data Format Setting"
+                                  Command="{Binding EditDataFormatSettingsCmd}" />
+                        <Separator />
+                        <MenuItem Header="Add 100 Random Int Data"
+                                  Command="{Binding Add100RandomIntDataCmd}" />
+                        <MenuItem Header="Add 100 Random Int with Time Data"
+                                  Command="{Binding Add100RandomIntWithTimeDataCmd}" />
+                        <MenuItem Header="Add 1000 Random Float with Time Data"
+                                  Command="{Binding Add1000RandomFloatWithTimeDataCmd}" />
+                    </MenuItem>
+                </Menu>
             </Border>
-            <TreeView />
+            <TextBlock Text="File Properties"
+                       DockPanel.Dock="Top"
+                       FontWeight="Bold" Margin="0,0,0,5" />
+            <ListBox DockPanel.Dock="Top"
+                     ItemsSource="{Binding DbFileStructure.Properties}"
+                     ItemTemplate="{StaticResource _PropertiesTemplate_}" />
+            <ScrollViewer>
+                <ListBox ItemsSource="{Binding DbFileStructure.Groups}"
+                         ScrollViewer.VerticalScrollBarVisibility="Visible">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="Group Properties" FontWeight="Bold" Margin="0,0,0,5" />
+                                <ListBox ItemsSource="{Binding Properties}"
+                                         ItemTemplate="{StaticResource _PropertiesTemplate_}" />
+                                <ListBox ItemsSource="{Binding Channels}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock Text="Channel Properties" FontWeight="Bold"
+                                                           Margin="20,0,0,5" />
+                                                <ListBox ItemsSource="{Binding Properties}"
+                                                         ItemTemplate="{StaticResource _PropertiesTemplate_}"
+                                                         Margin="20,0,0,5" />
+                                                <ListBox ItemsSource="{Binding Datas}">
+                                                    <ListBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <StackPanel Orientation="Horizontal" Margin="30,0,0,5">
+                                                                <TextBlock Text="{Binding Count}" Margin="0,0,5,0" />
+                                                                <TextBlock Text="{Binding MinValue}" />
+                                                                <TextBlock Text="{Binding MaxValue}" />
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ListBox.ItemTemplate>
+                                                </ListBox>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
         </DockPanel>
     </Border>
 </UserControl>

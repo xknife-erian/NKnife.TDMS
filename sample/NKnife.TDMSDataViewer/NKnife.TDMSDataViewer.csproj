@@ -23,4 +23,8 @@
         <PackageReference Include="NLog" Version="5.3.4" />
         <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\NKnife.TDMS\NKnife.TDMS.csproj" />
+    </ItemGroup>
 </Project>

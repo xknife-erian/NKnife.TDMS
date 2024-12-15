@@ -21,7 +21,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 #if DEBUG
             FilePropertiesVm.Name.Value = $"SampleDataFile-{Guid.NewGuid().ToString().ToUpper().Substring(0, 6)}";
 #endif
-            DataStructuredTree = new DataStructuredTreeControlViewModel(this);
+            DataStructuredTreeVm = new DataStructuredTreeControlViewModel(this);
 
             GroupPropertiesVm   = new LevelPropertiesControlViewModel(PropertiesType.Group);
             ChannelPropertiesVm = new LevelPropertiesControlViewModel(PropertiesType.Channel);
@@ -52,7 +52,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             {
                 if(value == WizardPageNames.GroupPropertiesPage
                    || value == WizardPageNames.ChannelPropertiesPage)
-                    PreviousPageName = WizardPageNames.DataStructuredTreePage;
+                    PreviousPageName = WizardPageNames.DataStructurePage;
                 NextPageName = value;
                 SetProperty(ref field, value);
             }
@@ -60,7 +60,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 
         public LevelPropertiesControlViewModel FilePropertiesVm { get; init; }
 
-        public DataStructuredTreeControlViewModel DataStructuredTree { get; init; }
+        public DataStructuredTreeControlViewModel DataStructuredTreeVm { get; init; }
 
         public LevelPropertiesControlViewModel GroupPropertiesVm
         {
@@ -74,7 +74,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             set => SetProperty(ref field, value);
         }
 
-        public DataFileInfo DataFileInfo { get; set; } = new();
+        public DbFileStructure DbFileStructure { get; set; } = new();
 
         public ICommand NextCommand => new RelayCommand(() =>
         {
@@ -89,9 +89,9 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
                     OnFilePropertiesPage();
 
                     break;
-                case WizardPageNames.DataStructuredTreePage:
+                case WizardPageNames.DataStructurePage:
                     NextPageName = WizardPageNames.ResultConfirmationPage;
-                    PreviousPageName = WizardPageNames.DataStructuredTreePage;
+                    PreviousPageName = WizardPageNames.DataStructurePage;
 
                     break;
                 case WizardPageNames.GroupPropertiesPage:
@@ -102,13 +102,13 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
                     OnChannelPropertiesPage();
 
                     break;
-                case WizardPageNames.DataFormatSettingsPage:
-                    NextPageName = WizardPageNames.DataStructuredTreePage;
+                case WizardPageNames.EditDataFormatSettingsPage:
+                    NextPageName = WizardPageNames.DataStructurePage;
 
                     break;
                 case WizardPageNames.ResultConfirmationPage:
                     NextPageName = WizardPageNames.BuildProgressPage;
-                    PreviousPageName = WizardPageNames.DataStructuredTreePage;
+                    PreviousPageName = WizardPageNames.DataStructurePage;
 
                     break;
                 case WizardPageNames.BuildProgressPage:
@@ -129,22 +129,22 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
         {
             switch (NextPageName)
             {
-                case WizardPageNames.DataStructuredTreePage:
-                    DataFileInfo.FileProperties.Clear();
+                case WizardPageNames.DataStructurePage:
+                    DbFileStructure.Properties.Clear();
 
-                    DataFileInfo.FileProperties.Add(FilePropertiesVm.Name);
-                    DataFileInfo.FileProperties.Add(FilePropertiesVm.Description);
+                    DbFileStructure.Properties.Add(FilePropertiesVm.Name);
+                    DbFileStructure.Properties.Add(FilePropertiesVm.Description);
 
                     if(!string.IsNullOrEmpty(FilePropertiesVm.Title.Value))
-                        DataFileInfo.FileProperties.Add(FilePropertiesVm.Title);
+                        DbFileStructure.Properties.Add(FilePropertiesVm.Title);
                     if(!string.IsNullOrEmpty(FilePropertiesVm.Author.Value))
-                        DataFileInfo.FileProperties.Add(FilePropertiesVm.Author);
+                        DbFileStructure.Properties.Add(FilePropertiesVm.Author);
 
                     foreach (var lp in FilePropertiesVm.LevelPropertiesSet)
                     {
                         if(!string.IsNullOrEmpty(lp.Name)
                            && !string.IsNullOrEmpty(lp.Value))
-                            DataFileInfo.FileProperties.Add(lp);
+                            DbFileStructure.Properties.Add(lp);
                     }
 
                     break;
@@ -160,11 +160,11 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             {
                 PromptNamePropertyNotFilled();
                 NextPageName     = WizardPageNames.ChannelPropertiesPage;
-                PreviousPageName = WizardPageNames.DataStructuredTreePage;
+                PreviousPageName = WizardPageNames.DataStructurePage;
             }
             else
             {
-                NextPageName     = WizardPageNames.DataStructuredTreePage;
+                NextPageName     = WizardPageNames.DataStructurePage;
                 PreviousPageName = WizardPageNames.FilePropertiesPage;
             }
         }
@@ -175,11 +175,11 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             {
                 PromptNamePropertyNotFilled();
                 NextPageName     = WizardPageNames.GroupPropertiesPage;
-                PreviousPageName = WizardPageNames.DataStructuredTreePage;
+                PreviousPageName = WizardPageNames.DataStructurePage;
             }
             else
             {
-                NextPageName     = WizardPageNames.DataStructuredTreePage;
+                NextPageName     = WizardPageNames.DataStructurePage;
                 PreviousPageName = WizardPageNames.FilePropertiesPage;
             }
         }
@@ -194,7 +194,7 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
             }
             else
             {
-                NextPageName     = WizardPageNames.DataStructuredTreePage;
+                NextPageName     = WizardPageNames.DataStructurePage;
                 PreviousPageName = WizardPageNames.FilePropertiesPage;
             }
         }

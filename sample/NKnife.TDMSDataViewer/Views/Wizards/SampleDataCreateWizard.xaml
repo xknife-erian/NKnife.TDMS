@@ -73,10 +73,10 @@
         </xctk:WizardPage>
 
         <xctk:WizardPage PageType="Interior"
-                         Name="_DataStructuredTreePage_"
+                         Name="_DataStructurePage_"
                          Title="数据结构"
                          Style="{StaticResource _WizardPageCommonStyle_}"
-                         DataContext="{Binding DataStructuredTree}">
+                         DataContext="{Binding DataStructuredTreeVm}">
             <cvt:DataStructuredTreeControl />
         </xctk:WizardPage>
 
@@ -99,7 +99,7 @@
         </xctk:WizardPage>
 
         <xctk:WizardPage PageType="Interior"
-                         Name="_DataFormatSettingsPage_"
+                         Name="_EditDataFormatSettingsPage_"
                          Title="设置数据格式"
                          Description="请填写当前通道将要存储的样本数据的格式，以及相关的设定。"
                          Style="{StaticResource _WizardPageCommonStyle_}">

@@ -9,12 +9,12 @@ namespace NKnife.TDMSDataViewer.ViewModels.Wizards
 
         public const string FilePropertiesPage = "_FilePropertiesPage_";
 
-        public const string DataStructuredTreePage = "_DataStructuredTreePage_";
+        public const string DataStructurePage = "_DataStructurePage_";
 
         public const string GroupPropertiesPage = "_GroupPropertiesPage_";
         public const string ChannelPropertiesPage = "_ChannelPropertiesPage_";
 
-        public const string DataFormatSettingsPage = "_DataFormatSettingsPage_";
+        public const string EditDataFormatSettingsPage = "_EditDataFormatSettingsPage_";
 
         public const string ResultConfirmationPage = "_ResultConfirmationPage_";
         public const string BuildProgressPage = "_BuildProgressPage_";
